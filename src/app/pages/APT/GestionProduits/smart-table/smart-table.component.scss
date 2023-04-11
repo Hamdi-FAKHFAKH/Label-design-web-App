@@ -1,0 +1,10 @@
+@import "../../../../@theme/styles/themes.scss";
+
+@include nb-install-component() {
+  nb-card {
+    transform: translate3d(0, 0, 0);
+  }
+}
+:host /deep/ ng2-smart-table thead > tr > th {
+  background-color: blue;
+}

@@ -1,0 +1,102 @@
+<h1 id="title" class="title">Login</h1>
+<p class="sub-title">Bonjour! Connectez-vous avec votre Matricule.</p>
+<br />
+<form class="needs-validation" (ngSubmit)="onSubmit(f)" #f="ngForm">
+  <div class="mb-3">
+    <label for="matricule" class="label">Matricule</label>
+    <input
+      class="form-control"
+      [ngClass]="{
+        'is-valid': matricule.valid && matricule.touched,
+        'is-invalid':
+          (!matricule.valid && matricule.touched) ||
+          (ErrorMsg && ErrorMsg.includes('Login incorrect'))
+      }"
+      type="number"
+      ngModel
+      min="1000"
+      fullWidth
+      id="matricule"
+      placeholder="Matricule"
+      required
+      name="matricule"
+      #matricule="ngModel"
+      max="9999"
+    />
+    <span>
+      <p
+        class="caption status-danger"
+        *ngIf="matricule.errors?.required && matricule.touched"
+      >
+        Veuillez remplir le champs Matricule !
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="matricule.errors?.min || matricule.errors?.max"
+      >
+        le champs Matricule doit comporter 4 caractères !
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="ErrorMsg && ErrorMsg.includes('Login incorrect')"
+      >
+        {{ ErrorMsg }}
+      </p>
+    </span>
+  </div>
+  <div>
+    <label for="exampleInputPassword1" class="label">Password</label>
+    <input
+      ngModel
+      class="form-control"
+      [ngClass]="{
+        'is-valid': password.valid && password.touched,
+        'is-invalid':
+          (!password.valid && password.touched) ||
+          (ErrorMsg && ErrorMsg.includes('Mot de passe incorrect'))
+      }"
+      type="password"
+      fullWidth
+      id="exampleInputPassword1"
+      placeholder="Password"
+      name="password"
+      #password="ngModel"
+      required
+    />
+    <span>
+      <p
+        class="caption status-danger"
+        *ngIf="!password.valid && password.touched"
+      >
+        Veuillez remplir le champs Mot de Passe !
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="ErrorMsg && ErrorMsg.includes('Mot de passe incorrect')"
+      >
+        {{ ErrorMsg }}
+      </p>
+    </span>
+  </div>
+  <br />
+  <div class="form-check mb-3">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      id="validationFormCheck1"
+      required
+    />
+    <label class="form-check-label" for="validationFormCheck1"
+      >Remember Me</label
+    >
+    <div class="invalid-feedback">Example invalid feedback text</div>
+  </div>
+  <button
+    class="btn btn-primary mt-2"
+    type="submit"
+    style="width: 100%"
+    [disabled]="!f.valid"
+  >
+    Submit
+  </button>
+</form>

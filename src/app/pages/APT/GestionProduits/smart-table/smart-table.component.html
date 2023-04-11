@@ -1,0 +1,53 @@
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+  <ol
+    class="breadcrumb"
+    style="background-color: rgba(255, 255, 255, 0.37); border-radius: 6px"
+  >
+    <li class="breadcrumb-item">
+      <a routerLink="/pages/apt/gestionProduits"
+        >S500 - Atelier Protection Thermique</a
+      >
+    </li>
+    <li
+      aria-current="page"
+      routerLinkActive="breadcrumb-item active"
+      routerLink="/pages/apt/gestionProduits"
+    >
+      GestionProduits
+    </li>
+  </ol>
+</nav>
+<br />
+<input
+  class="form-control me-2 ps-4"
+  type="search"
+  placeholder="&#xF002;  Search"
+  style="font-family: Arial, FontAwesome; border-radius: 6px"
+  aria-label="Search"
+  #search
+  (change)="onSearch(search.value)"
+/>
+<br />
+<button
+  type="button"
+  class="btn btn-success"
+  style="float: right; font-family: Arial, FontAwesome"
+  (click)="openWindowForm()"
+>
+  &#xf055; Créer un Nouveau Produit
+</button>
+<br /><br /><br />
+<div class="card">
+  <div class="card-body">
+    <div class="col-md-12" style="overflow-x: scroll">
+      <div class="smart-table-container" style="width: 1800px">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="source"
+          (deleteConfirm)="onDeleteConfirm($event)"
+        >
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</div>

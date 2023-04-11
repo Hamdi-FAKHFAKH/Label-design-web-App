@@ -1,0 +1,79 @@
+<h1 id="title" class="title">Login</h1>
+<p class="sub-title">Hello! Log in with your Matricule.</p>
+<br />
+<form class="needs-validation" novalidate>
+  <div class="mb-3">
+    <label for="matricule" class="label">Matricule</label>
+    <input
+      class="form-control"
+      [ngClass]="{
+        'is-valid': matriculeValid(),
+        'is-invalid': matriculeblur && !matriculeValid()
+      }"
+      type="number"
+      (blur)="matriculeblur = true"
+      [(ngModel)]="matricule"
+      fullWidth
+      id="matricule"
+      placeholder="Matricule"
+      min="1000"
+      required
+      name="matricule"
+    />
+    <span *ngIf="matriculeblur">
+      <p class="caption status-danger" *ngIf="!matricule">
+        Veuillez remplir le champs Login !
+      </p>
+      <div *ngIf="matricule && !matriculeValid()">
+        <p class="caption status-danger">
+          Login Incorrect, Veuillez vérifier le login saisi,<br />Sinon veuillez
+          contacter votre supérieur pour vous accorder un accès !
+        </p>
+      </div>
+    </span>
+  </div>
+  <div>
+    <label for="exampleInputPassword1" class="label">Password</label>
+    <input
+      (blur)="passwordblur = true"
+      (submit)="passwordblur = true"
+      [(ngModel)]="password"
+      class="form-control"
+      [ngClass]="{
+        'is-valid': passwordblur && password,
+        'is-invalid': passwordblur && !password
+      }"
+      type="password"
+      fullWidth
+      id="exampleInputPassword1"
+      placeholder="Password"
+      name="password"
+    />
+    <span *ngIf="passwordblur">
+      <p class="caption status-danger" *ngIf="!password">
+        Veuillez remplir le champs Mot de Passe !
+      </p>
+    </span>
+  </div>
+  <br />
+  <div class="form-check mb-3">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      id="validationFormCheck1"
+      required
+    />
+    <label class="form-check-label" for="validationFormCheck1"
+      >Remember Me</label
+    >
+    <div class="invalid-feedback">Example invalid feedback text</div>
+  </div>
+  <button
+    class="btn btn-primary mt-2"
+    type="submit"
+    style="width: 100%"
+    (click)="passwordblur = true; matriculeblur = true"
+  >
+    Submit
+  </button>
+</form>
