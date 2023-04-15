@@ -5,3 +5,11 @@
 .window-form {
   width: 600px;
 }
+:host /deep/ ng2-smart-table thead > tr > th {
+  background-color: #3374b5 !important;
+  border-color: #3374b5;
+  color: white;
+  font-weight: 900 !important;
+}
+
+/* ng2-smart-table table tr.ng2-smart-titles th */

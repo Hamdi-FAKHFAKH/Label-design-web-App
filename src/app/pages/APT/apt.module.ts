@@ -13,7 +13,6 @@ import {
 import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.component";
 import { WindowFormComponent } from "./GestionProduits/window-form/window-form.component";
 import { CommonModule } from "@angular/common";
-import { GestionProduitService } from "./GestionProduits/gestionProduit.service";
 
 @NgModule({
   imports: [

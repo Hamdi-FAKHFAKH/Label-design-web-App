@@ -25,7 +25,7 @@
   style="font-family: Arial, FontAwesome; border-radius: 6px"
   aria-label="Search"
   #search
-  (change)="onSearch(search.value)"
+  (input)="onSearch(search.value)"
 />
 <br />
 <button
@@ -40,11 +40,12 @@
 <div class="card">
   <div class="card-body">
     <div class="col-md-12" style="overflow-x: scroll">
-      <div class="smart-table-container" style="width: 1800px">
+      <div class="smart-table-container" style="width: 3400px">
         <ng2-smart-table
           [settings]="settings"
           [source]="source"
           (deleteConfirm)="onDeleteConfirm($event)"
+          (editConfirm)="onEdit($event)"
         >
         </ng2-smart-table>
       </div>

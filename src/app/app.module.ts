@@ -26,8 +26,8 @@ import { AuthGuard } from "./auth/auth-guard.service";
 import { AuthService } from "./auth/authService.service";
 import { CommonModule } from "@angular/common";
 import { authInterceptorService } from "./auth/authInterceptorService";
-import { GestionProduitService } from "./pages/APT/GestionProduits/gestionProduit.service";
-
+import { GestionProduitHttpService } from "./pages/APT/GestionProduits/gestionProduitHttp.service";
+import { GestionProduitService } from "./pages/APT/GestionProduits/GestionProduit.service";
 // import { FormsModule } from "@angular/forms";
 @NgModule({
   declarations: [AppComponent, LoginComponent],
@@ -55,6 +55,7 @@ import { GestionProduitService } from "./pages/APT/GestionProduits/gestionProdui
   providers: [
     AuthGuard,
     AuthService,
+    GestionProduitHttpService,
     GestionProduitService,
     {
       provide: HTTP_INTERCEPTORS,

@@ -49,7 +49,7 @@ export class AuthService {
   logOut() {
     this.user.next(null);
     this.router.navigate(["/auth"]);
-    this.cookieService.delete("userData", "/");
+    localStorage.removeItem("userData");
     this.TokenExpirationTimer && clearTimeout(this.TokenExpirationTimer);
     this.TokenExpirationTimer = null;
   }
