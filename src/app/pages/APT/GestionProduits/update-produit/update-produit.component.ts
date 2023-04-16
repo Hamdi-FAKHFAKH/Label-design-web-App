@@ -2,15 +2,15 @@ import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { NbWindowRef } from "@nebular/theme";
 import { GestionProduitHttpService } from "../gestionProduitHttp.service";
-
-import { Observable, forkJoin } from "rxjs";
 import { GestionProduitService } from "../GestionProduit.service";
 import { SerialNumberData } from "../gestionProduit.data";
+
 @Component({
-  templateUrl: "./window-form.component.html",
-  styleUrls: ["window-form.component.scss"],
+  selector: "ngx-update-produit",
+  templateUrl: "./update-produit.component.html",
+  styleUrls: ["./update-produit.component.scss"],
 })
-export class WindowFormComponent implements OnInit {
+export class UpdateProduitComponent implements OnInit {
   formes: { nom: string; class: string; clicked: boolean }[] = [
     {
       nom: "square",
@@ -18,11 +18,11 @@ export class WindowFormComponent implements OnInit {
       clicked: false,
     },
   ];
+  windowdata;
   produits: String[] = [];
   lotData: string[] = [];
-  SerialNumberData: SerialNumberData[];
-  selectedSerialNumber: SerialNumberData;
-  addNewSerialNumber: boolean;
+  refProd: string;
+
   format;
   constructor(
     public windowRef: NbWindowRef,
@@ -41,10 +41,7 @@ export class WindowFormComponent implements OnInit {
       }
       console.log(this.lotData);
     });
-    this.gestionProduitHttpService.getSerialNumber().subscribe((res) => {
-      this.SerialNumberData = res.serialNumber;
-    });
-    this.addNewSerialNumber = false;
+    this.refProd = this.windowdata.ref;
   }
   close() {
     this.windowRef.close();
@@ -67,6 +64,12 @@ export class WindowFormComponent implements OnInit {
     if (form.value.formatLot) {
       numLot = form.value.formatLot;
     }
+    if ((form.value.numLot || form.value.formatLot) && form.value.desLot) {
+      this.gestionProduitService.UpdateLot(
+        { desLot: form.value.desLot },
+        form.value.numLot
+      );
+    }
     // créer / vérifier l'existance d'un client
     if (form.value.codeClient) {
       success =
@@ -78,62 +81,15 @@ export class WindowFormComponent implements OnInit {
         (await this.gestionProduitService.AddFournisseur(form.value)) &&
         success;
     }
-    // créer un SerialNumber
-    if (
-      form.value.withSN &&
-      form.value.prefix &&
-      form.value.suffix &&
-      form.value.nbrCaractere &&
-      form.value.typeCompteur &&
-      form.value.pas &&
-      this.addNewSerialNumber
-    ) {
-      this.format =
-        form.value.prefix +
-        "-" +
-        form.value.suffix +
-        `{NC : ${form.value.nbrCaractere}}` +
-        `{Type : ${form.value.typeCompteur}}` +
-        `{pas : ${form.value.pas}}`;
-      // console.log("ddddd{{nc:20}}sdds".split(/[\{\}]+/));
-
-      idSN = await this.gestionProduitService.AddSerialNumber(
-        form.value,
-
-        this.format
-      );
-    }
-    if (!this.addNewSerialNumber && form.value.FormatSN) {
-      idSN = this.selectedSerialNumber.idSN;
-    }
-    // vérifier si produit déja créer
-    const prod = await this.gestionProduitHttpService
-      .getAllProduits()
-      .toPromise();
-    for (const p in prod.produits) {
-      if (prod.produits[p]["ref"] == form.value.ref) {
-        alert("Produit existe déja");
-        success = false;
-      }
-    }
-    // créer un produit
-    if (success && form.value.ref && form.value.nomProduit) {
-      success = await this.gestionProduitService.CreateProduit(
-        form.value,
+    // update un produit
+    if (success && this.windowdata.ref && form.value.nomProduit) {
+      success = await this.gestionProduitService.updateProduit(
+        { ...form.value, ref: this.windowdata.ref },
+        this.windowdata.ref,
         numLot,
-        idSN
+        this.windowdata.idSN
       );
       success ? this.windowRef.close() : alert("Produit creation Failed");
     }
-  }
-  SelectSn(val) {
-    console.log(val);
-
-    this.selectedSerialNumber = this.SerialNumberData[val];
-  }
-  addSN(event) {
-    this.addNewSerialNumber = event.target.checked;
-    console.log(event.target.checked);
-    console.log(this.selectedSerialNumber);
   }
 }

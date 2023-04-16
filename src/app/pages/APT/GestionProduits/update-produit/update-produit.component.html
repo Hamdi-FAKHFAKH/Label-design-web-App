@@ -17,24 +17,19 @@
         <div class="card-header">INFO Produit</div>
         <div class="card-body">
           <div class="col gx-1">
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="ref" class="form-label">Référence Produit</label>
-              <select
+              <input
+                type="text"
                 class="form-control"
-                name="ref"
-                id=""
-                ngModel
-                #ref="ngModel"
-              >
-                <option *ngFor="let item of produits" value="{{ item.ProRef }}">
-                  {{ item.ProRef }}
-                </option>
-              </select>
+                value="{{ windowdata.ref }}"
+                disabled
+              />
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="prodName" class="form-label">Nom Produit</label>
               <input
-                ngModel
+                [ngModel]="windowdata.nomProduit"
                 class="form-control"
                 id="prodName"
                 type="text"
@@ -44,10 +39,10 @@
                 required
               />
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="ref1">Référence 1</label>
               <input
-                ngModel
+                [ngModel]="windowdata.ref1"
                 #ref1="ngModel"
                 class="form-control"
                 id="ref1"
@@ -65,10 +60,10 @@
                 </option>
               </datalist>
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="ref1" class="form-label">Référence 2</label>
               <input
-                ngModel
+                [ngModel]="windowdata.ref2"
                 #ref2="ngModel"
                 class="form-control"
                 id="ref1"
@@ -95,10 +90,10 @@
         <div class="card-header">INFO Client / Fournisseur</div>
         <div class="card-body">
           <div class="col gx-1">
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="ref1" class="form-label">Code fournisseur</label>
               <input
-                ngModel
+                [ngModel]="windowdata.codeFournisseur"
                 #codeFournisseur="ngModel"
                 class="form-control"
                 id="ref1"
@@ -107,12 +102,12 @@
                 name="codeFournisseur"
               />
             </div>
-            <div class="row-md-3 mt-2 mt-2">
+            <div class="row-md-3">
               <label for="desFor" class="form-label"
                 >Désignation fournisseur
               </label>
               <input
-                ngModel
+                [ngModel]="windowdata.desFournisseur"
                 #desFournisseur="ngModel"
                 class="form-control"
                 id="desFor"
@@ -121,10 +116,10 @@
                 name="desFournisseur"
               />
             </div>
-            <div class="row-md-3 mt-2 mt-2">
+            <div class="row-md-3">
               <label for="ref1">Code Client</label>
               <input
-                ngModel
+                [ngModel]="windowdata.codeClient"
                 #codeClient="ngModel"
                 class="form-control"
                 id="ref1"
@@ -133,10 +128,10 @@
                 name="codeClient"
               />
             </div>
-            <div class="row-md-3 mt-2 mt-2">
+            <div class="row-md-3">
               <label for="ref1" class="form-label">Désignation Client</label>
               <input
-                ngModel
+                [ngModel]="windowdata.desFournisseur"
                 #desClient="ngModel"
                 class="form-control"
                 id="ref1"
@@ -154,13 +149,13 @@
         <div class="card-header">INFO Lot</div>
         <div class="card-body">
           <div class="col gx-1">
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="desFor" class="form-label">N° Lot/Format</label>
               <label for="F_lot"></label>
               <select #lot class="form-control" name="" id="F_lot">
                 <optgroup label="Sélectionner N°/Format de lot existant">
-                  <option value="Numéro de Lot">Numéro de Lot</option>
-                  <option value="Format de Lot">Format de Lot</option>
+                  <option value="Numéro de Lot" selected>Numéro de Lot</option>
+                  <option value="Format de Lot">Format de Date</option>
                 </optgroup>
                 <optgroup label="Ajouter un Nouveau">
                   <option value="Ajouter un Nouveau Format">
@@ -169,17 +164,13 @@
                 </optgroup>
               </select>
             </div>
-            <div class="row-md-3 mt-2">
-              <label
-                for="exampleDataList"
-                class="form-label mt-2"
-                *ngIf="lot.value !== 'Ajouter un Nouveau Format'"
-              >
+            <div class="row-md-3">
+              <label for="exampleDataList" class="form-label">
                 {{ lot.value }}
               </label>
               <select
                 id="datalist"
-                ngModel
+                [ngModel]="windowdata.numLot"
                 #lotvalue="ngModel"
                 name="formatLot"
                 *ngIf="lot.value === 'Format de Lot'"
@@ -191,50 +182,42 @@
                 </option>
               </select>
               <select
-                ngModel
+                [ngModel]="windowdata.numLot"
                 name="numLot"
                 id="datalist"
+                *ngIf="lot.value === 'Numéro de Lot'"
                 class="form-control"
                 required
-                *ngIf="lot.value === 'Numéro de Lot'"
               >
                 <option *ngFor="let item of lotData" value="{{ item.numLot }}">
                   {{ item.numLot }}
                 </option>
               </select>
               <div *ngIf="lot.value === 'Ajouter un Nouveau Format'">
-                <div class="row-md-3 mt-2">
-                  <label for="desLot" class="form-label mt-2"
-                    >Numéro de Lot</label
-                  >
-                  <input
-                    ngModel
-                    #desLot="ngModel"
-                    class="form-control"
-                    type="text"
-                    placeholder="Numéro de Lot"
-                    name="newNumLot"
-                    required
-                  />
-                </div>
-                <div class="row-md-3 mt-2">
-                  <label for="desLot">Format de Lot</label>
-                  <input
-                    ngModel
-                    #desLot="ngModel"
-                    class="form-control"
-                    type="text"
-                    placeholder="Format de Lot"
-                    name="newformatLot"
-                    required
-                  />
-                </div>
+                <input
+                  ngModel
+                  #desLot="ngModel"
+                  class="form-control"
+                  type="text"
+                  placeholder="Format de Lot"
+                  name="newformatLot"
+                  required
+                />
+                <input
+                  ngModel
+                  #desLot="ngModel"
+                  class="form-control"
+                  type="text"
+                  placeholder="Numéro de Lot"
+                  name="newNumLot"
+                  required
+                />
               </div>
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="desLot">Désignation Lot</label>
               <input
-                ngModel
+                [ngModel]="windowdata.desLot"
                 #desLot="ngModel"
                 class="form-control"
                 id="desLot"
@@ -255,62 +238,62 @@
         <div class="card-header">Text Supplémentaire</div>
         <div class="card-body">
           <div class="col gx-1">
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="txt1" class="form-label">Text1</label>
               <input
                 class="form-control"
                 id="ref1"
                 type="text"
                 placeholder="Text1"
-                ngModel
+                [ngModel]="windowdata.text1"
                 #text1="ngModel"
                 name="text1"
               />
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="text2" class="form-label">Text 2 </label>
               <input
                 class="form-control"
                 id="text2"
                 type="text"
                 placeholder="Text 2"
-                ngModel
+                [ngModel]="windowdata.text2"
                 #text2="ngModel"
                 name="text2"
               />
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="text3" class="form-label">Text 3</label>
               <input
                 class="form-control"
                 id="text3"
                 type="text"
                 placeholder="Text 3"
-                ngModel
+                [ngModel]="windowdata.text3"
                 #text3="ngModel"
                 name="text3"
               />
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="text4">Text 4</label>
               <input
                 class="form-control"
                 id="text4"
                 type="text"
                 placeholder="Text 4"
-                ngModel
+                [ngModel]="windowdata.text4"
                 #text4="ngModel"
                 name="text4"
               />
             </div>
-            <div class="row-md-3 mt-2">
+            <div class="row-md-3">
               <label for="text5" class="form-label">Text 5</label>
               <input
                 class="form-control"
                 id="text5"
                 type="text"
                 placeholder="Text 5"
-                ngModel
+                [ngModel]="windowdata.text5"
                 #text5="ngModel"
                 name="text5"
               />
@@ -329,8 +312,7 @@
               name="formes"
               id="formes"
               #formes
-              ngModel
-              [defaultChecked]="false"
+              [ngModel]="windowdata.formes"
             />
             <label for="formes"> &nbsp;formes</label>
             {{ formes.checked }}
@@ -339,9 +321,8 @@
               type="checkbox"
               name="withOF"
               id="OF"
-              ngModel
+              [ngModel]="windowdata.withOF"
               #withOF="ngModel"
-              [defaultChecked]="false"
             />
             <label for="OF"> &nbsp;Avec OF</label>
             <br />
@@ -349,165 +330,10 @@
               type="checkbox"
               name="withDataMatrix"
               id="withDataMatrix"
-              ngModel
+              [ngModel]="windowdata.withDataMatrix"
               #withDataMatrix="ngModel"
-              [defaultChecked]="false"
             />
             <label for="Avec_DataMatrix"> &nbsp;Avec DataMatrix</label><br />
-            <input
-              type="checkbox"
-              name="withSN"
-              id="num_serie"
-              #numSerie
-              ngModel
-              #withNumSerie="ngModel"
-              [defaultChecked]="false"
-            />
-            <label for="num_serie"> &nbsp;Avec Numéro de Série</label>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card h-100" *ngIf="numSerie.checked">
-        <div class="card-header">Info Numéro de Série</div>
-        <div class="card-body mx-3">
-          <div class="row">
-            <input
-              type="checkbox"
-              [defaultChecked]="false"
-              (change)="addSN($event)"
-            />
-            <label> &nbsp;Ajouter un Nouveau SN</label>
-            <br />
-
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="Préfix">Format SN</span>
-              <select
-                ngModel
-                name="FormatSN"
-                #snFormat
-                class="form-control"
-                (change)="SelectSn(snFormat.value)"
-                [disabled]="addNewSerialNumber"
-              >
-                <option selected value=""></option>
-                <option
-                  *ngFor="let item of SerialNumberData; let i = index"
-                  value="{{ i }}"
-                >
-                  {{ item.format }}
-                </option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="Préfix">Préfix</span>
-              <input
-                [ngModel]="selectedSerialNumber && selectedSerialNumber.prefix"
-                name="prefix"
-                #prefix="ngModel"
-                type="text"
-                class="form-control"
-                placeholder="Préfix"
-                aria-label="Préfix"
-                aria-describedby="Préfix"
-                val
-                [disabled]="!addNewSerialNumber"
-                value="{{
-                  selectedSerialNumber && selectedSerialNumber.prefix
-                }}"
-              />
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="Suffix">Suffix</span>
-              <input
-                [ngModel]="selectedSerialNumber && selectedSerialNumber.suffix"
-                name="suffix"
-                #suffix="ngModel"
-                type="text"
-                class="form-control"
-                placeholder="Suffix"
-                aria-label="Suffix"
-                aria-describedby="Suffix"
-                [disabled]="!addNewSerialNumber"
-                value="{{
-                  selectedSerialNumber && selectedSerialNumber.suffix
-                }}"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <label for="text5" class="form-label">Compteur</label><br />
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Nbr de Caractére
-              </label>
-              <select
-                class="form-control"
-                id="inputGroupSelect01"
-                [ngModel]="
-                  selectedSerialNumber && selectedSerialNumber.nbrCaractere
-                "
-                name="nbrCaractere"
-                #nbrCaractere="ngModel"
-                [disabled]="!addNewSerialNumber"
-                [value]="
-                  selectedSerialNumber && selectedSerialNumber.nbrCaractere
-                "
-              >
-                <option>Choose...</option>
-                <option
-                  *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                  value="{{ item }}"
-                >
-                  {{ item }}
-                </option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Type</label
-              >
-              <select
-                class="form-control"
-                id="inputGroupSelect01"
-                [ngModel]="
-                  selectedSerialNumber && selectedSerialNumber.typeCompteur
-                "
-                name="typeCompteur"
-                #typeCompteur="ngModel"
-                [disabled]="!addNewSerialNumber"
-                [value]="
-                  selectedSerialNumber && selectedSerialNumber.typeCompteur
-                "
-              >
-                <option selected>Choose...</option>
-                <option value="N">Numérique</option>
-                <option value="AN">Alphanumérique</option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Nbr de Caractére
-              </label>
-              <select
-                class="form-control"
-                id="inputGroupSelect01"
-                [ngModel]="selectedSerialNumber && selectedSerialNumber.pas"
-                name="pas"
-                #nbrCaractere="ngModel"
-                [disabled]="!addNewSerialNumber"
-                [value]="selectedSerialNumber && selectedSerialNumber.pas"
-              >
-                <option>Choose...</option>
-                <option
-                  *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                  value="{{ item }}"
-                >
-                  {{ item }}
-                </option>
-              </select>
-            </div>
           </div>
         </div>
       </div>
@@ -523,7 +349,7 @@
         style="margin-right: 15px"
         [disabled]="!f.valid"
       >
-        Enregistrer
+        Enregistrer Modification
       </button>
       <button type="button" class="btn btn-danger ms-3">Annuler</button>
     </div>

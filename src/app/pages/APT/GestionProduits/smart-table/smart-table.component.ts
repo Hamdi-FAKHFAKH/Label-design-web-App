@@ -7,6 +7,7 @@ import { WindowFormComponent } from "../window-form/window-form.component";
 import { GestionProduitHttpService } from "../gestionProduitHttp.service";
 import { exhaustMap } from "rxjs/operators";
 import { GestionProduitService } from "../GestionProduit.service";
+import { UpdateProduitComponent } from "../update-produit/update-produit.component";
 @Component({
   selector: "ngx-smart-table",
   templateUrl: "./smart-table.component.html",
@@ -17,6 +18,7 @@ export class SmartTableComponent {
     hideSubHeader: true,
     pager: { display: true },
     filter: false,
+    mode: "external",
     actions: { position: "right", add: false },
     columns: {
       ref: {
@@ -158,10 +160,10 @@ export class SmartTableComponent {
     }
 
     if (success) {
-      success = await this.gestionProduitService.updateProduit(
-        event.newData,
-        event.newData.ref
-      );
+      // success = await this.gestionProduitService.updateProduit(
+      //   event.newData,
+      //   event.newData.ref
+      // );
       success && event.confirm.resolve();
     } else {
       alert("produit updated Failed");
@@ -174,10 +176,13 @@ export class SmartTableComponent {
 
     if (window.confirm("Etes-vous sûr que vous voulez supprimer ce Produit?")) {
       (await this.gestionProduitService.deleteProduit(event.data.ref)) &&
-        event.confirm.resolve();
+        this.source.refresh();
     } else {
-      event.confirm.reject();
+      alert("produit deleted Failed");
     }
+    this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
+      this.source.load(res.produits);
+    });
   }
   openWindowForm() {
     const window = this.windowService.open(WindowFormComponent, {
@@ -185,6 +190,20 @@ export class SmartTableComponent {
       windowClass: "container",
       closeOnBackdropClick: false,
       buttons: { minimize: true, fullScreen: false, maximize: false },
+    });
+    window.onClose.subscribe((res) => {
+      this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
+        this.source.load(res.produits);
+      });
+    });
+  }
+  openUpdateProduitWindow(event) {
+    const window = this.windowService.open(UpdateProduitComponent, {
+      title: `Modification Produit`,
+      windowClass: "container",
+      closeOnBackdropClick: false,
+      buttons: { minimize: true, fullScreen: false, maximize: false },
+      context: { windowdata: event.data },
     });
     window.onClose.subscribe((res) => {
       this.gestionProduitHttpService.getAllProduits().subscribe((res) => {

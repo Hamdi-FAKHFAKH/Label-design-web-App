@@ -15,6 +15,7 @@ import {
   GetFournisseurResultData,
   GetSerialNumberResultData,
   updateProduitResponseData,
+  UpdateLotResponseData,
 } from "./gestionProduit.data";
 import { map } from "rxjs/operators";
 
@@ -119,6 +120,12 @@ export class GestionProduitHttpService {
   deleteProduit(id: string) {
     return this.http.delete<updateProduitResponseData>(
       `http://localhost:3080/api/v1/Produits/${id}`
+    );
+  }
+  updateLot(obj: LotData, id: string) {
+    return this.http.put<UpdateLotResponseData>(
+      `http://localhost:3080/api/v1/lot/${id}`,
+      obj
     );
   }
 }

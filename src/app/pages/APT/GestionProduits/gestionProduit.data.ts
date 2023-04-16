@@ -53,6 +53,13 @@ export interface LotData {
   desLot: string;
   createur: String;
   modificateur: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+export interface UpdateLotResponseData {
+  Status: string;
+  numberOfAffectedRows: string;
+  LotUpdated: LotData;
 }
 //---------------------------------------------------   Client Data --------------------------------------------------------------
 export interface ClientData {

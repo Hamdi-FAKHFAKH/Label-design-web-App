@@ -70,7 +70,7 @@ export class GestionProduitService {
     }
   }
 
-  async AddLot(data) {
+  async CreateLot(data) {
     const res = await this.gestionProduitHttpService
       .createLot({
         numLot: data.newNumLot,
@@ -79,6 +79,21 @@ export class GestionProduitService {
         createur: null,
         modificateur: null,
       })
+      .toPromise();
+    return !!res;
+  }
+  async UpdateLot(data, id) {
+    const res = await this.gestionProduitHttpService
+      .updateLot(
+        {
+          numLot: data.numLot,
+          format: data.formatLot,
+          desLot: data.desLot || null,
+          createur: null,
+          modificateur: null,
+        },
+        id
+      )
       .toPromise();
     return !!res;
   }
@@ -136,7 +151,7 @@ export class GestionProduitService {
       .toPromise();
     return !!produit;
   }
-  async updateProduit(data, id) {
+  async updateProduit(data, id, numLot, idSN) {
     const produitUpdated = await this.gestionProduitHttpService
       .updateProduit(
         {
@@ -148,8 +163,8 @@ export class GestionProduitService {
           nomProduit: data.nomProduit,
           idEtiquette: null,
           formes: null,
-          idSN: data.withSN != "" && data.idSN ? data.idSN : null,
-          numLot: data.numLot || null,
+          idSN: idSN || null,
+          numLot: numLot || null,
           withDataMatrix: data.withDataMatrix || false,
           withOF: data.withOF || false,
           withSN: data.withSN || false,

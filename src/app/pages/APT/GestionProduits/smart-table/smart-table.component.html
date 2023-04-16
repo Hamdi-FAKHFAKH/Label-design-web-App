@@ -44,8 +44,8 @@
         <ng2-smart-table
           [settings]="settings"
           [source]="source"
-          (deleteConfirm)="onDeleteConfirm($event)"
-          (editConfirm)="onEdit($event)"
+          (delete)="onDeleteConfirm($event)"
+          (edit)="openUpdateProduitWindow($event)"
         >
         </ng2-smart-table>
       </div>
