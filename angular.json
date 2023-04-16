@@ -125,6 +125,7 @@
               "node_modules/chart.js/dist/Chart.min.js"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/bootstrap/dist/css/bootstrap.css",
               "node_modules/typeface-exo/index.css",
               "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
@@ -150,10 +151,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
@@ -180,6 +178,11 @@
     },
     "@schematics/angular:directive": {
       "prefix": "ngx"
+    }
+  },
+  "cli": {
+    "cache": {
+      "enabled": false
     }
   }
 }

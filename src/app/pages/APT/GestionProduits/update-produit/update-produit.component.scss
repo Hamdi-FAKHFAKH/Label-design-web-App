@@ -1,0 +1,25 @@
+@import "../../../../@theme/styles/themes";
+
+@include nb-install-component() {
+  ::ng-deep .form {
+    display: flex;
+    flex-direction: column;
+
+    .text-label {
+      margin-top: 1.5rem;
+    }
+    .card-header {
+      background-color: #3374b5;
+      color: white;
+      font-weight: 600;
+      border-color: #3374b5;
+    }
+    .card {
+      border-color: #3374b5;
+    }
+    ::placeholder {
+      font-style: italic;
+      color: rgb(190, 190, 190);
+    }
+  }
+}
