@@ -19,7 +19,7 @@ import {
         <ng-content select="nb-menu"></ng-content>
       </nb-sidebar>
 
-      <nb-layout-column>
+      <nb-layout-column style="padding: 0px;">
         <ng-content select="router-outlet"></ng-content>
       </nb-layout-column>
     </nb-layout>

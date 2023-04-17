@@ -10,11 +10,6 @@ const routes: Routes = [
     component: PagesComponent,
     children: [
       {
-        path: "forms",
-        loadChildren: () =>
-          import("./forms/forms.module").then((m) => m.FormsModules),
-      },
-      {
         path: "apt",
         loadChildren: () => import("./APT/apt.module").then((m) => m.AptModule),
       },

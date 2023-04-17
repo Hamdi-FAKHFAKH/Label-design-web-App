@@ -12,6 +12,13 @@ const routes: Routes = [
         path: "gestionProduits",
         component: SmartTableComponent,
       },
+      {
+        path: "CreationEtiquette",
+        loadChildren: () =>
+          import("./CréationEtiquette/CreationEtiquette.module").then(
+            (m) => m.CreattionEtiquetteModule
+          ),
+      },
     ],
   },
 ];

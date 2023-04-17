@@ -11,10 +11,10 @@
     padding-right: 15px;
   "
 >
-  <div class="row row-cols-1 row-cols-md-3 g-2">
+  <div class="row row-cols-1 row-cols-md-1 g-1">
     <div class="col">
       <div class="card">
-        <div class="card-header">INFO Produit</div>
+        <!-- <div class="card-header">INFO Produit</div> -->
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
@@ -92,7 +92,7 @@
     </div>
     <div class="col">
       <div class="card h-100">
-        <div class="card-header">INFO Client / Fournisseur</div>
+        <!-- <div class="card-header">INFO Client / Fournisseur</div> -->
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
@@ -151,7 +151,7 @@
     </div>
     <div class="col">
       <div class="card h-100">
-        <div class="card-header">INFO Lot</div>
+        <!-- <div class="card-header">INFO Lot</div> -->
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
@@ -249,10 +249,10 @@
     </div>
   </div>
   <br />
-  <div class="row row-cols-1 row-cols-md-3 g-2">
+  <div class="row row-cols-1 row-cols-md-1">
     <div class="col">
       <div class="card h-100">
-        <div class="card-header">Text Supplémentaire</div>
+        <!-- <div class="card-header">Text Supplémentaire</div> -->
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
@@ -321,7 +321,7 @@
     </div>
     <div class="col">
       <div class="card h-100">
-        <div class="card-header">Options</div>
+        <!-- <div class="card-header">Options</div> -->
         <div class="card-body">
           <div class="col gx-1">
             <input
@@ -370,7 +370,7 @@
     </div>
     <div class="col">
       <div class="card h-100" *ngIf="numSerie.checked">
-        <div class="card-header">Info Numéro de Série</div>
+        <!-- <div class="card-header">Info Numéro de Série</div> -->
         <div class="card-body mx-3">
           <div class="row">
             <input
@@ -515,8 +515,8 @@
   </div>
   <br />
 
-  <div class="row mt-3">
-    <div class="col">
+  <div class="row my-3">
+    <div class="col" style="text-align: end">
       <button
         type="submit"
         class="btn btn-success"
@@ -525,7 +525,9 @@
       >
         Enregistrer
       </button>
-      <button type="button" class="btn btn-danger ms-3">Annuler</button>
+      <button type="button" class="btn btn-danger ms-3" (click)="close()">
+        Annuler
+      </button>
     </div>
   </div>
 </form>

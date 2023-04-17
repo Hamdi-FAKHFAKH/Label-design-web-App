@@ -28,7 +28,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
           },
           {
             title: "Création Etiquettes",
-            link: "/pages/layout/list",
+            link: "/pages/apt/CreationEtiquette",
             icon: "edit-2-outline",
           },
           {

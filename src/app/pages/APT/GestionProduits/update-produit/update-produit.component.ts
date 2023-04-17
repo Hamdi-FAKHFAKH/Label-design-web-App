@@ -67,7 +67,7 @@ export class UpdateProduitComponent implements OnInit {
     if ((form.value.numLot || form.value.formatLot) && form.value.desLot) {
       this.gestionProduitService.UpdateLot(
         { desLot: form.value.desLot },
-        form.value.numLot
+        form.value.numLot || form.value.formatLot
       );
     }
     // créer / vérifier l'existance d'un client
