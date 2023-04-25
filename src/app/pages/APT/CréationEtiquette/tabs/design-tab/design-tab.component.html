@@ -1,0 +1,40 @@
+<fieldset>
+  <legend>Liste des Champs</legend>
+</fieldset>
+<div
+  cdkDropList
+  (cdkDropListDropped)="onDrop($event)"
+  [cdkDropListData]="list2"
+  cdkDropListConnectedTo="list-2"
+  [cdkDropListEnterPredicate]="allowDropPredicate"
+>
+  <div
+    *ngFor="let item of list2"
+    cdkDrag
+    [cdkDragData]="item"
+    (cdkDragMoved)="dragMoved($event)"
+    (cdkDragReleased)="dragReleased($event)"
+  >
+    <div style="color: green" *ngIf="item === 'div'">div</div>
+    <div style="color: green" *ngIf="item === 'container'">Container</div>
+    <!-- <img
+      src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
+      width="88"
+      height="31"
+      *ngIf="item === 'img'"
+    /> -->
+
+    <!-- <img
+    src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
+    id="drag1"
+    width="88"
+    height="31"
+    cdkDrag
+    #img
+    cdkDragBoundary=".figure"
+  /> -->
+  </div>
+  <!-- cdkDragBoundary=".figure"
+    [cdkDragDisabled]="dragebel"
+    style="position: relative; z-index: 1" -->
+</div>

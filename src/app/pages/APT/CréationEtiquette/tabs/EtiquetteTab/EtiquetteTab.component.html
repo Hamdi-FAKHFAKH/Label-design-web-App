@@ -1,0 +1,226 @@
+<div class="input-group mb-3">
+  <span class="input-group-text" id="basic-addon1">ID</span>
+  <input
+    type="text"
+    class="form-control"
+    placeholder="ID Etiquette"
+    aria-label="ID Etiquette"
+    aria-describedby="basic-addon1"
+    disabled
+    value="{{ labelInfo.id }}"
+  />
+</div>
+<fieldset style="margin-top: -7px">
+  <legend>Config</legend>
+</fieldset>
+<select class="form-control" (change)="change('refProd', $event.target.value)">
+  <option selected>-- Référence Produit --</option>
+  <option *ngFor="let item of listProd" value="{{ item.ref }}">
+    {{ item.ref }}
+  </option>
+</select>
+<br />
+<div class="input-group">
+  <select
+    class="form-control"
+    id="inputGroupSelect04"
+    aria-label="Example select with button addon"
+    (change)="DownloadLabelData($event.target.value)"
+  >
+    <option selected>-- Référence Produit Similaire --</option>
+    <option *ngFor="let item of refProdWithEtiquette" value="{{ item.ref }}">
+      {{ item.ref }}
+    </option>
+  </select>
+  <button
+    class="btn btn-primary"
+    type="button"
+    style="padding-top: 6px; padding-bottom: 2px"
+  >
+    <nb-icon icon="external-link-outline" pack="eva"></nb-icon>
+  </button>
+</div>
+<fieldset>
+  <legend>Taille</legend>
+</fieldset>
+<div class="input-group mb-3">
+  <span class="input-group-text">Longueur</span>
+  <input
+    #long
+    type="number"
+    class="form-control"
+    placeholder="Longueur"
+    [ngModel]="longueur"
+    (input)="
+      change(
+        'longueur',
+        unitLong === 'mm' ? +$event.target.value : +$event.target.value * 10
+      )
+    "
+  />
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="changeLongUnit(long.value)"
+  >
+    {{ unitLong || "mm" }}
+  </button>
+</div>
+<div class="input-group mb-3" *ngIf="labelInfo.format !== 'cercle'">
+  <span class="input-group-text">Largeur</span>
+  <input
+    #larg
+    type="number"
+    class="form-control"
+    [ngModel]="largeur"
+    placeholder="Largeur"
+    (input)="
+      change(
+        'largeur',
+        unitLarg === 'mm' ? +$event.target.value : +$event.target.value * 10
+      )
+    "
+  />
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="changeLargUnit(larg.value)"
+  >
+    {{ unitLarg || "mm" }}
+  </button>
+</div>
+<div class="input-group mb-3">
+  <span class="input-group-text">Padding</span>
+  <input
+    #pad
+    type="number"
+    class="form-control"
+    [ngModel]="padding"
+    min="{{ padding }}"
+    placeholder="Padding"
+    (input)="
+      change(
+        'padding',
+        unitPadding === 'mm' ? +$event.target.value : +$event.target.value * 10
+      )
+    "
+  />
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="changePaddingUnit(pad.value)"
+  >
+    {{ unitPadding || "mm" }}
+  </button>
+</div>
+<span
+  *ngIf="+pad.value < minPadding"
+  style="color: red; background-color: white; margin-top: -5px"
+>
+  la valeur de padding doit être supérieur ou égale a {{ minPadding }}</span
+>
+<fieldset>
+  <legend>Orientation</legend>
+</fieldset>
+<div
+  class="btn-group mb-3"
+  role="group"
+  aria-label="Basic example"
+  style="width: -webkit-fill-available"
+>
+  <button type="button" class="btn btn-primary">
+    <nb-icon icon="arrow-circle-down-outline" pack="eva"></nb-icon>
+  </button>
+  <button type="button" class="btn btn-primary" (click)="changeOrientation()">
+    <nb-icon icon="repeat-outline" pack="eva"></nb-icon>
+  </button>
+</div>
+<fieldset>
+  <legend>Style</legend>
+</fieldset>
+<div
+  class="btn-group mb-3"
+  role="group"
+  aria-label="Basic example"
+  style="width: -webkit-fill-available"
+>
+  <button type="button" class="btn btn-primary">
+    <nb-icon
+      icon="color-palette"
+      pack="eva"
+      style="width: 25px; height: 25px"
+      [ngStyle]="{ color: color.value }"
+    ></nb-icon>
+    <input
+      #color
+      type="color"
+      class="form-control"
+      id="exampleColorInput"
+      value="#ffffff"
+      title="Choose your color"
+      style="opacity: 0; z-index: 4; position: absolute; left: 0px; top: 0"
+      (change)="change('color', $event.target.value)"
+    />
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    <nb-icon icon="shapes" pack="fa"></nb-icon>
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <a class="dropdown-item">
+        <nb-icon icon="square" pack="eva" (click)="setRectangle()"></nb-icon
+      ></a>
+    </li>
+    <li></li>
+    <li>
+      <a class="dropdown-item" (click)="setCercle()">
+        <fa-icon [icon]="['fas', 'circle']"></fa-icon>
+      </a>
+    </li>
+  </ul>
+</div>
+<fieldset>
+  <legend>Assist</legend>
+</fieldset>
+<div>
+  <div class="row mx-2">
+    <div class="col">
+      <div class="row">
+        <input
+          style="width: 18px; height: 18px"
+          type="checkbox"
+          name="rule"
+          id="rule"
+          class="form-control"
+          ngModel
+          [defaultChecked]="false"
+          (change)="change('withRule', $event.target.checked)"
+        />
+        <label for="rule"> &nbsp;Afficher la règle</label>
+      </div>
+    </div>
+    <div>
+      <div class="col">
+        <div class="row">
+          <input
+            style="width: 18px; height: 18px"
+            type="checkbox"
+            name="grille"
+            id="grille"
+            class="form-control"
+            ngModel
+            [defaultChecked]="false"
+            (change)="change('withGrid', $event.target.checked)"
+          />
+          <label for="grille"> &nbsp;Afficher la Grille</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

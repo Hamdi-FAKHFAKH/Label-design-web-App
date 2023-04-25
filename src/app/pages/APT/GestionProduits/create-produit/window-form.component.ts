@@ -1,23 +1,25 @@
 import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { NbWindowRef } from "@nebular/theme";
-import { GestionProduitHttpService } from "../gestionProduitHttp.service";
+import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 
 import { Observable, forkJoin } from "rxjs";
 import { GestionProduitService } from "../GestionProduit.service";
-import { SerialNumberData } from "../gestionProduit.data";
+import { SerialNumberData } from "../GestionProduit.data";
 @Component({
   templateUrl: "./window-form.component.html",
   styleUrls: ["window-form.component.scss"],
 })
 export class WindowFormComponent implements OnInit {
-  formes: { nom: string; class: string; clicked: boolean }[] = [
-    {
-      nom: "square",
-      class: "",
-      clicked: false,
-    },
-  ];
+  formes: { name: string; path: string; clicked: boolean }[];
+  addForme(name, path, clicked, index) {
+    if (clicked) {
+      this.formes[index] = { name: name, path: path, clicked: true };
+    } else {
+      this.formes[index] = { name: name, path: path, clicked: false };
+    }
+    console.log(this.gestionProduitService.formes);
+  }
   produits: String[] = [];
   lotData: string[] = [];
   SerialNumberData: SerialNumberData[];
@@ -30,11 +32,15 @@ export class WindowFormComponent implements OnInit {
     private gestionProduitService: GestionProduitService
   ) {}
 
-  ngOnInit(): void {
-    this.gestionProduitHttpService.getSDTPRA().subscribe((res) => {
-      this.produits = res.SDTPRA;
-      // console.log(this.produits[0]);
+  async ngOnInit() {
+    this.gestionProduitService.formes.map((val) => {
+      val.clicked = false;
     });
+    this.formes = this.gestionProduitService.formes;
+    const { SDTPRA } = await this.gestionProduitHttpService
+      .getSDTPRA()
+      .toPromise();
+    this.produits = SDTPRA;
     this.gestionProduitHttpService.getLots().subscribe((res) => {
       for (const i in res.lots) {
         this.lotData.push(res.lots[i]);
@@ -116,19 +122,25 @@ export class WindowFormComponent implements OnInit {
         success = false;
       }
     }
+    //add formes
+    let formes = "";
+    this.formes.map((val) => {
+      if (val.clicked) {
+        formes += val.name + ";";
+      }
+    });
     // créer un produit
     if (success && form.value.ref && form.value.nomProduit) {
       success = await this.gestionProduitService.CreateProduit(
         form.value,
         numLot,
-        idSN
+        idSN,
+        formes
       );
       success ? this.windowRef.close() : alert("Produit creation Failed");
     }
   }
   SelectSn(val) {
-    console.log(val);
-
     this.selectedSerialNumber = this.SerialNumberData[val];
   }
   addSN(event) {

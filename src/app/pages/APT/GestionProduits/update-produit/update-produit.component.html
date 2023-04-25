@@ -13,7 +13,7 @@
 >
   <div class="row row-cols-1 row-cols-md-3 g-2">
     <div class="col">
-      <div class="card">
+      <div class="card h-100">
         <div class="card-header">INFO Produit</div>
         <div class="card-body">
           <div class="col gx-1">
@@ -26,8 +26,10 @@
                 disabled
               />
             </div>
-            <div class="row-md-3">
-              <label for="prodName" class="form-label">Nom Produit</label>
+            <div class="row-md-3 mt-2">
+              <label for="prodName" class="form-label"
+                >Nom Produit <span style="color: red">*</span></label
+              >
               <input
                 [ngModel]="windowdata.nomProduit"
                 class="form-control"
@@ -39,7 +41,7 @@
                 required
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="ref1">Référence 1</label>
               <input
                 [ngModel]="windowdata.ref1"
@@ -60,7 +62,7 @@
                 </option>
               </datalist>
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="ref1" class="form-label">Référence 2</label>
               <input
                 [ngModel]="windowdata.ref2"
@@ -102,7 +104,7 @@
                 name="codeFournisseur"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="desFor" class="form-label"
                 >Désignation fournisseur
               </label>
@@ -116,7 +118,7 @@
                 name="desFournisseur"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="ref1">Code Client</label>
               <input
                 [ngModel]="windowdata.codeClient"
@@ -128,7 +130,7 @@
                 name="codeClient"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="ref1" class="form-label">Désignation Client</label>
               <input
                 [ngModel]="windowdata.desFournisseur"
@@ -164,9 +166,14 @@
                 </optgroup>
               </select>
             </div>
-            <div class="row-md-3">
-              <label for="exampleDataList" class="form-label">
+            <div class="row-md-3 mt-2">
+              <label
+                for="exampleDataList"
+                class="form-label"
+                *ngIf="lot.value !== 'Ajouter un Nouveau Format'"
+              >
                 {{ lot.value }}
+                <span style="color: red">*</span>
               </label>
               <select
                 id="datalist"
@@ -194,27 +201,37 @@
                 </option>
               </select>
               <div *ngIf="lot.value === 'Ajouter un Nouveau Format'">
-                <input
-                  ngModel
-                  #desLot="ngModel"
-                  class="form-control"
-                  type="text"
-                  placeholder="Format de Lot"
-                  name="newformatLot"
-                  required
-                />
-                <input
-                  ngModel
-                  #desLot="ngModel"
-                  class="form-control"
-                  type="text"
-                  placeholder="Numéro de Lot"
-                  name="newNumLot"
-                  required
-                />
+                <div class="row-md-3 mt-2 mt-2">
+                  <label for="desLot" class="form-label mt-2"
+                    >Numéro de Lot <span style="color: red">*</span></label
+                  >
+                  <input
+                    ngModel
+                    #desLot="ngModel"
+                    class="form-control"
+                    type="text"
+                    placeholder="Numéro de Lot"
+                    name="newNumLot"
+                    required
+                  />
+                </div>
+                <div class="row-md-3 mt-2 mt-2">
+                  <label for="desLot"
+                    >Format de Lot <span style="color: red">*</span></label
+                  >
+                  <input
+                    ngModel
+                    #desLot="ngModel"
+                    class="form-control"
+                    type="text"
+                    placeholder="Format de Lot"
+                    name="newformatLot"
+                    required
+                  />
+                </div>
               </div>
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="desLot">Désignation Lot</label>
               <input
                 [ngModel]="windowdata.desLot"
@@ -230,9 +247,6 @@
         </div>
       </div>
     </div>
-  </div>
-  <br />
-  <div class="row row-cols-1 row-cols-md-3 g-2">
     <div class="col">
       <div class="card h-100">
         <div class="card-header">Text Supplémentaire</div>
@@ -250,7 +264,7 @@
                 name="text1"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="text2" class="form-label">Text 2 </label>
               <input
                 class="form-control"
@@ -262,7 +276,7 @@
                 name="text2"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="text3" class="form-label">Text 3</label>
               <input
                 class="form-control"
@@ -274,7 +288,7 @@
                 name="text3"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="text4">Text 4</label>
               <input
                 class="form-control"
@@ -286,7 +300,7 @@
                 name="text4"
               />
             </div>
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="text5" class="form-label">Text 5</label>
               <input
                 class="form-control"
@@ -302,10 +316,13 @@
         </div>
       </div>
     </div>
-    <div class="col">
+  </div>
+  <br />
+  <div class="row row-cols-1 row-cols-md-3 g-2">
+    <div class="col-3">
       <div class="card h-100">
         <div class="card-header">Options</div>
-        <div class="card-body">
+        <div class="card-body" style="padding-bottom: 2px">
           <div class="col gx-1">
             <input
               type="checkbox"
@@ -338,7 +355,6 @@
         </div>
       </div>
     </div>
-    <div class="col"></div>
   </div>
   <br />
 
@@ -358,4 +374,5 @@
     </div>
   </div>
 </form>
+<span style="color: red">* champs obligatoire</span>
 <!-- [disabled]="!f.valid" -->

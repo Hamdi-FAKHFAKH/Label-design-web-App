@@ -17,9 +17,14 @@
     .card {
       border-color: #3374b5;
     }
-    ::placeholder {
-      font-style: italic;
-      color: rgb(190, 190, 190);
+    .card-header {
+      height: 30px;
+      font-size: medium;
+      padding: 5px;
+      text-align: center;
+    }
+    .card-body {
+      padding-top: 8px !important;
     }
   }
 }

@@ -3,8 +3,8 @@ import { LocalDataSource } from "ng2-smart-table";
 
 import { SmartTableData } from "../../../../@core/data/smart-table";
 import { NbWindowService } from "@nebular/theme";
-import { WindowFormComponent } from "../window-form/window-form.component";
-import { GestionProduitHttpService } from "../gestionProduitHttp.service";
+import { WindowFormComponent } from "../create-produit/window-form.component";
+import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 import { exhaustMap } from "rxjs/operators";
 import { GestionProduitService } from "../GestionProduit.service";
 import { UpdateProduitComponent } from "../update-produit/update-produit.component";

@@ -1,17 +1,39 @@
 .menu-sidebar.left.expanded {
-  width: 350px;
+  width: 380px;
   margin-right: -10px;
 }
 
 .menu-sidebar.expanded ::ng-deep .scrollable {
-  width: 350px;
+  width: 380px;
 }
 nb-sidebar.right {
-  width: 350px;
+  width: 380px;
   margin-right: -10px;
 }
 nb-sidebar.right.expanded ::ng-deep .scrollable {
-  width: 350px !important;
+  width: 380px !important;
   padding: 0px;
   margin-right: -10px;
+}
+.label {
+  align-items: center;
+  border-radius: 10px;
+  // position: fixed;
+  padding: 10px;
+  background-color: white;
+}
+nb-layout-column {
+  padding: 0px !important ;
+  margin: 36px;
+  // height: 100%;
+  overflow: hidden;
+}
+.cercle {
+  border-radius: var(--var-rad);
+}
+#container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70%;
 }

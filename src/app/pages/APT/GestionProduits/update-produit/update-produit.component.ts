@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { NbWindowRef } from "@nebular/theme";
-import { GestionProduitHttpService } from "../gestionProduitHttp.service";
+import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 import { GestionProduitService } from "../GestionProduit.service";
-import { SerialNumberData } from "../gestionProduit.data";
+import { SerialNumberData } from "../GestionProduit.data";
 
 @Component({
   selector: "ngx-update-produit",

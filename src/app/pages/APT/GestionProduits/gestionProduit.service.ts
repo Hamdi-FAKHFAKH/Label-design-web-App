@@ -1,10 +1,38 @@
-import { Injectable } from "@angular/core";
-import { GestionProduitHttpService } from "./gestionProduitHttp.service";
+import { Injectable, OnInit } from "@angular/core";
+import { GestionProduitHttpService } from "./GestionProduitHttp.service";
 import { v4 as uuidv4 } from "uuid";
 @Injectable()
 export class GestionProduitService {
-  constructor(private gestionProduitHttpService: GestionProduitHttpService) {}
-  AddProduit() {}
+  formes: { name: string; path: string; clicked: boolean }[];
+  constructor(private gestionProduitHttpService: GestionProduitHttpService) {
+    this.formes = [
+      {
+        name: "square",
+        path: "../../../../../assets/images/square-regular.svg",
+        clicked: false,
+      },
+      {
+        name: "cercle",
+        path: "../../../../../assets/images/icons8-circle-50.png",
+        clicked: false,
+      },
+      {
+        name: "left-arrow",
+        path: "../../../../../assets/images/icons8-left-arrow-32.png",
+        clicked: false,
+      },
+      {
+        name: "right-arrow",
+        path: "../../../../../assets/images/icons8-right-arrow-32.png",
+        clicked: false,
+      },
+      {
+        name: "reflech",
+        path: "../../../../../assets/images/icons8-refresh-32.png",
+        clicked: false,
+      },
+    ];
+  }
 
   async AddClient(data) {
     const client = await this.gestionProduitHttpService
@@ -124,7 +152,7 @@ export class GestionProduitService {
     return idSN;
   }
 
-  async CreateProduit(data, numLot, idSN) {
+  async CreateProduit(data, numLot, idSN, formes) {
     const produit = await this.gestionProduitHttpService
       .createProduit({
         ref: data.ref,
@@ -134,7 +162,7 @@ export class GestionProduitService {
         codeFournisseur: data.codeFournisseur || null,
         nomProduit: data.nomProduit,
         idEtiquette: null,
-        formes: null,
+        formes: formes,
         idSN: idSN || null,
         numLot: numLot || null,
         withDataMatrix: data.withDataMatrix || false,

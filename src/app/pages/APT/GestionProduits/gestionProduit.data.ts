@@ -8,27 +8,31 @@ export interface updateProduitResponseData {
   numberOfAffectedRows: number;
   ProduitUpdated?: ProduitData;
 }
+export interface getOneProduitResponseData {
+  Status: string;
+  produit: ProduitData;
+}
 export interface ProduitData {
   ref: string;
-  ref1: string;
-  ref2: string;
-  nomProduit: string;
-  numLot: string;
-  codeFournisseur: string;
-  codeClient: string;
-  idEtiquette: string;
-  idSN: string;
-  formes: string;
-  withDataMatrix: boolean;
-  withSN: boolean;
-  withOF: boolean;
-  text1: string;
-  text2: string;
-  text3: string;
-  text4: string;
-  text5: string;
-  createur: string;
-  modificateur: string;
+  ref1?: string;
+  ref2?: string;
+  nomProduit?: string;
+  numLot?: string;
+  codeFournisseur?: string;
+  codeClient?: string;
+  idEtiquette?: string;
+  idSN?: string;
+  formes?: string;
+  withDataMatrix?: boolean;
+  withSN?: boolean;
+  withOF?: boolean;
+  text1?: string;
+  text2?: string;
+  text3?: string;
+  text4?: string;
+  text5?: string;
+  createur?: string;
+  modificateur?: string;
   createdAt?: string;
   updateAt?: string;
 }

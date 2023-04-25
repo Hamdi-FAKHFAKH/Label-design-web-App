@@ -8,8 +8,79 @@
     <div><ngx-tabs style="width: 350px"></ngx-tabs></div>
   </nb-sidebar>
 
-  <nb-layout-column
-    style="padding: 0px !important ; margin: 0px; margin-right: -10px"
-    >Layout Content</nb-layout-column
-  >
+  <nb-layout-column>
+    <div class="btn-group mb-3" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-primary" (click)="zoomIn()">
+        <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+      </button>
+      <button type="button" class="btn btn-primary" (click)="initZoom()">
+        <fa-icon [icon]="['fas', 'expand']"></fa-icon>
+      </button>
+      <button type="button" class="btn btn-primary" (click)="zoomOut()">
+        <fa-icon [icon]="['fas', 'minus']"></fa-icon>
+      </button>
+    </div>
+    <div id="container">
+      <div class="label center" [ngStyle]="labelStyle" id="test">
+        <div
+          class="figure"
+          id="list-2"
+          cdkDropList
+          [cdkDropListData]="list1"
+          (cdkDropListDropped)="onDrop($event)"
+          [ngStyle]="{
+            border:
+              labelInfo.showPaddingCadre === true ? '1px solid green' : 'none'
+          }"
+          style="height: 100%; width: 100%"
+        >
+          <div *ngFor="let item of list1" cdkDrag>
+            <div style="color: green" *ngIf="item === 'div'">div</div>
+            <img
+              src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
+              width="88"
+              height="31"
+              *ngIf="item === 'img'"
+            />
+            <div class="row" *ngIf="item === 'container'">
+              <div
+                style="background-color: aqua; height: 200px"
+                class="col"
+                id="container1"
+                cdkDropList
+                (cdkDropListDropped)="onDrop($event)"
+                [cdkDropListData]="list3"
+              >
+                <div *ngFor="let item of list3" cdkDrag>{{ item }}</div>
+              </div>
+              <div
+                style="background-color: antiquewhite; height: 200px"
+                class="col"
+                id="container2"
+                cdkDropList
+                (cdkDropListDropped)="onDrop($event)"
+                [cdkDropListData]="list4"
+              >
+                <div *ngFor="let item of list4" cdkDrag>{{ item }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="btn-group mb-3"
+      role="group"
+      aria-label="Basic example"
+      style="position: relative; top: 20px"
+    >
+      <button type="button" class="btn btn-primary" (click)="saveToPdf()">
+        <nb-icon icon="save-outline" pack="eva"></nb-icon>
+      </button>
+      <button type="button" class="btn btn-primary">
+        <fa-icon [icon]="['fas', 'eye']"></fa-icon>
+      </button>
+    </div>
+  </nb-layout-column>
 </nb-layout>

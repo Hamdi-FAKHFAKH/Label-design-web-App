@@ -12,15 +12,20 @@ import {
   NbMenuModule,
   NbContextMenuModule,
   NbSelectModule,
+  NbRouteTabsetModule,
 } from "@nebular/theme";
-import {
-  Tab1Component,
-  Tab2Component,
-  TabsComponent,
-} from "./tabs/tabs.component";
 import { CreationEtiquetteRoutingModule } from "./CreationEtiquette.routing.module";
 import { SidebarComponent } from "./sidebar/sidebar.component";
-
+import { TabsComponent } from "./tabs/tabs.component";
+import { EtiquetteTabComponent } from "./tabs/EtiquetteTab/EtiquetteTab.component";
+import { LabelService } from "./label.service";
+import { CommonModule } from "@angular/common";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { LabeltHttpService } from "./labelHTTP.service";
+import { DesignTabComponent } from "./tabs/design-tab/design-tab.component";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { DragDrop2Component } from "./drag-drop2/drag-drop2.component";
+import { DragDropService } from "./drag-drop.service";
 @NgModule({
   imports: [
     FormsModule,
@@ -34,11 +39,21 @@ import { SidebarComponent } from "./sidebar/sidebar.component";
     NbLayoutModule,
     NbThemeModule,
     NbMenuModule,
+    NbRouteTabsetModule,
     NbContextMenuModule,
     NbSelectModule,
+    CommonModule,
+    FontAwesomeModule,
+    DragDropModule,
   ],
-  declarations: [TabsComponent, Tab1Component, Tab2Component, SidebarComponent],
+  declarations: [
+    TabsComponent,
+    SidebarComponent,
+    EtiquetteTabComponent,
+    DesignTabComponent,
+    DragDrop2Component,
+  ],
   exports: [],
-  providers: [],
+  providers: [LabelService, LabeltHttpService, DragDropService],
 })
 export class CreattionEtiquetteModule {}

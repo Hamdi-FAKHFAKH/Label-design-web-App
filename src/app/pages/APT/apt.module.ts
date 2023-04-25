@@ -11,7 +11,7 @@ import {
   NbButtonModule,
 } from "@nebular/theme";
 import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.component";
-import { WindowFormComponent } from "./GestionProduits/window-form/window-form.component";
+import { WindowFormComponent } from "./GestionProduits/create-produit/window-form.component";
 import { CommonModule } from "@angular/common";
 import { UpdateProduitComponent } from "./GestionProduits/update-produit/update-produit.component";
 

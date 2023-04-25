@@ -12,6 +12,8 @@ import { CoreModule } from "./@core/core.module";
 import { ThemeModule } from "./@theme/theme.module";
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
 import {
   NbChatModule,
   NbDatepickerModule,
@@ -26,8 +28,13 @@ import { AuthGuard } from "./auth/auth-guard.service";
 import { AuthService } from "./auth/authService.service";
 import { CommonModule } from "@angular/common";
 import { authInterceptorService } from "./auth/authInterceptorService";
-import { GestionProduitHttpService } from "./pages/APT/GestionProduits/gestionProduitHttp.service";
+import { GestionProduitHttpService } from "./pages/APT/GestionProduits/GestionProduitHttp.service";
 import { GestionProduitService } from "./pages/APT/GestionProduits/GestionProduit.service";
+import {
+  FontAwesomeModule,
+  FaIconLibrary,
+} from "@fortawesome/angular-fontawesome";
+import { ShareService } from "./pages/APT/CréationEtiquette/share.service";
 // import { FormsModule } from "@angular/forms";
 @NgModule({
   declarations: [AppComponent, LoginComponent],
@@ -50,6 +57,7 @@ import { GestionProduitService } from "./pages/APT/GestionProduits/GestionProdui
     }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
+    FontAwesomeModule,
   ],
   bootstrap: [AppComponent],
   providers: [
@@ -57,6 +65,7 @@ import { GestionProduitService } from "./pages/APT/GestionProduits/GestionProdui
     AuthService,
     GestionProduitHttpService,
     GestionProduitService,
+    ShareService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: authInterceptorService,
@@ -64,4 +73,8 @@ import { GestionProduitService } from "./pages/APT/GestionProduits/GestionProdui
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIconPacks(fas, far);
+  }
+}

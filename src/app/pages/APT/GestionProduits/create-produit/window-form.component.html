@@ -13,12 +13,14 @@
 >
   <div class="row row-cols-1 row-cols-md-1 g-1">
     <div class="col">
-      <div class="card">
-        <!-- <div class="card-header">INFO Produit</div> -->
+      <div class="card h-100">
+        <div class="card-header">INFO Produit</div>
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
-              <label for="ref" class="form-label">Référence Produit</label>
+              <label for="ref" class="form-label"
+                >Référence Produit <span style="color: red">*</span>
+              </label>
               <select
                 class="form-control"
                 name="ref"
@@ -32,7 +34,9 @@
               </select>
             </div>
             <div class="row-md-3 mt-2">
-              <label for="prodName" class="form-label">Nom Produit</label>
+              <label for="prodName" class="form-label"
+                >Nom Produit <span style="color: red">*</span></label
+              >
               <input
                 ngModel
                 class="form-control"
@@ -92,7 +96,7 @@
     </div>
     <div class="col">
       <div class="card h-100">
-        <!-- <div class="card-header">INFO Client / Fournisseur</div> -->
+        <div class="card-header">INFO Client / Fournisseur</div>
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
@@ -151,11 +155,13 @@
     </div>
     <div class="col">
       <div class="card h-100">
-        <!-- <div class="card-header">INFO Lot</div> -->
+        <div class="card-header">INFO Lot</div>
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
-              <label for="desFor" class="form-label">N° Lot/Format</label>
+              <label for="desFor" class="form-label"
+                >N° Lot/Format <span style="color: red">*</span></label
+              >
               <label for="F_lot"></label>
               <select #lot class="form-control" name="" id="F_lot">
                 <optgroup label="Sélectionner N°/Format de lot existant">
@@ -175,7 +181,7 @@
                 class="form-label mt-2"
                 *ngIf="lot.value !== 'Ajouter un Nouveau Format'"
               >
-                {{ lot.value }}
+                {{ lot.value }} <span style="color: red">*</span>
               </label>
               <select
                 id="datalist"
@@ -205,7 +211,7 @@
               <div *ngIf="lot.value === 'Ajouter un Nouveau Format'">
                 <div class="row-md-3 mt-2">
                   <label for="desLot" class="form-label mt-2"
-                    >Numéro de Lot</label
+                    >Numéro de Lot <span style="color: red">*</span></label
                   >
                   <input
                     ngModel
@@ -218,7 +224,9 @@
                   />
                 </div>
                 <div class="row-md-3 mt-2">
-                  <label for="desLot">Format de Lot</label>
+                  <label for="desLot"
+                    >Format de Lot <span style="color: red">*</span></label
+                  >
                   <input
                     ngModel
                     #desLot="ngModel"
@@ -247,12 +255,9 @@
         </div>
       </div>
     </div>
-  </div>
-  <br />
-  <div class="row row-cols-1 row-cols-md-1">
     <div class="col">
       <div class="card h-100">
-        <!-- <div class="card-header">Text Supplémentaire</div> -->
+        <div class="card-header">Text Supplémentaire</div>
         <div class="card-body">
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
@@ -319,21 +324,44 @@
         </div>
       </div>
     </div>
-    <div class="col">
+  </div>
+  <br />
+  <div class="row row-cols-1 row-cols-md-1">
+    <div class="col-3">
       <div class="card h-100">
-        <!-- <div class="card-header">Options</div> -->
-        <div class="card-body">
+        <div class="card-header">Options</div>
+        <div
+          class="card-body"
+          style="padding-top: 5px !important; padding-bottom: 2px"
+        >
           <div class="col gx-1">
             <input
               type="checkbox"
               name="formes"
               id="formes"
-              #formes
+              #forme
               ngModel
               [defaultChecked]="false"
             />
             <label for="formes"> &nbsp;formes</label>
-            {{ formes.checked }}
+            <div
+              class="container"
+              style="padding-left: 0px"
+              *ngIf="forme.checked"
+            >
+              <img
+                *ngFor="let item of formes; let i = index"
+                src="{{ item.path }}"
+                alt=""
+                height="20"
+                width="20"
+                (click)="
+                  item.clicked = !item.clicked;
+                  addForme(item.name, item.path, item.clicked, i)
+                "
+                [ngClass]="{ imgClicked: item.clicked }"
+              />
+            </div>
             <br />
             <input
               type="checkbox"
@@ -368,145 +396,151 @@
         </div>
       </div>
     </div>
-    <div class="col">
+    <div class="col-9">
       <div class="card h-100" *ngIf="numSerie.checked">
-        <!-- <div class="card-header">Info Numéro de Série</div> -->
+        <div class="card-header">Info Numéro de Série</div>
         <div class="card-body mx-3">
           <div class="row">
-            <input
-              type="checkbox"
-              [defaultChecked]="false"
-              (change)="addSN($event)"
-            />
-            <label> &nbsp;Ajouter un Nouveau SN</label>
-            <br />
+            <div class="col">
+              <input
+                type="checkbox"
+                [defaultChecked]="false"
+                (change)="addSN($event)"
+              />
+              <label> &nbsp;Ajouter un Nouveau SN</label>
+              <br />
 
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="Préfix">Format SN</span>
-              <select
-                ngModel
-                name="FormatSN"
-                #snFormat
-                class="form-control"
-                (change)="SelectSn(snFormat.value)"
-                [disabled]="addNewSerialNumber"
-              >
-                <option selected value=""></option>
-                <option
-                  *ngFor="let item of SerialNumberData; let i = index"
-                  value="{{ i }}"
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="Préfix">Format SN</span>
+                <select
+                  ngModel
+                  name="FormatSN"
+                  #snFormat
+                  class="form-control"
+                  (change)="SelectSn(snFormat.value)"
+                  [disabled]="addNewSerialNumber"
                 >
-                  {{ item.format }}
-                </option>
-              </select>
+                  <option
+                    *ngFor="let item of SerialNumberData; let i = index"
+                    value="{{ i }}"
+                    selected
+                  >
+                    {{ item.format }}
+                  </option>
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="Préfix">Préfix</span>
+                <input
+                  [ngModel]="
+                    selectedSerialNumber && selectedSerialNumber.prefix
+                  "
+                  name="prefix"
+                  #prefix="ngModel"
+                  type="text"
+                  class="form-control"
+                  placeholder="Préfix"
+                  aria-label="Préfix"
+                  aria-describedby="Préfix"
+                  val
+                  [disabled]="!addNewSerialNumber"
+                  value="{{
+                    selectedSerialNumber && selectedSerialNumber.prefix
+                  }}"
+                />
+              </div>
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="Suffix">Suffix</span>
+                <input
+                  [ngModel]="
+                    selectedSerialNumber && selectedSerialNumber.suffix
+                  "
+                  name="suffix"
+                  #suffix="ngModel"
+                  type="text"
+                  class="form-control"
+                  placeholder="Suffix"
+                  aria-label="Suffix"
+                  aria-describedby="Suffix"
+                  [disabled]="!addNewSerialNumber"
+                  value="{{
+                    selectedSerialNumber && selectedSerialNumber.suffix
+                  }}"
+                />
+              </div>
             </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="Préfix">Préfix</span>
-              <input
-                [ngModel]="selectedSerialNumber && selectedSerialNumber.prefix"
-                name="prefix"
-                #prefix="ngModel"
-                type="text"
-                class="form-control"
-                placeholder="Préfix"
-                aria-label="Préfix"
-                aria-describedby="Préfix"
-                val
-                [disabled]="!addNewSerialNumber"
-                value="{{
-                  selectedSerialNumber && selectedSerialNumber.prefix
-                }}"
-              />
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="Suffix">Suffix</span>
-              <input
-                [ngModel]="selectedSerialNumber && selectedSerialNumber.suffix"
-                name="suffix"
-                #suffix="ngModel"
-                type="text"
-                class="form-control"
-                placeholder="Suffix"
-                aria-label="Suffix"
-                aria-describedby="Suffix"
-                [disabled]="!addNewSerialNumber"
-                value="{{
-                  selectedSerialNumber && selectedSerialNumber.suffix
-                }}"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <label for="text5" class="form-label">Compteur</label><br />
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Nbr de Caractére
-              </label>
-              <select
-                class="form-control"
-                id="inputGroupSelect01"
-                [ngModel]="
-                  selectedSerialNumber && selectedSerialNumber.nbrCaractere
-                "
-                name="nbrCaractere"
-                #nbrCaractere="ngModel"
-                [disabled]="!addNewSerialNumber"
-                [value]="
-                  selectedSerialNumber && selectedSerialNumber.nbrCaractere
-                "
-              >
-                <option>Choose...</option>
-                <option
-                  *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                  value="{{ item }}"
+            <div class="col">
+              <label for="text5" class="form-label">Compteur</label><br />
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01"
+                  >Nbr de Caractére
+                </label>
+                <select
+                  class="form-control"
+                  id="inputGroupSelect01"
+                  [ngModel]="
+                    selectedSerialNumber && selectedSerialNumber.nbrCaractere
+                  "
+                  name="nbrCaractere"
+                  #nbrCaractere="ngModel"
+                  [disabled]="!addNewSerialNumber"
+                  [value]="
+                    selectedSerialNumber && selectedSerialNumber.nbrCaractere
+                  "
                 >
-                  {{ item }}
-                </option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Type</label
-              >
-              <select
-                class="form-control"
-                id="inputGroupSelect01"
-                [ngModel]="
-                  selectedSerialNumber && selectedSerialNumber.typeCompteur
-                "
-                name="typeCompteur"
-                #typeCompteur="ngModel"
-                [disabled]="!addNewSerialNumber"
-                [value]="
-                  selectedSerialNumber && selectedSerialNumber.typeCompteur
-                "
-              >
-                <option selected>Choose...</option>
-                <option value="N">Numérique</option>
-                <option value="AN">Alphanumérique</option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <label class="input-group-text" for="inputGroupSelect01"
-                >Nbr de Caractére
-              </label>
-              <select
-                class="form-control"
-                id="inputGroupSelect01"
-                [ngModel]="selectedSerialNumber && selectedSerialNumber.pas"
-                name="pas"
-                #nbrCaractere="ngModel"
-                [disabled]="!addNewSerialNumber"
-                [value]="selectedSerialNumber && selectedSerialNumber.pas"
-              >
-                <option>Choose...</option>
-                <option
-                  *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
-                  value="{{ item }}"
+                  <option>Choose...</option>
+                  <option
+                    *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+                    value="{{ item }}"
+                  >
+                    {{ item }}
+                  </option>
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01"
+                  >Type</label
                 >
-                  {{ item }}
-                </option>
-              </select>
+                <select
+                  class="form-control"
+                  id="inputGroupSelect01"
+                  [ngModel]="
+                    selectedSerialNumber && selectedSerialNumber.typeCompteur
+                  "
+                  name="typeCompteur"
+                  #typeCompteur="ngModel"
+                  [disabled]="!addNewSerialNumber"
+                  [value]="
+                    selectedSerialNumber && selectedSerialNumber.typeCompteur
+                  "
+                >
+                  <option selected>Choose...</option>
+                  <option value="N">Numérique</option>
+                  <option value="AN">Alphanumérique</option>
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01"
+                  >Nbr de Caractére
+                </label>
+                <select
+                  class="form-control"
+                  id="inputGroupSelect01"
+                  [ngModel]="selectedSerialNumber && selectedSerialNumber.pas"
+                  name="pas"
+                  #nbrCaractere="ngModel"
+                  [disabled]="!addNewSerialNumber"
+                  [value]="selectedSerialNumber && selectedSerialNumber.pas"
+                >
+                  <option>Choose...</option>
+                  <option
+                    *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+                    value="{{ item }}"
+                  >
+                    {{ item }}
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -531,4 +565,5 @@
     </div>
   </div>
 </form>
+<span style="color: red">* champs obligatoires</span>
 <!-- [disabled]="!f.valid" -->
