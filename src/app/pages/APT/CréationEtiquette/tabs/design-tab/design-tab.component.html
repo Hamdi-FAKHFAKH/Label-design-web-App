@@ -16,7 +16,12 @@
     [cdkDragData]="item.id"
     (cdkDragMoved)="dragMoved($event)"
   >
-    <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+    <div *cdkDragPlaceholder>
+      <div
+        class="example-custom-placeholder"
+        *ngIf="dragDropService.showDragPlaceholder"
+      ></div>
+    </div>
     <nb-accordion-item *ngIf="item.type === 'div'" [attr.data-id]="item.id">
       <nb-accordion-item-header>DIV </nb-accordion-item-header>
       <nb-accordion-item-body> </nb-accordion-item-body>

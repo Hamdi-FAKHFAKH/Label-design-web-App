@@ -53,6 +53,8 @@
               id="container1"
               [attr.data-id]="item.id"
               style="background-color: aqua; height: 50px"
+              (mouseenter)="dragDropService.showDragPlaceholder = false"
+              (mouseleave)="dragDropService.showDragPlaceholder = true"
             >
               <div *ngIf="item.children.length" class="row">
                 <div

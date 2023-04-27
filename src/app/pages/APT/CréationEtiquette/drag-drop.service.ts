@@ -25,6 +25,7 @@ export class DragDropService {
   dropTargetIds = ["label"]; //contient tous les id
   nodeLookup = {}; // {id : object(node)}
   nodeLookup2 = {};
+  showDragPlaceholder;
   list1: ListData[] = [];
   list2: ListData[] = [
     {
@@ -101,8 +102,8 @@ export class DragDropService {
     this.list1.forEach((node) => {
       this.nodeLookup[node.id] = node;
     });
+    this.showDragPlaceholder = true;
   }
-
   dragMoved(event) {
     this.dropActionTodo = {
       targetId: "label",
@@ -111,66 +112,63 @@ export class DragDropService {
       event.pointerPosition.x,
       event.pointerPosition.y
     );
-
     if (!e) {
       return;
     }
-
     let container = e.classList.contains("container1")
       ? e
       : e.closest(".container1");
     if (!container) {
       return;
     }
+
     this.dropActionTodo = {
       targetId: container.getAttribute("data-id"),
     };
     const targetRect = container.getBoundingClientRect();
-    const oneThirdHeight = targetRect.height / 3;
+    const oneThirdHeight = targetRect.height / 4;
 
-    if (event.pointerPosition.y - targetRect.top < oneThirdHeight) {
-      // before
-      this.dropActionTodo["action"] = "before";
-    } else if (event.pointerPosition.y - targetRect.top > 2 * oneThirdHeight) {
-      // after
-      this.dropActionTodo["action"] = "after";
-    } else {
-      // inside
-      //  this.dropActionTodo["action"] = "inside";
-      if (
-        this.nodeLookup[this.dropActionTodo.targetId].type === "container-2"
-      ) {
-        const demiWidth = targetRect.width / 2;
-        if (event.pointerPosition.x - targetRect.left < demiWidth) {
-          this.dropActionTodo["action"] = "insideLeft";
-          console.log("insideLeft");
-        } else {
-          this.dropActionTodo["action"] = "insideRight";
-          console.log("insideRight");
-        }
-      } else if (
-        this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
-      ) {
-        const oneThirdWidth = targetRect.width / 3;
-        if (event.pointerPosition.x - targetRect.left < oneThirdWidth) {
-          this.dropActionTodo["action"] = "insideLeft";
-          console.log("insideLeft");
-        } else if (
-          event.pointerPosition.x - targetRect.left > oneThirdWidth &&
-          event.pointerPosition.x - targetRect.left < 2 * oneThirdWidth
-        ) {
-          this.dropActionTodo["action"] = "insideMiddle";
-          console.log("insideLeft");
-        } else {
-          this.dropActionTodo["action"] = "insideRight";
-          console.log("insideRight");
-        }
+    // if (event.pointerPosition.y - targetRect.top < oneThirdHeight) {
+    //   // before
+    //   this.dropActionTodo["action"] = "before";
+    // } else if (event.pointerPosition.y - targetRect.top > 4 * oneThirdHeight) {
+    //   // after
+    //   this.dropActionTodo["action"] = "after";
+    // } else {
+    // inside
+    //  this.dropActionTodo["action"] = "inside";
+    if (this.nodeLookup[this.dropActionTodo.targetId].type === "container-2") {
+      const demiWidth = targetRect.width / 2;
+      if (event.pointerPosition.x - targetRect.left < demiWidth) {
+        this.dropActionTodo["action"] = "insideLeft";
+        console.log("insideLeft");
       } else {
-        this.dropActionTodo["action"] = "inside";
+        this.dropActionTodo["action"] = "insideRight";
+        console.log("insideRight");
       }
+    } else if (
+      this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
+    ) {
+      const oneThirdWidth = targetRect.width / 3;
+      if (event.pointerPosition.x - targetRect.left < oneThirdWidth) {
+        this.dropActionTodo["action"] = "insideLeft";
+        console.log("insideLeft");
+      } else if (
+        event.pointerPosition.x - targetRect.left > oneThirdWidth &&
+        event.pointerPosition.x - targetRect.left < 2 * oneThirdWidth
+      ) {
+        this.dropActionTodo["action"] = "insideMiddle";
+        console.log("insideLeft");
+      } else {
+        this.dropActionTodo["action"] = "insideRight";
+        console.log("insideRight");
+      }
+    } else {
+      this.dropActionTodo["action"] = "inside";
     }
+    //}
     console.log("dragEvent");
-    console.log(this.nodeLookup[this.dropActionTodo.targetId]);
+    console.log(this.nodeLookup[this.dropActionTodo.action]);
   }
 
   drop(event) {
@@ -185,11 +183,20 @@ export class DragDropService {
     console.log("parentItemId");
     console.log(parentItemId);
     if (this.dropActionTodo.action == "insideLeft" && draggedItem) {
-      // this.nodeLookup[this.dropActionTodo.targetId].children.push(draggedItem);
       this.nodeLookup[this.dropActionTodo.targetId].children[0] = draggedItem;
-    } else if (this.dropActionTodo.action == "insideRight" && draggedItem) {
-      // this.nodeLookup[this.dropActionTodo.targetId].children.push(draggedItem);
+    } else if (
+      (this.dropActionTodo.action == "insideMiddle" && draggedItem) ||
+      (this.dropActionTodo.action == "insideRight" &&
+        this.nodeLookup[this.dropActionTodo.targetId].type === "container-2" &&
+        draggedItem)
+    ) {
       this.nodeLookup[this.dropActionTodo.targetId].children[1] = draggedItem;
+    } else if (
+      this.dropActionTodo.action == "insideRight" &&
+      draggedItem &&
+      this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
+    ) {
+      this.nodeLookup[this.dropActionTodo.targetId].children[2] = draggedItem;
     } else if (this.dropActionTodo.action == "inside" && draggedItem) {
       this.nodeLookup[this.dropActionTodo.targetId].children.push(draggedItem);
     } else {
