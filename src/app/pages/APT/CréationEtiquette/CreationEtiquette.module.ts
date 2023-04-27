@@ -13,6 +13,7 @@ import {
   NbContextMenuModule,
   NbSelectModule,
   NbRouteTabsetModule,
+  NbAccordionModule,
 } from "@nebular/theme";
 import { CreationEtiquetteRoutingModule } from "./CreationEtiquette.routing.module";
 import { SidebarComponent } from "./sidebar/sidebar.component";
@@ -24,7 +25,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { LabeltHttpService } from "./labelHTTP.service";
 import { DesignTabComponent } from "./tabs/design-tab/design-tab.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { DragDrop2Component } from "./drag-drop2/drag-drop2.component";
 import { DragDropService } from "./drag-drop.service";
 @NgModule({
   imports: [
@@ -44,6 +44,7 @@ import { DragDropService } from "./drag-drop.service";
     NbSelectModule,
     CommonModule,
     FontAwesomeModule,
+    NbAccordionModule,
     DragDropModule,
   ],
   declarations: [
@@ -51,7 +52,6 @@ import { DragDropService } from "./drag-drop.service";
     SidebarComponent,
     EtiquetteTabComponent,
     DesignTabComponent,
-    DragDrop2Component,
   ],
   exports: [],
   providers: [LabelService, LabeltHttpService, DragDropService],

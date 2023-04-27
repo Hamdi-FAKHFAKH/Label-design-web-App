@@ -9,6 +9,7 @@ import {
   copyArrayItem,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import { DragDropService } from "../drag-drop.service";
 @Component({
   selector: "ngx-sidebar",
   templateUrl: "./sidebar.component.html",
@@ -18,20 +19,19 @@ export class SidebarComponent implements OnInit {
   @ViewChild(CdkDropList) dropList?: CdkDropList;
   labelStyle;
   labelInfo;
-  list1 = [];
+  list1;
   list3 = [];
   list4 = [];
   constructor(
     private labelService: LabelService,
     private lablHttpService: LabeltHttpService,
-    private gestionProduitHttpService: GestionProduitHttpService
+    private gestionProduitHttpService: GestionProduitHttpService,
+    public dragDropService: DragDropService
   ) {}
   ngOnInit(): void {
     this.labelService.labelInfo.subscribe((info) => {
       // console.log(info);
       if (info) {
-        console.log("update format");
-
         this.labelStyle = {
           "background-color": info.color,
           width: info.largeur + "mm",
@@ -47,6 +47,7 @@ export class SidebarComponent implements OnInit {
       }
       this.labelInfo = info;
     });
+    this.list1 = this.dragDropService.list1;
   }
   zoomIn() {
     this.labelStyle = {
@@ -157,7 +158,6 @@ export class SidebarComponent implements OnInit {
           modificateur: null,
         })
         .toPromise();
-      console.log(res);
     } else {
       const id: string = uuidv4();
       const res = await this.lablHttpService
@@ -179,49 +179,30 @@ export class SidebarComponent implements OnInit {
           this.labelInfo.refProd
         )
         .toPromise();
-      console.log(res);
-      console.log(res2);
     }
 
     //this.labelService.convertToPdf();
   }
-  drop(ev) {
-    console.log("ev2");
-    console.log(ev);
-    ev.container.element.nativeElement.appendChild(
-      ev.item.element.nativeElement
-    );
-    // ev.preventDefault();
-    // var data = ev.dataTransfer.getData("text");
-    // console.log(data);
-    // if (data.includes("drag")) {
-    //   ev.target.appendChild(document.getElementById(data));
-    //   document.getElementById("msg").remove();
-    //   // this.dragebel = false;
-    // }
-  }
-  onDrop(event: CdkDragDrop<string[]>) {
-    console.log(event.previousContainer.id);
-
-    if (event.previousContainer.id === event.container.id) {
-      // Handle drop within the same container
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      // Handle drop between different containers
-      copyArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
+  // drop(ev) {
+  //   ev.container.element.nativeElement.appendChild(
+  //     ev.item.element.nativeElement
+  //   );
+  // }
+  onDrop(event) {
+    this.dragDropService.drop(event);
+    // this.list1[event.currentIndex] = {
+    //   ...this.list1[event.currentIndex],
+    //   id: "dfdddfdfd",
+    // };
 
     // event.container.element.nativeElement.appendChild(
     //   event.item.element.nativeElement
     // );
+  }
+  dragMoved(event) {
+    this.dragDropService.dragMoved(event);
+  }
+  delete(event) {
+    console.log(event);
   }
 }

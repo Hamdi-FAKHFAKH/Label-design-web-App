@@ -24,7 +24,7 @@
       <div class="label center" [ngStyle]="labelStyle" id="test">
         <div
           class="figure"
-          id="list-2"
+          id="label"
           cdkDropList
           [cdkDropListData]="list1"
           (cdkDropListDropped)="onDrop($event)"
@@ -34,34 +34,35 @@
           }"
           style="height: 100%; width: 100%"
         >
-          <div *ngFor="let item of list1" cdkDrag>
-            <div style="color: green" *ngIf="item === 'div'">div</div>
-            <img
-              src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
-              width="88"
-              height="31"
-              *ngIf="item === 'img'"
-            />
-            <div class="row" *ngIf="item === 'container'">
-              <div
-                style="background-color: aqua; height: 200px"
-                class="col"
-                id="container1"
-                cdkDropList
-                (cdkDropListDropped)="onDrop($event)"
-                [cdkDropListData]="list3"
-              >
-                <div *ngFor="let item of list3" cdkDrag>{{ item }}</div>
-              </div>
-              <div
-                style="background-color: antiquewhite; height: 200px"
-                class="col"
-                id="container2"
-                cdkDropList
-                (cdkDropListDropped)="onDrop($event)"
-                [cdkDropListData]="list4"
-              >
-                <div *ngFor="let item of list4" cdkDrag>{{ item }}</div>
+          <div
+            *ngFor="let item of list1"
+            cdkDrag
+            (cdkDragMoved)="dragMoved($event)"
+            (document:keyup)="delete($event)"
+          >
+            <ng-container
+              *ngTemplateOutlet="tmplNode; context: { item: item }"
+            ></ng-container>
+            <div
+              class="container1 container"
+              *ngIf="
+                ['container', 'container-2', 'container-3'].indexOf(
+                  item.type
+                ) !== -1
+              "
+              id="container1"
+              [attr.data-id]="item.id"
+              style="background-color: aqua; height: 50px"
+            >
+              <div *ngIf="item.children.length" class="row">
+                <div
+                  *ngFor="let child of item.children; let i = index"
+                  class="col"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="tmplNode; context: { item: child }"
+                  ></ng-container>
+                </div>
               </div>
             </div>
           </div>
@@ -84,3 +85,21 @@
     </div>
   </nb-layout-column>
 </nb-layout>
+
+<ng-template #tmplNode let-item="item">
+  <div
+    style="color: green"
+    *ngIf="item.type === 'div'"
+    [attr.data-id]="item.id"
+  >
+    div
+  </div>
+  <div *ngIf="item.type === 'vide'" [attr.data-id]="item.id"></div>
+  <img
+    src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
+    width="88"
+    height="31"
+    *ngIf="item.type === 'img'"
+    [attr.data-id]="item.id"
+  />
+</ng-template>
