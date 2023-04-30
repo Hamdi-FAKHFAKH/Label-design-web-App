@@ -49,6 +49,81 @@ export class DragDropService {
   ) {
     labelService.labelInfo.subscribe((val) => {
       if (this.refproduit !== val.refProd && val.refProd !== null) {
+        this.list2 = [
+          {
+            id: uuidv4(),
+            type: "container-2",
+            data: "",
+            refItem: null,
+            title: "",
+            children: [
+              {
+                id: uuidv4(),
+                type: "vide",
+                children: [],
+                data: "",
+                refItem: null,
+                title: "",
+              },
+              {
+                id: uuidv4(),
+                type: "vide",
+                children: [],
+                data: "",
+                title: "",
+                refItem: null,
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "container-3",
+            data: "",
+            refItem: null,
+            title: "",
+            children: [
+              {
+                id: uuidv4(),
+                type: "vide",
+                children: [],
+                data: "",
+                refItem: null,
+                title: "",
+              },
+              {
+                id: uuidv4(),
+                type: "vide",
+                children: [],
+                data: "",
+                refItem: null,
+                title: "",
+              },
+              {
+                id: uuidv4(),
+                type: "vide",
+                children: [],
+                data: "",
+                refItem: null,
+                title: "",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "container",
+            children: [],
+            data: "",
+            refItem: null,
+            title: "",
+          },
+          {
+            id: uuidv4(),
+            type: "vide",
+            data: "",
+            refItem: null,
+            title: "",
+          },
+        ];
         this.refproduit = val.refProd;
         gestionProduitHttpService
           .getOneProduit(this.refproduit)
@@ -61,118 +136,125 @@ export class DragDropService {
               if (
                 item !== "createdAt" &&
                 item !== "updatedAt" &&
+                item !== "idEtiquette" &&
+                item !== "withSN" &&
+                item !== "withOF" &&
+                item !== "withDataMatrix" &&
+                item !== "Createur" &&
+                item !== "Modificateur" &&
+                item !== "formes" &&
+                item !== "idSN" &&
                 resProduit.produit[item]
               ) {
-                // if (item === "codeClient" && resProduit.produit[item]) {
-                //   gestionProduitHttpService
-                //     .getClient(resProduit.produit[item])
-                //     .toPromise()
-                //     .then((client) => {
-                //       this.list2.push(
-                //         {
-                //           id: uuidv4(),
-                //           type: "text",
-                //           refItem: item,
-                //           title: ComponentTitle[item],
-                //           data: resProduit.produit[item],
-                //           style: {
-                //             "font-weight": "normal",
-                //             bold: false,
-                //             italic: false,
-                //             "font-style": "normal",
-                //             "text-decoration": "none",
-                //             underline: false,
-                //           },
-                //         },
-                //         {
-                //           id: uuidv4(),
-                //           type: "text",
-                //           title: ComponentTitle.desClient,
-                //           refItem: "desClient",
-                //           data: client.body.client.desClient,
-                //           style: {
-                //             "font-weight": "normal",
-                //             bold: false,
-                //             italic: false,
-                //             "font-style": "normal",
-                //             "text-decoration": "none",
-                //             underline: false,
-                //           },
-                //         }
-                //       );
-                //     });
-                // } else if (
-                //   item === "codeFournisseur" &&
-                //   resProduit.produit[item]
-                // ) {
-                //   gestionProduitHttpService
-                //     .getFournisseur(resProduit.produit[item])
-                //     .toPromise()
-                //     .then((fournisseur) => {
-                //       this.list2.push(
-                //         {
-                //           id: uuidv4(),
-                //           type: "text",
-                //           refItem: item,
-                //           title: ComponentTitle.codeFournisseur,
-                //           data: resProduit.produit[item],
-                //           style: {
-                //             "font-weight": "normal",
-                //             bold: false,
-                //             italic: false,
-                //             "font-style": "normal",
-                //             "text-decoration": "none",
-                //             underline: false,
-                //           },
-                //         },
-                //         {
-                //           id: uuidv4(),
-                //           type: "text",
-                //           title: ComponentTitle.desFournisseur,
-                //           refItem: "desClient",
-                //           data: fournisseur.body.fournisseur.desFournisseur,
-                //           style: {
-                //             "font-weight": "normal",
-                //             bold: false,
-                //             italic: false,
-                //             "font-style": "normal",
-                //             "text-decoration": "none",
-                //             underline: false,
-                //           },
-                //         }
-                //       );
-                //     });
-                // }
-                this.list2.push({
-                  id: uuidv4(),
-                  type:
-                    item == "withDataMatrix"
-                      ? "QRcode"
-                      : item == "formes"
-                      ? "shape"
-                      : "text",
-                  refItem: item,
-                  title: ComponentTitle[item],
-                  data: resProduit.produit[item],
-                  style: {
-                    "font-weight": "normal",
-                    bold: false,
-                    italic: false,
-                    "font-style": "normal",
-                    "text-decoration": "none",
-                    underline: false,
-                  },
-                });
+                if (resProduit.produit.codeClient && item === "codeClient") {
+                  gestionProduitHttpService
+                    .getClient(resProduit.produit.codeClient)
+                    .toPromise()
+                    .then((client) => {
+                      this.list2.push(
+                        {
+                          id: uuidv4(),
+                          type: "text",
+                          refItem: item,
+                          title: ComponentTitle.codeClient,
+                          data: resProduit.produit.codeClient,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                          },
+                        },
+                        {
+                          id: uuidv4(),
+                          type: "text",
+                          title: ComponentTitle.desClient,
+                          refItem: "desClient",
+                          data: client.body.client.desClient,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                          },
+                        }
+                      );
+                      this.prepareDragDrop(this.list2);
+                    });
+                } else if (
+                  resProduit.produit.codeFournisseur &&
+                  item === "codeFournisseur"
+                ) {
+                  gestionProduitHttpService
+                    .getFournisseur(resProduit.produit.codeFournisseur)
+                    .toPromise()
+                    .then((fournisseur) => {
+                      this.list2.push(
+                        {
+                          id: uuidv4(),
+                          type: "text",
+                          refItem: item,
+                          title: ComponentTitle.codeFournisseur,
+                          data: resProduit.produit.codeFournisseur,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                          },
+                        },
+                        {
+                          id: uuidv4(),
+                          type: "text",
+                          title: ComponentTitle.desFournisseur,
+                          refItem: "desClient",
+                          data: fournisseur.body.fournisseur.desFournisseur,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                          },
+                        }
+                      );
+                      this.prepareDragDrop(this.list2);
+                    });
+                } else {
+                  this.list2.push({
+                    id: uuidv4(),
+                    type:
+                      item == "withDataMatrix"
+                        ? "QRcode"
+                        : item == "formes"
+                        ? "shape"
+                        : "text",
+                    refItem: item,
+                    title: ComponentTitle[item],
+                    data: resProduit.produit[item],
+                    style: {
+                      "font-weight": "normal",
+                      bold: false,
+                      italic: false,
+                      "font-style": "normal",
+                      "text-decoration": "none",
+                      underline: false,
+                    },
+                  });
+                  this.prepareDragDrop(this.list2);
+                }
               }
             });
-            this.prepareDragDrop(this.list2);
             console.log(this.list2);
           });
       }
-    });
-
-    this.list1.forEach((node) => {
-      this.nodeLookup[node.id] = node;
     });
     this.list2 = [
       {

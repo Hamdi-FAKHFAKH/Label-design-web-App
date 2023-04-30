@@ -4,7 +4,7 @@
 <div
   cdkDropList
   (cdkDropListDropped)="onDrop($event)"
-  [cdkDropListData]="list2"
+  [cdkDropListData]="dragDropService.list2"
   [cdkDropListConnectedTo]="dragDropService.dropTargetIds"
   [cdkDropListSortingDisabled]="true"
   id="design"
@@ -14,7 +14,7 @@
       <nb-accordion-item-header> Champs </nb-accordion-item-header>
       <nb-accordion-item-body>
         <div
-          *ngFor="let item of list2"
+          *ngFor="let item of dragDropService.list2"
           cdkDrag
           [cdkDragData]="item.id"
           (cdkDragMoved)="dragMoved($event)"
@@ -49,7 +49,7 @@
       <nb-accordion-item-header> Containers </nb-accordion-item-header>
       <nb-accordion-item-body>
         <div
-          *ngFor="let item of list2"
+          *ngFor="let item of dragDropService.list2"
           cdkDrag
           [cdkDragData]="item.id"
           (cdkDragMoved)="dragMoved($event)"

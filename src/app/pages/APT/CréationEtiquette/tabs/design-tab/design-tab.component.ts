@@ -27,7 +27,9 @@ export class DesignTabComponent implements OnInit {
   list1;
 
   ngOnInit(): void {
-    this.list2 = this.dragDropService.list2;
+    console.log("list2 from design");
+    console.log(this.dragDropService.list2);
+
     this.list1 = this.dragDropService.list1;
   }
   // @Input() refProd: string;
