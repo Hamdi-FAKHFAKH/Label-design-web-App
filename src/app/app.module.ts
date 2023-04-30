@@ -15,9 +15,12 @@ import { AppRoutingModule } from "./app-routing.module";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import {
+  NbAccordionModule,
+  NbCardModule,
   NbChatModule,
   NbDatepickerModule,
   NbDialogModule,
+  NbLayoutModule,
   NbMenuModule,
   NbSidebarModule,
   NbToastrModule,
@@ -43,9 +46,12 @@ import { ShareService } from "./pages/APT/CréationEtiquette/share.service";
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    NbCardModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
+    NbAccordionModule,
+    NbLayoutModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),

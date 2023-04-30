@@ -1,0 +1,388 @@
+<div class="col px-1">
+  <fieldset>
+    <legend>Taille</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col px-1">
+      <label for="longueur" class="label">longueur</label>
+      <input
+        (input)="
+          changeStyle(
+            'height',
+            $event.target.value === '0'
+              ? 'fit-content'
+              : $event.target.value + 'mm'
+          )
+        "
+        type="number"
+        min="0"
+        name="longueur"
+        id="longueur"
+        class="form-control"
+      />
+    </div>
+    <div class="col px-1">
+      <label for="largeur" class="label">largeur</label>
+      <input
+        type="number"
+        min="0"
+        name="largeur"
+        id="largeur"
+        class="form-control"
+        (input)="
+          changeStyle(
+            'width',
+            $event.target.value === '0'
+              ? 'fit-content'
+              : $event.target.value + 'mm'
+          )
+        "
+      />
+    </div>
+    <div class="col px-1">
+      <label for="taille" class="label">Taille</label>
+      <input
+        type="number"
+        min="0"
+        name="taille"
+        id="taille"
+        class="form-control"
+        (input)="changeStyle('font-size', $event.target.value + 'pt')"
+      />
+    </div>
+  </div>
+  <fieldset>
+    <legend>Couleur</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col px-1">
+      <label for="fg-color" class="label"> Font </label>
+      <input
+        type="color"
+        name="fg-color"
+        id="fg-color"
+        class="form-control"
+        (input)="changeStyle('color', $event.target.value)"
+      />
+    </div>
+    <div class="col px-1">
+      <label for="bg-color" class="label"> Arrière </label>
+      <input
+        type="color"
+        name="bg-color"
+        id="bg-color"
+        class="form-control"
+        (input)="changeStyle('background-color', $event.target.value)"
+      />
+    </div>
+    <div class="col px-1">
+      <label for="bg-color" class="label"> Border </label>
+      <input
+        type="color"
+        name="bg-color"
+        id="bg-color"
+        class="form-control"
+        (input)="changeStyle('border-color', $event.target.value)"
+      />
+    </div>
+  </div>
+  <fieldset>
+    <legend>Espacement</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col px-1">
+      <label for="padding" class="label"> Padding</label>
+      <div class="input-group mb-3">
+        <input
+          #padding
+          type="number"
+          min="0"
+          class="form-control"
+          (input)="changeStyle(paddingClicked, $event.target.value + 'mm')"
+          (keyup.enter)="
+            changeStyle(paddingClicked, $event.target.value + 'mm')
+          "
+        />
+        <button
+          class="btn btn-outline-primary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        ></button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a
+              (click)="paddingClicked = 'padding-left'"
+              [ngClass]="{ itemClicked: paddingClicked === 'padding-left' }"
+            >
+              <img
+                src="../../../../../assets/images/left-alignment.png"
+                alt=""
+                height="20px"
+                width="20px"
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="paddingClicked = 'padding-right'"
+              [ngClass]="{ itemClicked: paddingClicked === 'padding-right' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/right-alignment.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="paddingClicked = 'padding-top'"
+              [ngClass]="{ itemClicked: paddingClicked === 'padding-top' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/top-alignment.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="paddingClicked = 'padding-bottom'"
+              [ngClass]="{ itemClicked: paddingClicked === 'padding-bottom' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/align-objects.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="paddingClicked = 'padding'"
+              [ngClass]="{ itemClicked: paddingClicked === 'padding' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/padding_icon.svg"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col px-1">
+      <label for="margin" class="label"> Margin</label>
+      <div class="input-group mb-3">
+        <input
+          type="number"
+          min="0"
+          class="form-control"
+          (input)="changeStyle(marginCliked, $event.target.value + 'mm')"
+          (keyup.enter)="changeStyle(marginCliked, $event.target.value + 'mm')"
+        />
+        <button
+          class="btn btn-outline-primary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        ></button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a
+              (click)="marginCliked = 'margin-left'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-left' }"
+            >
+              <img
+                src="../../../../../assets/images/left-alignment.png"
+                alt=""
+                height="20px"
+                width="20px"
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin-right'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-right' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/right-alignment.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin-top'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-top' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/top-alignment.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin-bottom'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-bottom' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/align-objects.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/padding_icon.svg"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-3 px-1">
+      <label for="margin" class="label" style="margin-left: -3px"
+        >Orientation</label
+      >
+      <input
+        type="number"
+        min="0"
+        name="margin"
+        id="margin"
+        (input)="
+          changeStyle('transform', 'rotate(' + $event.target.value + 'deg)')
+        "
+        class="form-control"
+      />
+    </div>
+  </div>
+  <fieldset>
+    <legend>Style</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col px-1">
+      <label for="police" class="label">Police</label>
+      <select
+        class="form-control"
+        name="police"
+        id="police"
+        (change)="changeStyle('font-family', $event.target.value)"
+      >
+        <option *ngFor="let font of fontFamily" value="{{ font }}">
+          {{ font }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col px-1">
+      <div
+        class="btn-group"
+        role="group"
+        aria-label="Basic example"
+        style="margin: auto; width: 100%"
+      >
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="changeStyle('text-align', 'left')"
+        >
+          <fa-icon icon="align-left"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="changeStyle('text-align', 'center')"
+        >
+          <fa-icon icon="align-center"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="changeStyle('text-align', 'right')"
+        >
+          <fa-icon icon="align-right"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            componentstyle.bold = !componentstyle.bold;
+            changeStyle('bold', componentstyle.bold)
+          "
+        >
+          <fa-icon icon="bold"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            componentstyle.italic = !componentstyle.italic;
+            changeStyle('italic', componentstyle.italic)
+          "
+        >
+          <fa-icon icon="italic"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            componentstyle.underline = !componentstyle.underline;
+            changeStyle('underline', componentstyle.underline)
+          "
+        >
+          <fa-icon icon="underline"> </fa-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <fieldset>
+    <legend>Data</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col px-1">
+      <label for="data" class="label">Data</label>
+      <input
+        type="text"
+        name="data"
+        id="data"
+        class="form-control"
+        name="data"
+        disabled
+        [value]="produit[this.items[this.itemId].refItem]"
+      />
+    </div>
+  </div>
+</div>

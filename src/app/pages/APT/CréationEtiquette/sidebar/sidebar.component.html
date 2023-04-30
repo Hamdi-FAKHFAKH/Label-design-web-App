@@ -90,18 +90,19 @@
 
 <ng-template #tmplNode let-item="item">
   <div
-    style="color: green"
-    *ngIf="item.type === 'div'"
+    [ngStyle]="{ margin: '15px 15px 15px 15px' }"
+    *ngIf="item.type === 'text'"
     [attr.data-id]="item.id"
+    [ngStyle]="item.style"
   >
-    div
+    {{ item.data }}
   </div>
   <div *ngIf="item.type === 'vide'" [attr.data-id]="item.id"></div>
   <img
     src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
     width="88"
     height="31"
-    *ngIf="item.type === 'img'"
+    *ngIf="item.type === 'image'"
     [attr.data-id]="item.id"
   />
 </ng-template>

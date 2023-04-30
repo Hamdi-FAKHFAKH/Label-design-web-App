@@ -24,9 +24,11 @@ import { DragDropService } from "../../drag-drop.service";
 })
 export class DesignTabComponent implements OnInit {
   list2;
-  list3 = [];
+  list1;
+
   ngOnInit(): void {
     this.list2 = this.dragDropService.list2;
+    this.list1 = this.dragDropService.list1;
   }
   // @Input() refProd: string;
   // @Input() dragebel;

@@ -26,6 +26,7 @@ import { LabeltHttpService } from "./labelHTTP.service";
 import { DesignTabComponent } from "./tabs/design-tab/design-tab.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { DragDropService } from "./drag-drop.service";
+import { ItemComponent } from './item/item.component';
 @NgModule({
   imports: [
     FormsModule,
@@ -38,13 +39,13 @@ import { DragDropService } from "./drag-drop.service";
     NbSidebarModule,
     NbLayoutModule,
     NbThemeModule,
+    NbAccordionModule,
     NbMenuModule,
     NbRouteTabsetModule,
     NbContextMenuModule,
     NbSelectModule,
     CommonModule,
     FontAwesomeModule,
-    NbAccordionModule,
     DragDropModule,
   ],
   declarations: [
@@ -52,8 +53,14 @@ import { DragDropService } from "./drag-drop.service";
     SidebarComponent,
     EtiquetteTabComponent,
     DesignTabComponent,
+    ItemComponent,
   ],
   exports: [],
-  providers: [LabelService, LabeltHttpService, DragDropService],
+  providers: [
+    LabelService,
+    LabeltHttpService,
+    DragDropService,
+    NbAccordionModule,
+  ],
 })
 export class CreattionEtiquetteModule {}

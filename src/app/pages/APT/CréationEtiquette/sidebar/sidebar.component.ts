@@ -10,6 +10,7 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
+
 @Component({
   selector: "ngx-sidebar",
   templateUrl: "./sidebar.component.html",

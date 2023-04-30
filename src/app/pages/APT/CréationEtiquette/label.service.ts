@@ -17,6 +17,8 @@ export class LabelService {
     showPaddingCadre: false,
   };
   labelInfo = new BehaviorSubject<infoLabel>(this.initLabelInfo);
+  canDesign = false;
+
   convertToPdf() {
     var element = document.getElementById("test");
     var options = {

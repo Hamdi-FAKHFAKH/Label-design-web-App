@@ -2,13 +2,9 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/app",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "noUnusedLocals": false
   },
-  "files": [
-    "main.ts",
-    "polyfills.ts"
-  ],
-  "include": [
-    "**/*.d.ts"
-  ]
+  "files": ["main.ts", "polyfills.ts"],
+  "include": ["**/*.d.ts"]
 }

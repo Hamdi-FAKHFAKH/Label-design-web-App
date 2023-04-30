@@ -1,7 +1,6 @@
 <fieldset>
-  <legend>Liste des Champs</legend>
+  <legend>Liste des champs à glisser</legend>
 </fieldset>
-
 <div
   cdkDropList
   (cdkDropListDropped)="onDrop($event)"
@@ -10,84 +9,198 @@
   [cdkDropListSortingDisabled]="true"
   id="design"
 >
-  <nb-accordion
-    *ngFor="let item of list2"
-    cdkDrag
-    [cdkDragData]="item.id"
-    (cdkDragMoved)="dragMoved($event)"
-  >
-    <div *cdkDragPlaceholder>
-      <div
-        class="example-custom-placeholder"
-        *ngIf="dragDropService.showDragPlaceholder"
-      ></div>
-    </div>
-    <nb-accordion-item *ngIf="item.type === 'div'" [attr.data-id]="item.id">
-      <nb-accordion-item-header>DIV </nb-accordion-item-header>
-      <nb-accordion-item-body> </nb-accordion-item-body>
-    </nb-accordion-item>
-    <nb-accordion-item *ngIf="item.type === 'vide'" [attr.data-id]="item.id">
-      <nb-accordion-item-header>Vide </nb-accordion-item-header>
-      <nb-accordion-item-body> </nb-accordion-item-body>
-    </nb-accordion-item>
-    <nb-accordion-item *ngIf="item.type === 'container'">
-      <nb-accordion-item-header> Container </nb-accordion-item-header>
+  <nb-accordion>
+    <nb-accordion-item>
+      <nb-accordion-item-header> Champs </nb-accordion-item-header>
       <nb-accordion-item-body>
-        A nebula is an interstellar cloud of dust, hydrogen, helium and other
-        ionized gases. Originally, nebula was a name for any diffuse
-        astronomical object, including galaxies beyond the Milky Way.
+        <div
+          *ngFor="let item of list2"
+          cdkDrag
+          [cdkDragData]="item.id"
+          (cdkDragMoved)="dragMoved($event)"
+        >
+          <div *cdkDragPlaceholder>
+            <div
+              class="example-custom-placeholder"
+              *ngIf="dragDropService.showDragPlaceholder"
+            ></div>
+          </div>
+          <div
+            *ngIf="item.type === 'text'"
+            [attr.data-id]="item.id"
+            class="example-box"
+          >
+            {{ item.title }}
+          </div>
+          <div
+            *cdkDragPreview
+            style="
+              padding: 10px;
+              background-color: rgb(194, 187, 187);
+              border-radius: 10px;
+            "
+          >
+            {{ item.type }}
+          </div>
+        </div>
       </nb-accordion-item-body>
     </nb-accordion-item>
-    <nb-accordion-item *ngIf="item.type === 'container-2'">
-      <nb-accordion-item-header> Container-2 </nb-accordion-item-header>
+    <nb-accordion-item>
+      <nb-accordion-item-header> Containers </nb-accordion-item-header>
       <nb-accordion-item-body>
-        A nebula is an interstellar cloud of dust, hydrogen, helium and other
-        ionized gases. Originally, nebula was a name for any diffuse
-        astronomical object, including galaxies beyond the Milky Way.
+        <div
+          *ngFor="let item of list2"
+          cdkDrag
+          [cdkDragData]="item.id"
+          (cdkDragMoved)="dragMoved($event)"
+        >
+          <div *cdkDragPlaceholder>
+            <div
+              class="example-custom-placeholder"
+              *ngIf="dragDropService.showDragPlaceholder"
+            ></div>
+          </div>
+          <div
+            *ngIf="item.type === 'container'"
+            [attr.data-id]="item.id"
+            class="example-box"
+          >
+            Container
+          </div>
+          <div
+            *ngIf="item.type === 'container-2'"
+            [attr.data-id]="item.id"
+            class="example-box"
+          >
+            Container-2
+          </div>
+          <div *ngIf="item.type === 'container-3'" class="example-box">
+            Container-3
+          </div>
+          <div *cdkDragPreview>{{ item.type }}</div>
+        </div>
       </nb-accordion-item-body>
     </nb-accordion-item>
-    <nb-accordion-item *ngIf="item.type === 'container-3'">
-      <nb-accordion-item-header> Container-3 </nb-accordion-item-header>
-      <nb-accordion-item-body>
-        A nebula is an interstellar cloud of dust, hydrogen, helium and other
-        ionized gases. Originally, nebula was a name for any diffuse
-        astronomical object, including galaxies beyond the Milky Way.
-      </nb-accordion-item-body>
-    </nb-accordion-item>
-    <nb-accordion-item *ngIf="item.type === 'img'">
-      <nb-accordion-item-header> Image </nb-accordion-item-header>
-      <nb-accordion-item-body>
-        A nebula is an interstellar cloud of dust, hydrogen, helium and other
-        ionized gases. Originally, nebula was a name for any diffuse
-        astronomical object, including galaxies beyond the Milky Way.
-      </nb-accordion-item-body>
-    </nb-accordion-item>
-    <div *cdkDragPreview>{{ item.type }}</div>
   </nb-accordion>
-  <!-- <div
-    *ngFor="let item of list2"
-    cdkDrag
-    [cdkDragData]="item"
-    (cdkDragMoved)="dragMoved($event)"
-    (cdkDragReleased)="dragReleased($event)"
-  > -->
-  <!-- <div style="color: green" *ngIf="item === 'div'">div</div>
-    <div style="color: green" *ngIf="item === 'container'">Container</div> -->
-  <!-- <img
-      src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
-      width="88"
-      height="31"
-      *ngIf="item === 'img'"
-    /> -->
+</div>
+<fieldset>
+  <legend>Liste des champs Ajoutés</legend>
+</fieldset>
+<div>
+  <nb-accordion>
+    <nb-accordion-item *ngFor="let item of list1">
+      <nb-accordion-item-header
+        *ngIf="item.type === 'text'"
+        [attr.data-id]="item.id"
+        >{{ item.title }}
+      </nb-accordion-item-header>
+      <nb-accordion-item-body *ngIf="item.type === 'text'"
+        ><ngx-design-item [itemId]="item.id"></ngx-design-item>
+      </nb-accordion-item-body>
 
-  <!-- <img
-    src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
-    id="drag1"
-    width="88"
-    height="31"
-    cdkDrag
-    #img
-    cdkDragBoundary=".figure"
-  /> -->
-  <!-- </div> -->
+      <nb-accordion-item-header
+        *ngIf="item.type === 'vide'"
+        [attr.data-id]="item.id"
+        >Vide
+      </nb-accordion-item-header>
+      <nb-accordion-item-body *ngIf="item.type === 'vide'"
+        ><ngx-design-item [itemId]="item.id"></ngx-design-item>
+      </nb-accordion-item-body>
+
+      <nb-accordion-item-header *ngIf="item.type === 'container'">
+        Container
+      </nb-accordion-item-header>
+      <nb-accordion-item-body *ngIf="item.type === 'container'">
+        <div *ngIf="item.children.length">
+          <nb-accordion *ngFor="let item1 of item.children">
+            <nb-accordion-item
+              *ngIf="item1.type === 'text'"
+              [attr.data-id]="item1.refItem"
+            >
+              <nb-accordion-item-header
+                >{{ item1.title }}
+              </nb-accordion-item-header>
+              <nb-accordion-item-body>
+                <ngx-design-item [itemid]="item1.id"></ngx-design-item>
+              </nb-accordion-item-body>
+            </nb-accordion-item>
+            <nb-accordion-item
+              *ngIf="item1.type === 'vide'"
+              [attr.data-id]="item1.refItem"
+            >
+              <nb-accordion-item-header>Vide </nb-accordion-item-header>
+              <nb-accordion-item-body> </nb-accordion-item-body>
+            </nb-accordion-item>
+          </nb-accordion>
+        </div>
+      </nb-accordion-item-body>
+
+      <nb-accordion-item-header *ngIf="item.type === 'container-2'">
+        Container-2
+      </nb-accordion-item-header>
+      <nb-accordion-item-body *ngIf="item.type === 'container-2'">
+        <div *ngIf="item.children.length">
+          <nb-accordion *ngFor="let item1 of item.children">
+            <nb-accordion-item
+              *ngIf="item1.type === 'text'"
+              [attr.data-id]="item1.refItem"
+            >
+              <nb-accordion-item-header
+                >{{ item1.title }}
+              </nb-accordion-item-header>
+              <nb-accordion-item-body>
+                <ngx-design-item itemid="item1"></ngx-design-item>
+              </nb-accordion-item-body>
+            </nb-accordion-item>
+            <nb-accordion-item>
+              <nb-accordion-item-header
+                *ngIf="item1.type === 'vide'"
+                [attr.data-id]="item1.refItem"
+              >
+                Vide
+              </nb-accordion-item-header>
+              <nb-accordion-item-body> </nb-accordion-item-body>
+            </nb-accordion-item>
+          </nb-accordion>
+        </div>
+      </nb-accordion-item-body>
+
+      <nb-accordion-item-header *ngIf="item.type === 'container-3'">
+        Container-3
+      </nb-accordion-item-header>
+      <nb-accordion-item-body *ngIf="item.type === 'container-3'">
+        <div *ngIf="item.children.length">
+          <nb-accordion *ngFor="let item1 of item.children">
+            <nb-accordion-item
+              *ngIf="item1.type === 'text'"
+              [attr.data-id]="item1.refItem"
+            >
+              <nb-accordion-item-header
+                >{{ item1.title }}
+              </nb-accordion-item-header>
+              <nb-accordion-item-body>
+                <ngx-design-item [itemId]="item1.id"></ngx-design-item
+              ></nb-accordion-item-body>
+            </nb-accordion-item>
+            <nb-accordion-item
+              *ngIf="item1.type === 'vide'"
+              [attr.data-id]="item1.refItem"
+            >
+              <nb-accordion-item-header>Vide </nb-accordion-item-header>
+              <nb-accordion-item-body> </nb-accordion-item-body>
+            </nb-accordion-item>
+          </nb-accordion>
+        </div>
+      </nb-accordion-item-body>
+
+      <nb-accordion-item-header *ngIf="item.type === 'img'">
+        Image
+      </nb-accordion-item-header>
+      <nb-accordion-item-body *ngIf="item.type === 'img'">
+        A nebula is an interstellar cloud of dust, hydrogen, helium and other
+        ionized gases. Originally, nebula was a name for any diffuse
+        astronomical object, including galaxies beyond the Milky Way.
+      </nb-accordion-item-body>
+    </nb-accordion-item>
+  </nb-accordion>
 </div>

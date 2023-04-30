@@ -5,7 +5,9 @@
         <nb-tab tabTitle="Etiquette">
           <ngx-etiquette-tab></ngx-etiquette-tab>
         </nb-tab>
-        <nb-tab tabTitle="Design"><ngx-design-tab></ngx-design-tab> </nb-tab>
+        <nb-tab tabTitle="Design" [disabled]="!canDesign"
+          ><ngx-design-tab></ngx-design-tab>
+        </nb-tab>
         <nb-tab tabTitle="Vue">
           <span>Vue</span>
         </nb-tab>

@@ -8,100 +8,247 @@ import {
 import { DOCUMENT } from "@angular/common";
 import { Inject, Injectable } from "@angular/core";
 import { v4 as uuidv4 } from "uuid";
-export interface ListData {
-  id: string;
-  type: string;
-  children: ListData[];
-}
+import { GestionProduitHttpService } from "../GestionProduits/GestionProduitHttp.service";
+import { LabelService } from "./label.service";
+import { ComponentTitle, ComponetList } from "./ComposentData";
+import { ProduitData } from "../GestionProduits/GestionProduit.data";
+
 export interface DropInfo {
   targetId: string;
   action?: string;
 }
+
 @Injectable()
 export class DragDropService {
-  // ids for connected drop lists
-  currentHoverDropListId?: string;
   // ids for connected drop lists
   dropTargetIds = ["label"]; //contient tous les id
   nodeLookup = {}; // {id : object(node)}
   nodeLookup2 = {};
   showDragPlaceholder;
-  list1: ListData[] = [];
-  list2: ListData[] = [
-    {
-      id: "item1",
-      type: "container-2",
-      children: [
-        {
-          id: "item11",
-          type: "vide",
-          children: [],
-        },
-        {
-          id: "item12",
-          type: "vide",
-          children: [],
-        },
-      ],
-    },
-    {
-      id: "item2",
-      type: "container-3",
-      children: [
-        {
-          id: "item11",
-          type: "vide",
-          children: [],
-        },
-        {
-          id: "item12",
-          type: "vide",
-          children: [],
-        },
-        {
-          id: "item13",
-          type: "vide",
-          children: [],
-        },
-      ],
-    },
-    {
-      id: "item3",
-      type: "container",
-      children: [],
-    },
-    {
-      id: "item4",
-      type: "div",
-      children: [],
-    },
-    {
-      id: "item5",
-      type: "img",
-      children: [],
-    },
-    {
-      id: "item6",
-      type: "vide",
-      children: [],
-    },
-  ];
+  refproduit: string;
+  produit: ProduitData;
+  list1: ComponetList[] = [];
+  //TODO: modifier liste 2 comme BD
+  list2: ComponetList[];
   dropActionTodo: DropInfo = {
     targetId: "label",
   };
-  prepareDragDrop(nodes: ListData[]) {
+  prepareDragDrop(nodes: ComponetList[]) {
     nodes.forEach((node) => {
       this.dropTargetIds.push(node.id);
       this.nodeLookup2[node.id] = node;
-      this.prepareDragDrop(node.children);
+      if (node.children) {
+        this.prepareDragDrop(node.children);
+      }
     });
   }
-  constructor(@Inject(DOCUMENT) private document: Document) {
-    this.prepareDragDrop(this.list2);
-    console.log(this.dropTargetIds);
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    private gestionProduitHttpService: GestionProduitHttpService,
+    private labelService: LabelService
+  ) {
+    labelService.labelInfo.subscribe((val) => {
+      if (this.refproduit !== val.refProd && val.refProd !== null) {
+        this.refproduit = val.refProd;
+        gestionProduitHttpService
+          .getOneProduit(this.refproduit)
+          .toPromise()
+          .then((resProduit) => {
+            this.produit = resProduit.produit;
+            console.log("produits");
+            console.log(resProduit);
+            Object.keys(resProduit.produit).forEach((item) => {
+              if (
+                item !== "createdAt" &&
+                item !== "updatedAt" &&
+                resProduit.produit[item]
+              ) {
+                // if (item === "codeClient" && resProduit.produit[item]) {
+                //   gestionProduitHttpService
+                //     .getClient(resProduit.produit[item])
+                //     .toPromise()
+                //     .then((client) => {
+                //       this.list2.push(
+                //         {
+                //           id: uuidv4(),
+                //           type: "text",
+                //           refItem: item,
+                //           title: ComponentTitle[item],
+                //           data: resProduit.produit[item],
+                //           style: {
+                //             "font-weight": "normal",
+                //             bold: false,
+                //             italic: false,
+                //             "font-style": "normal",
+                //             "text-decoration": "none",
+                //             underline: false,
+                //           },
+                //         },
+                //         {
+                //           id: uuidv4(),
+                //           type: "text",
+                //           title: ComponentTitle.desClient,
+                //           refItem: "desClient",
+                //           data: client.body.client.desClient,
+                //           style: {
+                //             "font-weight": "normal",
+                //             bold: false,
+                //             italic: false,
+                //             "font-style": "normal",
+                //             "text-decoration": "none",
+                //             underline: false,
+                //           },
+                //         }
+                //       );
+                //     });
+                // } else if (
+                //   item === "codeFournisseur" &&
+                //   resProduit.produit[item]
+                // ) {
+                //   gestionProduitHttpService
+                //     .getFournisseur(resProduit.produit[item])
+                //     .toPromise()
+                //     .then((fournisseur) => {
+                //       this.list2.push(
+                //         {
+                //           id: uuidv4(),
+                //           type: "text",
+                //           refItem: item,
+                //           title: ComponentTitle.codeFournisseur,
+                //           data: resProduit.produit[item],
+                //           style: {
+                //             "font-weight": "normal",
+                //             bold: false,
+                //             italic: false,
+                //             "font-style": "normal",
+                //             "text-decoration": "none",
+                //             underline: false,
+                //           },
+                //         },
+                //         {
+                //           id: uuidv4(),
+                //           type: "text",
+                //           title: ComponentTitle.desFournisseur,
+                //           refItem: "desClient",
+                //           data: fournisseur.body.fournisseur.desFournisseur,
+                //           style: {
+                //             "font-weight": "normal",
+                //             bold: false,
+                //             italic: false,
+                //             "font-style": "normal",
+                //             "text-decoration": "none",
+                //             underline: false,
+                //           },
+                //         }
+                //       );
+                //     });
+                // }
+                this.list2.push({
+                  id: uuidv4(),
+                  type:
+                    item == "withDataMatrix"
+                      ? "QRcode"
+                      : item == "formes"
+                      ? "shape"
+                      : "text",
+                  refItem: item,
+                  title: ComponentTitle[item],
+                  data: resProduit.produit[item],
+                  style: {
+                    "font-weight": "normal",
+                    bold: false,
+                    italic: false,
+                    "font-style": "normal",
+                    "text-decoration": "none",
+                    underline: false,
+                  },
+                });
+              }
+            });
+            this.prepareDragDrop(this.list2);
+            console.log(this.list2);
+          });
+      }
+    });
+
     this.list1.forEach((node) => {
       this.nodeLookup[node.id] = node;
     });
+    this.list2 = [
+      {
+        id: uuidv4(),
+        type: "container-2",
+        data: "",
+        refItem: null,
+        title: "",
+        children: [
+          {
+            id: uuidv4(),
+            type: "vide",
+            children: [],
+            data: "",
+            refItem: null,
+            title: "",
+          },
+          {
+            id: uuidv4(),
+            type: "vide",
+            children: [],
+            data: "",
+            title: "",
+            refItem: null,
+          },
+        ],
+      },
+      {
+        id: uuidv4(),
+        type: "container-3",
+        data: "",
+        refItem: null,
+        title: "",
+        children: [
+          {
+            id: uuidv4(),
+            type: "vide",
+            children: [],
+            data: "",
+            refItem: null,
+            title: "",
+          },
+          {
+            id: uuidv4(),
+            type: "vide",
+            children: [],
+            data: "",
+            refItem: null,
+            title: "",
+          },
+          {
+            id: uuidv4(),
+            type: "vide",
+            children: [],
+            data: "",
+            refItem: null,
+            title: "",
+          },
+        ],
+      },
+      {
+        id: uuidv4(),
+        type: "container",
+        children: [],
+        data: "",
+        refItem: null,
+        title: "",
+      },
+      {
+        id: uuidv4(),
+        type: "vide",
+        data: "",
+        refItem: null,
+        title: "",
+      },
+    ];
     this.showDragPlaceholder = true;
   }
   dragMoved(event) {
@@ -183,22 +330,34 @@ export class DragDropService {
     console.log("parentItemId");
     console.log(parentItemId);
     if (this.dropActionTodo.action == "insideLeft" && draggedItem) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[0] = draggedItem;
+      this.nodeLookup[this.dropActionTodo.targetId].children[0] = {
+        ...draggedItem,
+        id: uuidv4(),
+      };
     } else if (
       (this.dropActionTodo.action == "insideMiddle" && draggedItem) ||
       (this.dropActionTodo.action == "insideRight" &&
         this.nodeLookup[this.dropActionTodo.targetId].type === "container-2" &&
         draggedItem)
     ) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[1] = draggedItem;
+      this.nodeLookup[this.dropActionTodo.targetId].children[1] = {
+        ...draggedItem,
+        id: uuidv4(),
+      };
     } else if (
       this.dropActionTodo.action == "insideRight" &&
       draggedItem &&
       this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
     ) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[2] = draggedItem;
+      this.nodeLookup[this.dropActionTodo.targetId].children[2] = {
+        ...draggedItem,
+        id: uuidv4(),
+      };
     } else if (this.dropActionTodo.action == "inside" && draggedItem) {
-      this.nodeLookup[this.dropActionTodo.targetId].children.push(draggedItem);
+      this.nodeLookup[this.dropActionTodo.targetId].children.push({
+        ...draggedItem,
+        id: uuidv4(),
+      });
     } else {
       if (event.previousContainer === event.container) {
         // Handle drop within the same container
@@ -216,7 +375,7 @@ export class DragDropService {
             Object.assign(
               {},
               {
-                ...event.previousContainer.data[event.previousIndex],
+                ...draggedItem,
                 children: [
                   {
                     id: "item11",
@@ -240,7 +399,7 @@ export class DragDropService {
             Object.assign(
               {},
               {
-                ...event.previousContainer.data[event.previousIndex],
+                ...draggedItem,
                 children: [
                   {
                     id: "item11",
@@ -269,7 +428,7 @@ export class DragDropService {
             Object.assign(
               {},
               {
-                ...event.previousContainer.data[event.previousIndex],
+                ...draggedItem,
                 children: [],
                 id: id,
               }
@@ -281,18 +440,5 @@ export class DragDropService {
     }
     console.log("list form service");
     console.log(this.list1);
-  }
-  // recherche le parent de drop area
-  getParentNodeId(
-    id: string,
-    nodesToSearch: ListData[],
-    parentId: string
-  ): string {
-    for (let node of nodesToSearch) {
-      if (node.id == id) return parentId;
-      let ret = this.getParentNodeId(id, node.children, node.id);
-      if (ret) return ret;
-    }
-    return null;
   }
 }

@@ -74,7 +74,7 @@ export interface ClientData {
 }
 export interface GetClientResponseData {
   status: string;
-  client: Array<ClientDataResult>;
+  client: ClientDataResult;
 }
 export interface UpdateClientResponseData {
   Status: string;
@@ -106,7 +106,7 @@ export interface FournisseurResultData {
 }
 export interface GetFournisseurResultData {
   status: string;
-  client: Array<FournisseurResultData>;
+  fournisseur: FournisseurResultData;
 }
 export interface UpdateFournisseurResultData {
   Status: string;
