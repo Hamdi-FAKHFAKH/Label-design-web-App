@@ -131,3 +131,7 @@ export interface GetSerialNumberResultData {
   status: string;
   serialNumber: Array<SerialNumberData>;
 }
+export interface GetOneSerialNumberResultData {
+  status: string;
+  serialNumber: SerialNumberData;
+}

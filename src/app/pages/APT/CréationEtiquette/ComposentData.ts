@@ -7,6 +7,8 @@ export interface ComponetList {
   children?: ComponetList[];
   style?: ComponentStyle;
   data: string;
+  dataMatrixFormat?: string;
+  dataMatrixCode?: string;
 }
 export interface ComponentStyle {
   height?: string;
@@ -49,7 +51,8 @@ export enum ComponentTitle {
   desFournisseur = "Désination Fournisseur",
   codeClient = "Code Client",
   desClient = "Désination Client",
-  idSN = "Id Numéro de Série",
+  SN = "Numéro de Série",
+  withDataMatrix = "DataMatrix",
   text1 = "Text1",
   text2 = "Text2",
   text3 = "Text3",

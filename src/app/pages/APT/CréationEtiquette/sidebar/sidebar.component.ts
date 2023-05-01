@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterContentChecked,
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { LabelService } from "../label.service";
 import { LabeltHttpService } from "../labelHTTP.service";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +16,7 @@ import {
   copyArrayItem,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import bwipjs from "bwip-js";
 import { DragDropService } from "../drag-drop.service";
 
 @Component({
@@ -30,6 +38,14 @@ export class SidebarComponent implements OnInit {
     public dragDropService: DragDropService
   ) {}
   ngOnInit(): void {
+    // let canvas = bwipjs.toCanvas("mycanvas", {
+    //   bcid: "code128", // Barcode type
+    //   text: "0123456789", // Text to encode
+    //   scale: 3, // 3x scaling factor
+    //   height: 10, // Bar height, in millimeters
+    //   includetext: true, // Show human-readable text
+    //   textxalign: "center", // Always good to set this
+    // });
     this.labelService.labelInfo.subscribe((info) => {
       // console.log(info);
       if (info) {
@@ -50,6 +66,7 @@ export class SidebarComponent implements OnInit {
     });
     this.list1 = this.dragDropService.list1;
   }
+
   zoomIn() {
     this.labelStyle = {
       ...this.labelStyle,
@@ -203,7 +220,11 @@ export class SidebarComponent implements OnInit {
   dragMoved(event) {
     this.dragDropService.dragMoved(event);
   }
-  delete(event) {
-    console.log(event);
+  delete(id: string) {
+    console.log(id + "deleted");
+    const index = this.dragDropService.list1.findIndex((obj) => {
+      return obj.id == id;
+    });
+    index != -1 && this.dragDropService.list1.splice(index, 1);
   }
 }

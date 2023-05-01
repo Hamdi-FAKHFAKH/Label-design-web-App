@@ -5,11 +5,11 @@ import { ComponentStyle, ComponetList } from "../ComposentData";
 import { ProduitData } from "../../GestionProduits/GestionProduit.data";
 
 @Component({
-  selector: "ngx-design-item",
-  templateUrl: "./item.component.html",
-  styleUrls: ["./item.component.scss"],
+  selector: "ngx-field-style-form",
+  templateUrl: "./fieldStyleForm.component.html",
+  styleUrls: ["./fieldStyleForm.component.scss"],
 })
-export class ItemComponent implements OnInit {
+export class FieldStyleFormComponent implements OnInit {
   @Input() itemId;
   items = {};
   produit: ProduitData;
@@ -97,8 +97,8 @@ export class ItemComponent implements OnInit {
     console.log(this.dragDropService.list1);
   }
 }
-//TODO: Add Serial Number
 //TODO: Add  DataMatrix
 //TODO: Add  Container Style
+//TODO: Add  forms
 //TODO: Laison avec BD
 //TODO: Border

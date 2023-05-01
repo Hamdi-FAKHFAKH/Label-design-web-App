@@ -1,0 +1,203 @@
+<div class="col">
+  <fieldset>
+    <legend>Taille</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col">
+      <div class="row gx-1">
+        <div class="col">
+          <label for="longueur" class="label">Longueur</label>
+          <input
+            [disabled]="format.value === 'qrcode'"
+            type="number"
+            name="longueur"
+            id=""
+            class="form-control"
+            [value]="format.value === 'qrcode' && largeur.value"
+            (input)="change('longueur', $event.target.value)"
+          />
+        </div>
+        <div class="col">
+          <label for="largeur" class="label">Largeur</label>
+          <input
+            #largeur
+            type="number"
+            name="largeur"
+            id=""
+            class="form-control"
+            (input)="change('largeur', $event.target.value)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <fieldset>
+    <legend>Couleur</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col px-1">
+          <label for="fg-color" class="label"> Font </label>
+          <input
+            type="color"
+            name="fg-color"
+            id="fg-color"
+            class="form-control"
+            (input)="changeStyle('color', $event.target.value)"
+          />
+        </div>
+        <div class="col px-1">
+          <label for="bg-color" class="label"> Arrière </label>
+          <input
+            type="color"
+            name="bg-color"
+            id="bg-color"
+            class="form-control"
+            (input)="changeStyle('background-color', $event.target.value)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <fieldset>
+    <legend>Espacement</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col">
+      <label for="margin" class="label"> Margin</label>
+      <div class="input-group mb-3">
+        <input
+          type="number"
+          min="0"
+          class="form-control"
+          (input)="changeStyle(marginCliked, $event.target.value)"
+          (keyup.enter)="changeStyle(marginCliked, $event.target.value)"
+        />
+        <button
+          class="btn btn-outline-primary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        ></button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a
+              (click)="marginCliked = 'margin-left'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-left' }"
+            >
+              <img
+                src="../../../../../assets/images/left-alignment.png"
+                alt=""
+                height="20px"
+                width="20px"
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin-right'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-right' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/right-alignment.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin-top'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-top' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/top-alignment.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin-bottom'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin-bottom' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/align-objects.png"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="marginCliked = 'margin'"
+              [ngClass]="{ itemClicked: marginCliked === 'margin' }"
+            >
+              <img
+                class="icon-link icon-link-hover"
+                src="../../../../../assets/images/padding_icon.svg"
+                height="20px"
+                width="20px"
+                alt=""
+              />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label for="format" class="label">Format</label>
+        <select
+          #format
+          class="form-control"
+          name="format"
+          id=""
+          (change)="change('format', $event.target.value)"
+        >
+          <option *ngFor="let format of barcodeObjs" value="{{ format.value }}">
+            {{ format.name }}
+          </option>
+          <option value="qrcode">QRCode</option>
+        </select>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label for="codage" class="label">Codage</label>
+        <select
+          class="form-control"
+          name="codage"
+          id=""
+          (change)="change('code', $event.target.value)"
+        >
+          <option></option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label for="data">Data</label>
+        <textarea
+          class="form-control"
+          name="data"
+          id=""
+          rows="5"
+          (input)="change('data', $event.target.value)"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+</div>

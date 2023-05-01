@@ -38,6 +38,7 @@ import {
   FaIconLibrary,
 } from "@fortawesome/angular-fontawesome";
 import { ShareService } from "./pages/APT/CréationEtiquette/share.service";
+
 // import { FormsModule } from "@angular/forms";
 @NgModule({
   declarations: [AppComponent, LoginComponent],

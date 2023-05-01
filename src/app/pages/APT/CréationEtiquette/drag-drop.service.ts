@@ -139,14 +139,43 @@ export class DragDropService {
                 item !== "idEtiquette" &&
                 item !== "withSN" &&
                 item !== "withOF" &&
-                item !== "withDataMatrix" &&
                 item !== "Createur" &&
                 item !== "Modificateur" &&
                 item !== "formes" &&
-                item !== "idSN" &&
                 resProduit.produit[item]
               ) {
-                if (resProduit.produit.codeClient && item === "codeClient") {
+                if (
+                  item === "idSN" &&
+                  resProduit.produit.idSN &&
+                  resProduit.produit.withSN
+                ) {
+                  gestionProduitHttpService
+                    .getOneSerialNumber(resProduit.produit.idSN)
+                    .toPromise()
+                    .then((serialNumber) => {
+                      this.list2.push({
+                        id: uuidv4(),
+                        type: "text",
+                        refItem: item,
+                        title: ComponentTitle.SN,
+                        data:
+                          serialNumber.serialNumber.prefix +
+                          serialNumber.serialNumber.suffix,
+                        style: {
+                          "font-weight": "normal",
+                          bold: false,
+                          italic: false,
+                          "font-style": "normal",
+                          "text-decoration": "none",
+                          underline: false,
+                        },
+                      });
+                      this.prepareDragDrop(this.list2);
+                    });
+                } else if (
+                  resProduit.produit.codeClient &&
+                  item === "codeClient"
+                ) {
                   gestionProduitHttpService
                     .getClient(resProduit.produit.codeClient)
                     .toPromise()
@@ -238,7 +267,10 @@ export class DragDropService {
                         : "text",
                     refItem: item,
                     title: ComponentTitle[item],
-                    data: resProduit.produit[item],
+                    data:
+                      item == "withDataMatrix"
+                        ? "datamatrix"
+                        : resProduit.produit[item],
                     style: {
                       "font-weight": "normal",
                       bold: false,
@@ -247,6 +279,7 @@ export class DragDropService {
                       "text-decoration": "none",
                       underline: false,
                     },
+                    dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
                   });
                   this.prepareDragDrop(this.list2);
                 }

@@ -17,6 +17,7 @@ import {
   updateProduitResponseData,
   UpdateLotResponseData,
   getOneProduitResponseData,
+  GetOneSerialNumberResultData,
 } from "./GestionProduit.data";
 
 @Injectable()
@@ -137,6 +138,11 @@ export class GestionProduitHttpService {
   getSerialNumber() {
     return this.http.get<GetSerialNumberResultData>(
       "http://localhost:3080/api/v1/serialNumber"
+    );
+  }
+  getOneSerialNumber(id: string) {
+    return this.http.get<GetOneSerialNumberResultData>(
+      `http://localhost:3080/api/v1/serialNumber/${id}`
     );
   }
 }

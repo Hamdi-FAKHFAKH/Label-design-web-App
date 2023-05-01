@@ -38,9 +38,9 @@
             *ngFor="let item of list1"
             cdkDrag
             (cdkDragMoved)="dragMoved($event)"
-            (document:keyup)="delete($event)"
           >
             <ng-container
+              (keyup.delete)="delete(item.id)"
               *ngTemplateOutlet="tmplNode; context: { item: item }"
             ></ng-container>
             <div
@@ -62,6 +62,7 @@
                   class="col"
                 >
                   <ng-container
+                    (keyup.delete)="delete(item.id)"
                     *ngTemplateOutlet="tmplNode; context: { item: child }"
                   ></ng-container>
                 </div>
@@ -90,12 +91,63 @@
 
 <ng-template #tmplNode let-item="item">
   <div
-    [ngStyle]="{ margin: '15px 15px 15px 15px' }"
     *ngIf="item.type === 'text'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
   >
     {{ item.data }}
+  </div>
+  <div
+    *ngIf="item.type === 'QRcode'"
+    [attr.data-id]="item.id"
+    [ngStyle]="item.style"
+    style="width: fit-content !important; display: block"
+  >
+    <div
+      *ngIf="item.dataMatrixFormat === 'qrcode'"
+      [ngStyle]="{
+        marginLeft: item.style['margin-left'] + 'mm',
+        marginRight: item.style['margin-right'] + 'mm',
+        marginTop: item.style['margin-top'] + 'mm',
+        marginBottom: item.style['margin-bottom'] + 'mm',
+        margin: item.style['margin'] + 'mm'
+      }"
+    >
+      <qrcode
+        [qrdata]="item.data"
+        [width]="item.style.width || 80"
+        [errorCorrectionLevel]="'M'"
+        [elementType]="'svg'"
+        [colorLight]="item.style['background-color']"
+        [colorDark]="item.style['color']"
+      ></qrcode>
+    </div>
+    <ngx-barcode
+      [bc-value]="item.data"
+      [bc-display-value]="true"
+      [bc-format]="item.dataMatrixFormat"
+      *ngIf="item.dataMatrixFormat !== 'qrcode'"
+      [bc-width]="item.style.width / 100 || 1"
+      [bc-height]="item.style.height || 100"
+      [bc-element-type]="'svg'"
+      [bc-background]="item.style['background-color']"
+      [bc-line-color]="item.style['color']"
+      [bc-margin-left]="item.style['margin-left'] || 0"
+      [bc-margin-right]="item.style['margin-right'] || 0"
+      [bc-margin-top]="item.style['margin-top'] || 0"
+      [bc-margin-bottom]="item.style['margin-bottom'] || 0"
+      [bc-margin]="item.style['margin'] || 0"
+    ></ngx-barcode>
+    <!-- <ejs-barcodegenerator
+      style="display: block"
+      #barcode
+      id="barcode"
+      width="200px"
+      height="150px"
+      mode="SVG"
+      type="Codabar"
+      value="123456789"
+    ></ejs-barcodegenerator> -->
   </div>
   <div *ngIf="item.type === 'vide'" [attr.data-id]="item.id"></div>
   <img
@@ -106,3 +158,9 @@
     [attr.data-id]="item.id"
   />
 </ng-template>
+<!-- <mat-menu #rightMenu="matMenu"> 
+  <ng-template matMenuContent let-item="item"> 
+    <button mat-menu-item>Clicked {% raw %}{{item.content}}{% endraw %}</button> 
+    <button mat-menu-item>Fixed value</button> 
+  </ng-template> 
+</mat-menu>  -->

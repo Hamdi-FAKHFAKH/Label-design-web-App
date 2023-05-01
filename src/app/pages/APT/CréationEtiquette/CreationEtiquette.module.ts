@@ -26,7 +26,16 @@ import { LabeltHttpService } from "./labelHTTP.service";
 import { DesignTabComponent } from "./tabs/design-tab/design-tab.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { DragDropService } from "./drag-drop.service";
-import { ItemComponent } from './item/item.component';
+import { FieldStyleFormComponent } from "./fieldStyleForm/fieldStyleForm.component";
+import { QRCodeModule } from "angularx-qrcode";
+import { DataMatrixStyleFormComponent } from "./data-matrix-style-form/data-matrix-style-form.component";
+
+import {
+  BarcodeGeneratorAllModule,
+  QRCodeGeneratorAllModule,
+  DataMatrixGeneratorAllModule,
+} from "@syncfusion/ej2-angular-barcode-generator";
+import { NgxBarcodeModule } from "ngx-barcode";
 @NgModule({
   imports: [
     FormsModule,
@@ -47,13 +56,19 @@ import { ItemComponent } from './item/item.component';
     CommonModule,
     FontAwesomeModule,
     DragDropModule,
+    QRCodeModule,
+    BarcodeGeneratorAllModule,
+    QRCodeGeneratorAllModule,
+    DataMatrixGeneratorAllModule,
+    NgxBarcodeModule,
   ],
   declarations: [
     TabsComponent,
     SidebarComponent,
     EtiquetteTabComponent,
     DesignTabComponent,
-    ItemComponent,
+    FieldStyleFormComponent,
+    DataMatrixStyleFormComponent,
   ],
   exports: [],
   providers: [
