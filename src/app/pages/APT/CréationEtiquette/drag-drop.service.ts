@@ -60,7 +60,7 @@ export class DragDropService {
             children: [
               {
                 id: uuidv4(),
-                type: "vide",
+                type: "container-1",
                 children: [],
                 data: "",
                 refItem: null,
@@ -68,7 +68,7 @@ export class DragDropService {
               },
               {
                 id: uuidv4(),
-                type: "vide",
+                type: "container-1",
                 children: [],
                 data: "",
                 title: "",
@@ -85,7 +85,7 @@ export class DragDropService {
             children: [
               {
                 id: uuidv4(),
-                type: "vide",
+                type: "container-1",
                 children: [],
                 data: "",
                 refItem: null,
@@ -93,7 +93,7 @@ export class DragDropService {
               },
               {
                 id: uuidv4(),
-                type: "vide",
+                type: "container-1",
                 children: [],
                 data: "",
                 refItem: null,
@@ -101,7 +101,7 @@ export class DragDropService {
               },
               {
                 id: uuidv4(),
-                type: "vide",
+                type: "container-1",
                 children: [],
                 data: "",
                 refItem: null,
@@ -112,14 +112,16 @@ export class DragDropService {
           {
             id: uuidv4(),
             type: "container",
-            children: [],
-            data: "",
-            refItem: null,
-            title: "",
-          },
-          {
-            id: uuidv4(),
-            type: "vide",
+            children: [
+              {
+                id: uuidv4(),
+                type: "container-1",
+                children: [],
+                data: "",
+                refItem: null,
+                title: "",
+              },
+            ],
             data: "",
             refItem: null,
             title: "",
@@ -168,6 +170,7 @@ export class DragDropService {
                           "text-decoration": "none",
                           underline: false,
                         },
+                        children: [],
                       });
                       this.prepareDragDrop(this.list2);
                     });
@@ -297,7 +300,7 @@ export class DragDropService {
         children: [
           {
             id: uuidv4(),
-            type: "vide",
+            type: "container-1",
             children: [],
             data: "",
             refItem: null,
@@ -305,7 +308,7 @@ export class DragDropService {
           },
           {
             id: uuidv4(),
-            type: "vide",
+            type: "container-1",
             children: [],
             data: "",
             title: "",
@@ -322,7 +325,7 @@ export class DragDropService {
         children: [
           {
             id: uuidv4(),
-            type: "vide",
+            type: "text",
             children: [],
             data: "",
             refItem: null,
@@ -330,7 +333,7 @@ export class DragDropService {
           },
           {
             id: uuidv4(),
-            type: "vide",
+            type: "container-1",
             children: [],
             data: "",
             refItem: null,
@@ -338,7 +341,7 @@ export class DragDropService {
           },
           {
             id: uuidv4(),
-            type: "vide",
+            type: "container-1",
             children: [],
             data: "",
             refItem: null,
@@ -349,17 +352,27 @@ export class DragDropService {
       {
         id: uuidv4(),
         type: "container",
-        children: [],
+        children: [
+          {
+            id: uuidv4(),
+            type: "container-1",
+            children: [],
+            data: "",
+            refItem: null,
+            title: "",
+          },
+        ],
         data: "",
         refItem: null,
         title: "",
       },
       {
         id: uuidv4(),
-        type: "vide",
+        type: "container-1",
         data: "",
         refItem: null,
         title: "",
+        children: [],
       },
     ];
     this.showDragPlaceholder = true;
@@ -432,30 +445,33 @@ export class DragDropService {
     //get object of the dragebel item
     const draggedItem = this.nodeLookup2[draggedItemId];
     if (this.dropActionTodo.action == "insideLeft" && draggedItem) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[0] = {
+      this.nodeLookup[this.dropActionTodo.targetId].children[0].children.push({
         ...draggedItem,
         id: uuidv4(),
-      };
+      });
     } else if (
       (this.dropActionTodo.action == "insideMiddle" && draggedItem) ||
       (this.dropActionTodo.action == "insideRight" &&
         this.nodeLookup[this.dropActionTodo.targetId].type === "container-2" &&
         draggedItem)
     ) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[1] = {
+      this.nodeLookup[this.dropActionTodo.targetId].children[1].children.push({
         ...draggedItem,
         id: uuidv4(),
-      };
+      });
     } else if (
       this.dropActionTodo.action == "insideRight" &&
       draggedItem &&
       this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
     ) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[2] = {
+      this.nodeLookup[this.dropActionTodo.targetId].children[2].children.push({
         ...draggedItem,
         id: uuidv4(),
-      };
+      });
     } else if (this.dropActionTodo.action == "inside" && draggedItem) {
+      this.nodeLookup[this.dropActionTodo.targetId].children[0].type ==
+        "container-1" &&
+        this.nodeLookup[this.dropActionTodo.targetId].children.splice(0, 1);
       this.nodeLookup[this.dropActionTodo.targetId].children.push({
         ...draggedItem,
         id: uuidv4(),
@@ -481,12 +497,12 @@ export class DragDropService {
                 children: [
                   {
                     id: "item11",
-                    type: "vide",
+                    type: "container-1",
                     children: [],
                   },
                   {
-                    id: "item12",
-                    type: "vide",
+                    id: "container-1",
+                    type: "container-1",
                     children: [],
                   },
                 ],
@@ -505,17 +521,36 @@ export class DragDropService {
                 children: [
                   {
                     id: "item11",
-                    type: "vide",
+                    type: "container-1",
                     children: [],
                   },
                   {
                     id: "item12",
-                    type: "vide",
+                    type: "container-1",
                     children: [],
                   },
                   {
                     id: "item13",
-                    type: "vide",
+                    type: "container-1",
+                    children: [],
+                  },
+                ],
+                id: id,
+              }
+            )
+          );
+        } else if (draggedItem.type === "container") {
+          this.list1.splice(
+            event.currentIndex,
+            0,
+            Object.assign(
+              {},
+              {
+                ...draggedItem,
+                children: [
+                  {
+                    id: "item11",
+                    type: "container-1",
                     children: [],
                   },
                 ],

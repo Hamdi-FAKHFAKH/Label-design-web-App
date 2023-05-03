@@ -84,10 +84,20 @@
                     'border-width': item.style && item.style['border-width']
                   }"
                 >
-                  <ng-container
-                    (keyup.delete)="delete(item.id)"
-                    *ngTemplateOutlet="tmplNode; context: { item: child }"
-                  ></ng-container>
+                  <div
+                    *ngIf="item.type !== 'container' && child.children.length"
+                  >
+                    <div *ngFor="let child1 of child.children">
+                      <ng-container
+                        *ngTemplateOutlet="tmplNode; context: { item: child1 }"
+                      ></ng-container>
+                    </div>
+                  </div>
+                  <div *ngIf="item.type === 'container'">
+                    <ng-container
+                      *ngTemplateOutlet="tmplNode; context: { item: child }"
+                    ></ng-container>
+                  </div>
                 </div>
               </div>
             </div>
@@ -117,6 +127,7 @@
     *ngIf="item.type === 'text'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
+    style="cursor: move"
   >
     {{ item.data }}
   </div>
@@ -172,7 +183,7 @@
       value="123456789"
     ></ejs-barcodegenerator> -->
   </div>
-  <div *ngIf="item.type === 'vide'" [attr.data-id]="item.id"></div>
+  <div *ngIf="item.type === 'container-1'" [attr.data-id]="item.id"></div>
   <img
     src="https://images.pexels.com/photos/658687/pexels-photo-658687.jpeg?auto=compress&cs=tinysrgb&h=350"
     width="88"

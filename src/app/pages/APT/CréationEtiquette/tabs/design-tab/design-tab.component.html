@@ -168,9 +168,9 @@
             >
               <nb-accordion-item-header>
                 <div class="item-header">
-                  <div>{{ item.title }}</div>
+                  <div>{{ item1.title }}</div>
                   <div
-                    (click)="remove(item.id)"
+                    (click)="remove(item1.id)"
                     style="margin-right: 25px; margin-bottom: -10px"
                   >
                     <nb-icon
@@ -216,42 +216,47 @@
       <nb-accordion-item-body *ngIf="item.type === 'container-2'">
         <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
-          <nb-accordion *ngFor="let item1 of item.children">
-            <nb-accordion-item
-              *ngIf="item1.type === 'text'"
-              [attr.data-id]="item1.refItem"
-            >
-              <nb-accordion-item-header>
-                <div class="item-header">
-                  <div>{{ item1.title }}</div>
-                  <div
-                    (click)="remove(item1.id)"
-                    style="margin-right: 25px; margin-bottom: -10px"
-                  >
-                    <nb-icon
-                      icon="close"
-                      status="danger"
-                      style="width: 25px; height: 25px; margin-bottom: -4px"
-                    ></nb-icon>
-                  </div>
-                </div>
-              </nb-accordion-item-header>
-              <nb-accordion-item-body>
-                <ngx-field-style-form
-                  [itemId]="item1.id"
-                ></ngx-field-style-form>
-              </nb-accordion-item-body>
-            </nb-accordion-item>
-            <nb-accordion-item>
-              <nb-accordion-item-header
-                *ngIf="item1.type === 'vide'"
-                [attr.data-id]="item1.refItem"
+          <div *ngFor="let item1 of item.children; let i = index">
+            <fieldset>
+              <legend>Container {{ i }}</legend>
+            </fieldset>
+            <nb-accordion *ngFor="let item2 of item1.children">
+              <nb-accordion-item
+                *ngIf="item2.type === 'text'"
+                [attr.data-id]="item2.refItem"
               >
-                Vide
-              </nb-accordion-item-header>
-              <nb-accordion-item-body> </nb-accordion-item-body>
-            </nb-accordion-item>
-          </nb-accordion>
+                <nb-accordion-item-header>
+                  <div class="item-header">
+                    <div>{{ item2.title }}</div>
+                    <div
+                      (click)="remove(item2.id)"
+                      style="margin-right: 25px; margin-bottom: -10px"
+                    >
+                      <nb-icon
+                        icon="close"
+                        status="danger"
+                        style="width: 25px; height: 25px; margin-bottom: -4px"
+                      ></nb-icon>
+                    </div>
+                  </div>
+                </nb-accordion-item-header>
+                <nb-accordion-item-body>
+                  <ngx-field-style-form
+                    [itemId]="item2.id"
+                  ></ngx-field-style-form>
+                </nb-accordion-item-body>
+              </nb-accordion-item>
+              <nb-accordion-item>
+                <nb-accordion-item-header
+                  *ngIf="item2.type === 'vide'"
+                  [attr.data-id]="item2.refItem"
+                >
+                  Vide
+                </nb-accordion-item-header>
+                <nb-accordion-item-body> </nb-accordion-item-body>
+              </nb-accordion-item>
+            </nb-accordion>
+          </div>
         </div>
       </nb-accordion-item-body>
 
@@ -273,38 +278,47 @@
       <nb-accordion-item-body *ngIf="item.type === 'container-3'">
         <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
-          <nb-accordion *ngFor="let item1 of item.children">
-            <nb-accordion-item
-              *ngIf="item1.type === 'text'"
-              [attr.data-id]="item1.refItem"
-            >
-              <nb-accordion-item-header>
-                <div class="item-header">
-                  <div>{{ item1.title }}</div>
-                  <div
-                    (click)="remove(item1.id)"
-                    style="margin-right: 25px; margin-bottom: -10px"
-                  >
-                    <nb-icon
-                      icon="close"
-                      status="danger"
-                      style="width: 25px; height: 25px; margin-bottom: -4px"
-                    ></nb-icon>
+          <div *ngFor="let item1 of item.children; let i = index">
+            <fieldset>
+              <legend>Container {{ i }}</legend>
+            </fieldset>
+            <nb-accordion *ngFor="let item2 of item1.children">
+              <nb-accordion-item
+                *ngIf="item2.type === 'text'"
+                [attr.data-id]="item2.refItem"
+              >
+                <nb-accordion-item-header>
+                  <div class="item-header">
+                    <div>{{ item2.title }}</div>
+                    <div
+                      (click)="remove(item2.id)"
+                      style="margin-right: 25px; margin-bottom: -10px"
+                    >
+                      <nb-icon
+                        icon="close"
+                        status="danger"
+                        style="width: 25px; height: 25px; margin-bottom: -4px"
+                      ></nb-icon>
+                    </div>
                   </div>
-                </div>
-              </nb-accordion-item-header>
-              <nb-accordion-item-body>
-                <ngx-field-style-form [itemId]="item1.id"></ngx-field-style-form
-              ></nb-accordion-item-body>
-            </nb-accordion-item>
-            <nb-accordion-item
-              *ngIf="item1.type === 'vide'"
-              [attr.data-id]="item1.refItem"
-            >
-              <nb-accordion-item-header>Vide </nb-accordion-item-header>
-              <nb-accordion-item-body> </nb-accordion-item-body>
-            </nb-accordion-item>
-          </nb-accordion>
+                </nb-accordion-item-header>
+                <nb-accordion-item-body>
+                  <ngx-field-style-form
+                    [itemId]="item2.id"
+                  ></ngx-field-style-form>
+                </nb-accordion-item-body>
+              </nb-accordion-item>
+              <nb-accordion-item>
+                <nb-accordion-item-header
+                  *ngIf="item2.type === 'vide'"
+                  [attr.data-id]="item2.refItem"
+                >
+                  Vide
+                </nb-accordion-item-header>
+                <nb-accordion-item-body> </nb-accordion-item-body>
+              </nb-accordion-item>
+            </nb-accordion>
+          </div>
         </div>
       </nb-accordion-item-body>
 

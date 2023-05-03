@@ -266,17 +266,17 @@ export class SidebarComponent implements OnInit {
     this.containerNotVide = this.list1.some(
       (item) =>
         item.type == "container" &&
-        item.children.some((val) => val.type !== "vide")
+        item.children.some((val) => val.children.length > 0)
     );
     this.container2NotVide = this.list1.some(
       (item) =>
         item.children.length == 2 &&
-        item.children.some((val) => val.type !== "vide")
+        item.children.some((val) => val.children.length > 0)
     );
     this.container3NotVide = this.list1.some(
       (item) =>
         item.children.length == 3 &&
-        item.children.some((val) => val.type !== "vide")
+        item.children.some((val) => val.children.length > 0)
     );
     // this.list1[event.currentIndex] = {
     //   ...this.list1[event.currentIndex],
