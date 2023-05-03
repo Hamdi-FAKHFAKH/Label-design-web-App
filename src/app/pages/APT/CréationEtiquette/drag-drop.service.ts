@@ -24,6 +24,7 @@ export class DragDropService {
   dropTargetIds = ["label"]; //contient tous les id
   nodeLookup = {}; // {id : object(node)}
   nodeLookup2 = {};
+  items = {};
   showDragPlaceholder;
   refproduit: string;
   produit: ProduitData;
@@ -130,8 +131,6 @@ export class DragDropService {
           .toPromise()
           .then((resProduit) => {
             this.produit = resProduit.produit;
-            console.log("produits");
-            console.log(resProduit);
             Object.keys(resProduit.produit).forEach((item) => {
               if (
                 item !== "createdAt" &&
@@ -285,7 +284,6 @@ export class DragDropService {
                 }
               }
             });
-            console.log(this.list2);
           });
       }
     });
@@ -403,10 +401,8 @@ export class DragDropService {
       const demiWidth = targetRect.width / 2;
       if (event.pointerPosition.x - targetRect.left < demiWidth) {
         this.dropActionTodo["action"] = "insideLeft";
-        console.log("insideLeft");
       } else {
         this.dropActionTodo["action"] = "insideRight";
-        console.log("insideRight");
       }
     } else if (
       this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
@@ -414,23 +410,18 @@ export class DragDropService {
       const oneThirdWidth = targetRect.width / 3;
       if (event.pointerPosition.x - targetRect.left < oneThirdWidth) {
         this.dropActionTodo["action"] = "insideLeft";
-        console.log("insideLeft");
       } else if (
         event.pointerPosition.x - targetRect.left > oneThirdWidth &&
         event.pointerPosition.x - targetRect.left < 2 * oneThirdWidth
       ) {
         this.dropActionTodo["action"] = "insideMiddle";
-        console.log("insideLeft");
       } else {
         this.dropActionTodo["action"] = "insideRight";
-        console.log("insideRight");
       }
     } else {
       this.dropActionTodo["action"] = "inside";
     }
     //}
-    console.log("dragEvent");
-    console.log(this.nodeLookup[this.dropActionTodo.action]);
   }
 
   drop(event) {
@@ -440,10 +431,6 @@ export class DragDropService {
     const targetListId: string = "label"; //parent of drag area
     //get object of the dragebel item
     const draggedItem = this.nodeLookup2[draggedItemId];
-    console.log("targetListId");
-    console.log(targetListId);
-    console.log("parentItemId");
-    console.log(parentItemId);
     if (this.dropActionTodo.action == "insideLeft" && draggedItem) {
       this.nodeLookup[this.dropActionTodo.targetId].children[0] = {
         ...draggedItem,
@@ -552,8 +539,18 @@ export class DragDropService {
         }
         this.nodeLookup[id] = this.list1[event.currentIndex];
       }
+      console.log("list1");
+      console.log(this.list1);
     }
-    console.log("list form service");
-    console.log(this.list1);
+
+    this.getAllItems(this.list1);
+  }
+  getAllItems(list: ComponetList[]) {
+    list.forEach((item) => {
+      this.items[item.id] = item;
+      if (item.children) {
+        this.getAllItems(item.children);
+      }
+    });
   }
 }

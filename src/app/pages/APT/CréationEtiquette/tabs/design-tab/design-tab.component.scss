@@ -79,3 +79,21 @@ img {
 // .example-box:last-child {
 //   border-bottom: none;
 // }
+nb-icon {
+  font-size: 2rem;
+}
+nb-accordion-item-header {
+  padding: 10px 15px;
+}
+.item-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: space-between;
+}
+
+nb-accordion-item-body .item-body {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}

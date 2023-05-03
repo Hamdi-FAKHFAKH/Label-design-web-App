@@ -92,7 +92,20 @@
       <nb-accordion-item-header
         *ngIf="item.type === 'text'"
         [attr.data-id]="item.id"
-        >{{ item.title }}
+      >
+        <div class="item-header">
+          <div>{{ item.title }}</div>
+          <div
+            (click)="remove(item.id)"
+            style="margin-right: 25px; margin-bottom: -10px"
+          >
+            <nb-icon
+              icon="close"
+              status="danger"
+              style="width: 25px; height: 25px; margin-bottom: -4px"
+            ></nb-icon>
+          </div>
+        </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'text'"
         ><ngx-field-style-form [itemId]="item.id"></ngx-field-style-form>
@@ -100,7 +113,20 @@
       <nb-accordion-item-header
         *ngIf="item.type === 'QRcode'"
         [attr.data-id]="item.id"
-        >{{ item.title }}
+      >
+        <div class="item-header">
+          <div>{{ item.title }}</div>
+          <div
+            (click)="remove(item.id)"
+            style="margin-right: 25px; margin-bottom: -10px"
+          >
+            <nb-icon
+              icon="close"
+              status="danger"
+              style="width: 25px; height: 25px; margin-bottom: -4px"
+            ></nb-icon>
+          </div>
+        </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'QRcode'"
         ><ngx-data-matrix-style-form
@@ -118,21 +144,46 @@
       </nb-accordion-item-body>
 
       <nb-accordion-item-header *ngIf="item.type === 'container'">
-        Container
+        <div class="item-header">
+          <div>Container</div>
+          <div
+            (click)="remove(item.id)"
+            style="margin-right: 25px; margin-bottom: -10px"
+          >
+            <nb-icon
+              icon="close"
+              status="danger"
+              style="width: 25px; height: 25px; margin-bottom: -4px"
+            ></nb-icon>
+          </div>
+        </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'container'">
+        <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
           <nb-accordion *ngFor="let item1 of item.children">
             <nb-accordion-item
               *ngIf="item1.type === 'text'"
               [attr.data-id]="item1.refItem"
             >
-              <nb-accordion-item-header
-                >{{ item1.title }}
+              <nb-accordion-item-header>
+                <div class="item-header">
+                  <div>{{ item.title }}</div>
+                  <div
+                    (click)="remove(item.id)"
+                    style="margin-right: 25px; margin-bottom: -10px"
+                  >
+                    <nb-icon
+                      icon="close"
+                      status="danger"
+                      style="width: 25px; height: 25px; margin-bottom: -4px"
+                    ></nb-icon>
+                  </div>
+                </div>
               </nb-accordion-item-header>
               <nb-accordion-item-body>
                 <ngx-field-style-form
-                  [itemid]="item1.id"
+                  [itemId]="item1.id"
                 ></ngx-field-style-form>
               </nb-accordion-item-body>
             </nb-accordion-item>
@@ -148,20 +199,47 @@
       </nb-accordion-item-body>
 
       <nb-accordion-item-header *ngIf="item.type === 'container-2'">
-        Container-2
+        <div class="item-header">
+          <div>Container 2</div>
+          <div
+            (click)="remove(item.id)"
+            style="margin-right: 25px; margin-bottom: -10px"
+          >
+            <nb-icon
+              icon="close"
+              status="danger"
+              style="width: 25px; height: 25px; margin-bottom: -4px"
+            ></nb-icon>
+          </div>
+        </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'container-2'">
+        <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
           <nb-accordion *ngFor="let item1 of item.children">
             <nb-accordion-item
               *ngIf="item1.type === 'text'"
               [attr.data-id]="item1.refItem"
             >
-              <nb-accordion-item-header
-                >{{ item1.title }}
+              <nb-accordion-item-header>
+                <div class="item-header">
+                  <div>{{ item1.title }}</div>
+                  <div
+                    (click)="remove(item1.id)"
+                    style="margin-right: 25px; margin-bottom: -10px"
+                  >
+                    <nb-icon
+                      icon="close"
+                      status="danger"
+                      style="width: 25px; height: 25px; margin-bottom: -4px"
+                    ></nb-icon>
+                  </div>
+                </div>
               </nb-accordion-item-header>
               <nb-accordion-item-body>
-                <ngx-field-style-form itemid="item1"></ngx-field-style-form>
+                <ngx-field-style-form
+                  [itemId]="item1.id"
+                ></ngx-field-style-form>
               </nb-accordion-item-body>
             </nb-accordion-item>
             <nb-accordion-item>
@@ -178,17 +256,42 @@
       </nb-accordion-item-body>
 
       <nb-accordion-item-header *ngIf="item.type === 'container-3'">
-        Container-3
+        <div class="item-header">
+          <div>Container 3</div>
+          <div
+            (click)="remove(item.id)"
+            style="margin-right: 25px; margin-bottom: -10px"
+          >
+            <nb-icon
+              icon="close"
+              status="danger"
+              style="width: 25px; height: 25px; margin-bottom: -4px"
+            ></nb-icon>
+          </div>
+        </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'container-3'">
+        <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
           <nb-accordion *ngFor="let item1 of item.children">
             <nb-accordion-item
               *ngIf="item1.type === 'text'"
               [attr.data-id]="item1.refItem"
             >
-              <nb-accordion-item-header
-                >{{ item1.title }}
+              <nb-accordion-item-header>
+                <div class="item-header">
+                  <div>{{ item1.title }}</div>
+                  <div
+                    (click)="remove(item1.id)"
+                    style="margin-right: 25px; margin-bottom: -10px"
+                  >
+                    <nb-icon
+                      icon="close"
+                      status="danger"
+                      style="width: 25px; height: 25px; margin-bottom: -4px"
+                    ></nb-icon>
+                  </div>
+                </div>
               </nb-accordion-item-header>
               <nb-accordion-item-body>
                 <ngx-field-style-form [itemId]="item1.id"></ngx-field-style-form

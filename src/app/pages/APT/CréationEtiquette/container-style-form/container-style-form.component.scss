@@ -36,26 +36,6 @@ li {
   margin-left: -10px;
   margin-right: -10px;
 }
-.tag .col {
+.col {
   padding: 0px;
-}
-.tag span {
-  font-size: small;
-  font-weight: 600;
-  padding: 0px 6px;
-  border-radius: inherit;
-}
-.tag img,
-.tag fa-icon {
-  cursor: pointer;
-}
-.tag img:hover {
-  border-bottom: 3px solid #007bff;
-  height: 20px;
-  width: 20px;
-}
-.tag img:hover:last-child {
-  border-bottom: 3px solid #007bff;
-  height: 15px;
-  width: 18px;
 }

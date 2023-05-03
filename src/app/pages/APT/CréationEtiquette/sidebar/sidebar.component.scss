@@ -38,8 +38,31 @@ nb-layout-column {
   height: 70%;
 }
 .container {
-  padding-left: 0px;
+  padding: 0px;
+  margin: 0px;
+  height: fit-content;
+}
+.container > .row {
+  margin: 0px;
+  padding: 0px;
+}
+.row:hover .notVideContainer {
+  border: 1px dashed gray;
+}
+.qrcode {
+  margin-bottom: -1px;
 }
 svg {
   max-width: 150px !important;
+}
+.videContainer {
+  min-height: 60px;
+  border: 1px dashed gray;
+}
+.col {
+  padding: 0px;
+}
+
+#container1 > div > div:nth-child(1) {
+  border-right: 0px;
 }

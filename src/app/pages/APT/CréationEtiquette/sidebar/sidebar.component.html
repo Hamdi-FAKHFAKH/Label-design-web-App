@@ -52,14 +52,37 @@
               "
               id="container1"
               [attr.data-id]="item.id"
-              style="background-color: aqua; height: 50px"
               (mouseenter)="dragDropService.showDragPlaceholder = false"
               (mouseleave)="dragDropService.showDragPlaceholder = true"
             >
-              <div *ngIf="item.children.length" class="row">
+              <div
+                *ngIf="item.children.length"
+                class="row"
+                [ngStyle]="rowStyle(item)"
+                style="border-style: none !important"
+              >
                 <div
                   *ngFor="let child of item.children; let i = index"
                   class="col"
+                  [ngClass]="{
+                    videContainer:
+                      item.type === 'container'
+                        ? !containerNotVide
+                        : item.type === 'container-2'
+                        ? !container2NotVide
+                        : !container3NotVide,
+                    notVideContainer:
+                      item.type === 'container'
+                        ? containerNotVide
+                        : item.type === 'container-2'
+                        ? container2NotVide
+                        : container3NotVide
+                  }"
+                  [ngStyle]="{
+                    'border-style': item.style && item.style['border-style'],
+                    'border-color': item.style && item.style['border-color'],
+                    'border-width': item.style && item.style['border-width']
+                  }"
                 >
                   <ng-container
                     (keyup.delete)="delete(item.id)"
@@ -88,7 +111,7 @@
     </div>
   </nb-layout-column>
 </nb-layout>
-
+<!-- **************************************************************** ng Template ******************************************* -->
 <ng-template #tmplNode let-item="item">
   <div
     *ngIf="item.type === 'text'"
@@ -117,7 +140,7 @@
         [qrdata]="item.data"
         [width]="item.style.width || 80"
         [errorCorrectionLevel]="'M'"
-        [elementType]="'svg'"
+        [elementType]="'canvas'"
         [colorLight]="item.style['background-color']"
         [colorDark]="item.style['color']"
       ></qrcode>
@@ -158,9 +181,9 @@
     [attr.data-id]="item.id"
   />
 </ng-template>
-<!-- <mat-menu #rightMenu="matMenu"> 
-  <ng-template matMenuContent let-item="item"> 
-    <button mat-menu-item>Clicked {% raw %}{{item.content}}{% endraw %}</button> 
-    <button mat-menu-item>Fixed value</button> 
-  </ng-template> 
-</mat-menu>  -->
+<!-- <mat-menu #rightMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <button mat-menu-item>Clicked {{ item.content }}</button>
+    <button mat-menu-item>Fixed menu</button>
+  </ng-template>
+</mat-menu> -->

@@ -2,8 +2,8 @@ export interface ComponetList {
   id: string;
   type: string;
   refItem: string;
-  title: string;
-  format?: string;
+  title: string; //titre a afficher
+  format?: string; //format de icon(shape)
   children?: ComponetList[];
   style?: ComponentStyle;
   data: string;
@@ -35,11 +35,11 @@ export interface ComponentStyle {
   // "text-decoration"?: string;
   underline?: boolean;
   italic?: boolean;
-  Capitale?: boolean;
   "text-align"?: string;
   "font-weight"?: string;
   //  transform: rotate(35deg); => orinentation
   transform?: string;
+  "border-width"?: string;
 }
 export enum ComponentTitle {
   ref = "Réference Produit",

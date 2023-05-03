@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { LabelService } from "../../label.service";
 import { GestionProduitHttpService } from "../../../GestionProduits/GestionProduitHttp.service";
 import { LabeltHttpService } from "../../labelHTTP.service";
+import { DragDropService } from "../../drag-drop.service";
 @Component({
   selector: "ngx-etiquette-tab",
   templateUrl: "./EtiquetteTab.component.html",
@@ -23,7 +24,8 @@ export class EtiquetteTabComponent implements OnInit {
   constructor(
     private lableService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
-    private labelHttpService: LabeltHttpService
+    private labelHttpService: LabeltHttpService,
+    private dragDropService: DragDropService
   ) {}
 
   async ngOnInit() {
@@ -75,16 +77,16 @@ export class EtiquetteTabComponent implements OnInit {
         }, 1600);
       }
     } else if (elemName == "refProd") {
+      if (this.dragDropService.list1.length >= 1) {
+        alert(
+          "êtes-vous sûr de changer la référence ? tous les champs sur l'étiquette seront perdus"
+        );
+        this.dragDropService.list1.length = 0;
+      }
       this.lableService.labelInfo.next({
         ...this.labelInfo,
         refProd: elemValue,
         id: `TE-${elemValue}`,
-        //       -${
-        // new Date().getDate() +
-        // "/" +
-        // (new Date().getMonth() + 1) +
-        // "/" +
-        // new Date().getFullYear()
       });
     } else {
       this.lableService.labelInfo.next({

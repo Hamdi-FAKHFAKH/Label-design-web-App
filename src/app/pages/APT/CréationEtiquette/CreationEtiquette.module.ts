@@ -29,13 +29,13 @@ import { DragDropService } from "./drag-drop.service";
 import { FieldStyleFormComponent } from "./fieldStyleForm/fieldStyleForm.component";
 import { QRCodeModule } from "angularx-qrcode";
 import { DataMatrixStyleFormComponent } from "./data-matrix-style-form/data-matrix-style-form.component";
-
 import {
   BarcodeGeneratorAllModule,
   QRCodeGeneratorAllModule,
   DataMatrixGeneratorAllModule,
 } from "@syncfusion/ej2-angular-barcode-generator";
 import { NgxBarcodeModule } from "ngx-barcode";
+import { ContainerStyleFormComponent } from './container-style-form/container-style-form.component';
 @NgModule({
   imports: [
     FormsModule,
@@ -69,6 +69,7 @@ import { NgxBarcodeModule } from "ngx-barcode";
     DesignTabComponent,
     FieldStyleFormComponent,
     DataMatrixStyleFormComponent,
+    ContainerStyleFormComponent,
   ],
   exports: [],
   providers: [

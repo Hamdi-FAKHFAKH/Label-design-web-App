@@ -18,6 +18,7 @@ import {
 } from "@angular/cdk/drag-drop";
 import bwipjs from "bwip-js";
 import { DragDropService } from "../drag-drop.service";
+import { ComponetList } from "../ComposentData";
 
 @Component({
   selector: "ngx-sidebar",
@@ -26,6 +27,9 @@ import { DragDropService } from "../drag-drop.service";
 })
 export class SidebarComponent implements OnInit {
   @ViewChild(CdkDropList) dropList?: CdkDropList;
+  containerNotVide;
+  container2NotVide;
+  container3NotVide;
   labelStyle;
   labelInfo;
   list1;
@@ -38,6 +42,9 @@ export class SidebarComponent implements OnInit {
     public dragDropService: DragDropService
   ) {}
   ngOnInit(): void {
+    this.containerNotVide = false;
+    this.container2NotVide = false;
+    this.container3NotVide = false;
     // let canvas = bwipjs.toCanvas("mycanvas", {
     //   bcid: "code128", // Barcode type
     //   text: "0123456789", // Text to encode
@@ -197,6 +204,54 @@ export class SidebarComponent implements OnInit {
           this.labelInfo.refProd
         )
         .toPromise();
+      //create composent
+      this.dragDropService.list1.map((obj, index) => {
+        const res3 = this.lablHttpService
+          .CreateComopsent({
+            "background-color": obj.style["background-color"],
+            "border-color": obj.style["border-color"],
+            "border-style": obj.style["border-style"],
+            "border-width": obj.style["border-width"],
+            bold: obj.style.bold,
+            "font-family": obj.style["font-family"],
+            "font-size": obj.style["font-size"],
+            "font-style": obj.style["font-style"],
+            margin: obj.style["margin"],
+            "margin-left": obj.style["margin-left"],
+            "margin-right": obj.style["margin-right"],
+            "margin-bottom": obj.style["margin-bottom"],
+            "margin-top": obj.style["margin-top"],
+            padding: obj.style["padding"],
+            "padding-top": obj.style["padding-top"],
+            "padding-bottom": obj.style["padding-bottom"],
+            "padding-right": obj.style["padding-right"],
+            "padding-left": obj.style["padding-left"],
+            "text-align": obj.style["text-align"],
+            color: obj.style["color"],
+            italic: obj.style["italic"],
+            underline: obj.style["underline"],
+            width: obj.style["width"],
+            height: obj.style["height"],
+            "text-decoration": obj.style["text-decoration"],
+            transform: obj.style["transform"],
+            type: obj.type,
+            refItem: obj.refItem,
+            children: obj.children.join(";"),
+            data: obj.data,
+            title: obj.title,
+            format: obj.format,
+            id: `${index}-${obj.id}`,
+            refEtiquette: id,
+            dataMatrixCode: obj.dataMatrixCode,
+            dataMatrixFormat: obj.dataMatrixCode,
+          })
+          .toPromise()
+          .then(() => {
+            console.log(
+              `composent num ${index} with id : ${obj.id} insered successefly `
+            );
+          });
+      });
     }
 
     //this.labelService.convertToPdf();
@@ -208,6 +263,21 @@ export class SidebarComponent implements OnInit {
   // }
   onDrop(event) {
     this.dragDropService.drop(event);
+    this.containerNotVide = this.list1.some(
+      (item) =>
+        item.type == "container" &&
+        item.children.some((val) => val.type !== "vide")
+    );
+    this.container2NotVide = this.list1.some(
+      (item) =>
+        item.children.length == 2 &&
+        item.children.some((val) => val.type !== "vide")
+    );
+    this.container3NotVide = this.list1.some(
+      (item) =>
+        item.children.length == 3 &&
+        item.children.some((val) => val.type !== "vide")
+    );
     // this.list1[event.currentIndex] = {
     //   ...this.list1[event.currentIndex],
     //   id: "dfdddfdfd",
@@ -220,11 +290,11 @@ export class SidebarComponent implements OnInit {
   dragMoved(event) {
     this.dragDropService.dragMoved(event);
   }
-  delete(id: string) {
-    console.log(id + "deleted");
-    const index = this.dragDropService.list1.findIndex((obj) => {
-      return obj.id == id;
-    });
-    index != -1 && this.dragDropService.list1.splice(index, 1);
+  delete(id: string) {}
+  rowStyle(item: ComponetList) {
+    return {
+      ...item.style,
+      "border-style": "none",
+    };
   }
 }

@@ -1,4 +1,4 @@
-<div class="col">
+<div class="col" style="padding: 0px">
   <fieldset>
     <legend>Taille</legend>
   </fieldset>
@@ -186,16 +186,121 @@
       </div>
     </div>
   </div>
+  <fieldset>
+    <legend>Data</legend>
+  </fieldset>
+  <div class="row tag">
+    <div class="col">
+      <!-- <div class="row" style="margin: 0px">
+        <div class="col">
+          <label class="label" for="tag">Tag</label>
+        </div>
+        <div class="col">
+          <label class="label" for="valeur">Valeur</label>
+        </div>
+      </div> -->
+      <div class="row" style="margin: 0px -5px">
+        <div class="col-5" style="padding-left: 5px">
+          <!-- <input
+            type="text"
+            class="form-control"
+            placeholder="TAG"
+            list="tagList"
+            id="tag"
+          />
+          <datalist id="tagList">
+            <option *ngFor="let item of tagList">{{ item }}</option>
+          </datalist> -->
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">TAG</span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="TAG"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
+              list="tagList"
+              #tag
+              (click)="tag.value = ''"
+            />
+            <datalist id="tagList">
+              <option *ngFor="let item of tagList">{{ item }}</option>
+            </datalist>
+          </div>
+        </div>
+        <div class="col">
+          <!-- <input
+            type="text"
+            id="valeur"
+            class="form-control"
+            placeholder="valeur"
+            list="valueList"
+          />
+          <datalist id="valueList">
+            <option *ngFor="let item of valueList">{{ item }}</option>
+          </datalist> -->
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">VAL</span>
+            <input
+              #val
+              type="text"
+              class="form-control"
+              placeholder="value"
+              aria-label="value"
+              aria-describedby="basic-addon1"
+              list="valueList"
+              (click)="val.value = ''"
+            />
+            <datalist id="valueList">
+              <option *ngFor="let item of valueList">{{ item }}</option>
+            </datalist>
+          </div>
+        </div>
+        <div
+          class="col-2"
+          style="
+            /*display: flex;*/ /*padding-top: 11.5px*/
+            padding-left: 5px;
+            padding-right: 0px;
+          "
+        >
+          <!-- <img
+            src="../../../../../assets/images/turn-left.png"
+            alt=""
+            height="20px"
+            width="20px"
+            style="margin-right: 10px; margin-left: -7px"
+          />
+          &thinsp;
+          <img
+            src="../../../../../assets/images/plus.png"
+            alt=""
+            height="15px"
+            width="15px"
+            style="margin-right: 10px; margin-top: 1.5px; padding-bottom: 2px"
+          /> -->
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="addItem(tag.value, val.value)"
+          >
+            <fa-icon icon="plus"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col">
       <div class="form-group">
-        <label for="data">Data</label>
+        <label for="data" class="label">Data</label>
         <textarea
           class="form-control"
           name="data"
           id=""
           rows="5"
           (input)="change('data', $event.target.value)"
+          [(ngModel)]="xmlForm"
         ></textarea>
       </div>
     </div>

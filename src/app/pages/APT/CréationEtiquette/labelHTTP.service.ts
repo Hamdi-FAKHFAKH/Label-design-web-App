@@ -2,9 +2,10 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { GetProduitResponseData } from "../GestionProduits/GestionProduit.data";
 import {
+  ComposentHttpData,
   EtiquetteData,
   GetEtiquetteResponseData,
-} from "./CreationEtiquette.data";
+} from "./EtiquetteHttp.data";
 @Injectable()
 export class LabeltHttpService {
   constructor(private http: HttpClient) {}
@@ -26,5 +27,8 @@ export class LabeltHttpService {
   }
   UpdateEtiquette(id: string, obj: EtiquetteData) {
     return this.http.put(`http://localhost:3080/api/v1/etiquette/${id}`, obj);
+  }
+  CreateComopsent(obj: ComposentHttpData) {
+    return this.http.post(`http://localhost:3080/api/v1/Composent`, obj);
   }
 }

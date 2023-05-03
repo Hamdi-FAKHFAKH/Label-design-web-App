@@ -44,4 +44,13 @@ export class DesignTabComponent implements OnInit {
   onDrop(event: CdkDragDrop<string[]>) {
     this.dragDropService.drop(event);
   }
+  remove(id: string) {
+    console.log(id + "deleted");
+    console.log(this.dragDropService.list1);
+
+    const index = this.dragDropService.list1.findIndex((obj) => {
+      return obj.id == id;
+    });
+    index != -1 && this.dragDropService.list1.splice(index, 1);
+  }
 }
