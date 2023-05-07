@@ -10,18 +10,16 @@ export class ContainerStyleFormComponent implements OnInit {
   paddingClicked;
   marginCliked;
   @Input() itemId;
-  items = {};
 
   constructor(private dragDropService: DragDropService) {}
 
   ngOnInit(): void {
     this.paddingClicked = "padding";
     this.marginCliked = "margin";
-    this.items = this.dragDropService.items;
   }
   changeStyle(itemName: string, itemValue: string) {
-    this.items[this.itemId].style = {
-      ...this.items[this.itemId].style,
+    this.dragDropService.items[this.itemId].style = {
+      ...this.dragDropService.items[this.itemId].style,
       [itemName]: itemValue,
     };
     console.log("list1");

@@ -26,7 +26,7 @@
           class="figure"
           id="label"
           cdkDropList
-          [cdkDropListData]="list1"
+          [cdkDropListData]="dragDropService.list1"
           (cdkDropListDropped)="onDrop($event)"
           [ngStyle]="{
             border:
@@ -35,7 +35,7 @@
           style="height: 100%; width: 100%"
         >
           <div
-            *ngFor="let item of list1"
+            *ngFor="let item of dragDropService.list1"
             cdkDrag
             (cdkDragMoved)="dragMoved($event)"
           >
@@ -68,15 +68,29 @@
                     videContainer:
                       item.type === 'container'
                         ? !containerNotVide
-                        : item.type === 'container-2'
-                        ? !container2NotVide
-                        : !container3NotVide,
+                        : item.type === 'container-2' &&
+                          (item.children[0].children.length > 0 ||
+                            item.children[1].children.length > 0)
+                        ? false
+                        : item.type === 'container-3' &&
+                          (item.children[0].children.length > 0 ||
+                            item.children[1].children.length > 0 ||
+                            item.children[2].children.length > 0)
+                        ? false
+                        : true,
                     notVideContainer:
                       item.type === 'container'
-                        ? containerNotVide
-                        : item.type === 'container-2'
-                        ? container2NotVide
-                        : container3NotVide
+                        ? !containerNotVide
+                        : item.type === 'container-2' &&
+                          (item.children[0].children.length > 0 ||
+                            item.children[1].children.length > 0)
+                        ? true
+                        : item.type === 'container-3' &&
+                          (item.children[0].children.length > 0 ||
+                            item.children[1].children.length > 0 ||
+                            item.children[2].children.length > 0)
+                        ? true
+                        : false
                   }"
                   [ngStyle]="{
                     'border-style': item.style && item.style['border-style'],
@@ -151,7 +165,7 @@
         [qrdata]="item.data"
         [width]="item.style.width || 80"
         [errorCorrectionLevel]="'M'"
-        [elementType]="'canvas'"
+        [elementType]="'svg'"
         [colorLight]="item.style['background-color']"
         [colorDark]="item.style['color']"
       ></qrcode>

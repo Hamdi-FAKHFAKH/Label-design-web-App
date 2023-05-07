@@ -1,22 +1,9 @@
-import {
-  AfterContentChecked,
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { LabelService } from "../label.service";
 import { LabeltHttpService } from "../labelHTTP.service";
 import { v4 as uuidv4 } from "uuid";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
-import {
-  CdkDragDrop,
-  CdkDropList,
-  copyArrayItem,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
-import bwipjs from "bwip-js";
+import { CdkDropList } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
 import { ComponetList } from "../ComposentData";
 
@@ -35,6 +22,7 @@ export class SidebarComponent implements OnInit {
   list1;
   list3 = [];
   list4 = [];
+  idEtiquette;
   constructor(
     private labelService: LabelService,
     private lablHttpService: LabeltHttpService,
@@ -45,14 +33,6 @@ export class SidebarComponent implements OnInit {
     this.containerNotVide = false;
     this.container2NotVide = false;
     this.container3NotVide = false;
-    // let canvas = bwipjs.toCanvas("mycanvas", {
-    //   bcid: "code128", // Barcode type
-    //   text: "0123456789", // Text to encode
-    //   scale: 3, // 3x scaling factor
-    //   height: 10, // Bar height, in millimeters
-    //   includetext: true, // Show human-readable text
-    //   textxalign: "center", // Always good to set this
-    // });
     this.labelService.labelInfo.subscribe((info) => {
       // console.log(info);
       if (info) {
@@ -71,7 +51,6 @@ export class SidebarComponent implements OnInit {
       }
       this.labelInfo = info;
     });
-    this.list1 = this.dragDropService.list1;
   }
 
   zoomIn() {
@@ -155,11 +134,11 @@ export class SidebarComponent implements OnInit {
       .getAllProduitWithEtiquette()
       .toPromise();
     const refProdWithEtiquette = [];
-    let idEtiquette;
+
     produits.map((val) => {
       refProdWithEtiquette.push(val.ref);
       if (val.ref === this.labelInfo.refProd) {
-        idEtiquette = val.idEtiquette;
+        this.idEtiquette = val.idEtiquette;
       }
     });
     if (!this.labelInfo.refProd) {
@@ -171,10 +150,10 @@ export class SidebarComponent implements OnInit {
           "?"
       );
       const res = await this.lablHttpService
-        .UpdateEtiquette(idEtiquette, {
+        .UpdateEtiquette(this.idEtiquette, {
           couleur: this.labelInfo.color,
           format: this.labelInfo.format,
-          id: idEtiquette,
+          id: this.idEtiquette,
           createur: null,
           id1: this.labelInfo.id,
           largeur: this.labelInfo.largeur,
@@ -204,88 +183,38 @@ export class SidebarComponent implements OnInit {
           this.labelInfo.refProd
         )
         .toPromise();
-      //create composent
-      this.dragDropService.list1.map((obj, index) => {
-        const res3 = this.lablHttpService
-          .CreateComopsent({
-            "background-color": obj.style["background-color"],
-            "border-color": obj.style["border-color"],
-            "border-style": obj.style["border-style"],
-            "border-width": obj.style["border-width"],
-            bold: obj.style.bold,
-            "font-family": obj.style["font-family"],
-            "font-size": obj.style["font-size"],
-            "font-style": obj.style["font-style"],
-            margin: obj.style["margin"],
-            "margin-left": obj.style["margin-left"],
-            "margin-right": obj.style["margin-right"],
-            "margin-bottom": obj.style["margin-bottom"],
-            "margin-top": obj.style["margin-top"],
-            padding: obj.style["padding"],
-            "padding-top": obj.style["padding-top"],
-            "padding-bottom": obj.style["padding-bottom"],
-            "padding-right": obj.style["padding-right"],
-            "padding-left": obj.style["padding-left"],
-            "text-align": obj.style["text-align"],
-            color: obj.style["color"],
-            italic: obj.style["italic"],
-            underline: obj.style["underline"],
-            width: obj.style["width"],
-            height: obj.style["height"],
-            "text-decoration": obj.style["text-decoration"],
-            transform: obj.style["transform"],
-            type: obj.type,
-            refItem: obj.refItem,
-            children: obj.children.join(";"),
-            data: obj.data,
-            title: obj.title,
-            format: obj.format,
-            id: `${index}-${obj.id}`,
-            refEtiquette: id,
-            dataMatrixCode: obj.dataMatrixCode,
-            dataMatrixFormat: obj.dataMatrixCode,
-          })
-          .toPromise()
-          .then(() => {
-            console.log(
-              `composent num ${index} with id : ${obj.id} insered successefly `
-            );
-          });
-      });
+      this.idEtiquette = id;
     }
-
+    if (this.labelInfo.refProd) {
+      //remove all components of this label
+      await this.lablHttpService
+        .deleteComponentsByEtiquette(this.idEtiquette)
+        .toPromise()
+        .catch((err) => {
+          console.log(err.error.Status);
+        });
+      await this.createComponent(this.dragDropService.list1, this.idEtiquette);
+    }
     //this.labelService.convertToPdf();
   }
-  // drop(ev) {
-  //   ev.container.element.nativeElement.appendChild(
-  //     ev.item.element.nativeElement
-  //   );
-  // }
+
   onDrop(event) {
     this.dragDropService.drop(event);
-    this.containerNotVide = this.list1.some(
+    this.containerNotVide = this.dragDropService.list1.some(
       (item) =>
         item.type == "container" &&
         item.children.some((val) => val.children.length > 0)
     );
-    this.container2NotVide = this.list1.some(
+    this.container2NotVide = this.dragDropService.list1.some(
       (item) =>
         item.children.length == 2 &&
         item.children.some((val) => val.children.length > 0)
     );
-    this.container3NotVide = this.list1.some(
+    this.container3NotVide = this.dragDropService.list1.some(
       (item) =>
         item.children.length == 3 &&
         item.children.some((val) => val.children.length > 0)
     );
-    // this.list1[event.currentIndex] = {
-    //   ...this.list1[event.currentIndex],
-    //   id: "dfdddfdfd",
-    // };
-
-    // event.container.element.nativeElement.appendChild(
-    //   event.item.element.nativeElement
-    // );
   }
   dragMoved(event) {
     this.dragDropService.dragMoved(event);
@@ -297,4 +226,114 @@ export class SidebarComponent implements OnInit {
       "border-style": "none",
     };
   }
+  async createComponent(list: ComponetList[], idEtiquette) {
+    await Promise.all(
+      list.map(async (obj, index) => {
+        if (obj.children && obj.children.length > 0) {
+          await this.lablHttpService
+            .CreateComponent({
+              ordre: index,
+              "background-color": obj.style && obj.style["background-color"],
+              "border-color": obj.style && obj.style["border-color"],
+              "border-style": obj.style && obj.style["border-style"],
+              "border-width": obj.style && obj.style["border-width"],
+              bold: obj.style && obj.style.bold,
+              "font-family": obj.style && obj.style["font-family"],
+              "font-size": obj.style && obj.style["font-size"],
+              "font-style": obj.style && obj.style["font-style"],
+              margin: obj.style && obj.style["margin"],
+              "margin-left": obj.style && obj.style["margin-left"],
+              "margin-right": obj.style && obj.style["margin-right"],
+              "margin-bottom": obj.style && obj.style["margin-bottom"],
+              "margin-top": obj.style && obj.style["margin-top"],
+              padding: obj.style && obj.style["padding"],
+              "padding-top": obj.style && obj.style["padding-top"],
+              "padding-bottom": obj.style && obj.style["padding-bottom"],
+              "padding-right": obj.style && obj.style["padding-right"],
+              "padding-left": obj.style && obj.style["padding-left"],
+              "text-align": obj.style && obj.style["text-align"],
+              color: obj.style && obj.style["color"],
+              italic: obj.style && obj.style["italic"],
+              underline: obj.style && obj.style["underline"],
+              width: obj.style && obj.style["width"],
+              height: obj.style && obj.style["height"],
+              "text-decoration": obj.style && obj.style["text-decoration"],
+              transform: obj.style && obj.style["transform"],
+              type: obj.type,
+              refItem: obj.refItem,
+              children:
+                obj.children.length > 1
+                  ? obj.children.map((val) => val.id).join(";")
+                  : obj.children[0].id,
+              title: obj.title,
+              format: obj.format,
+              id: obj.id,
+              refEtiquette: idEtiquette,
+              dataMatrixCode: obj.dataMatrixCode,
+              dataMatrixFormat: obj.dataMatrixFormat,
+            })
+            .toPromise();
+          console.log(
+            `composent num ${index} with id : ${obj.type} insered successefly `
+          );
+          await this.createComponent(obj.children, idEtiquette);
+        } else {
+          await this.lablHttpService
+            .CreateComponent({
+              ordre: index,
+              "background-color": obj.style && obj.style["background-color"],
+              "border-color": obj.style && obj.style["border-color"],
+              "border-style": obj.style && obj.style["border-style"],
+              "border-width": obj.style && obj.style["border-width"],
+              bold: obj.style && obj.style.bold,
+              "font-family": obj.style && obj.style["font-family"],
+              "font-size": obj.style && obj.style["font-size"],
+              "font-style": obj.style && obj.style["font-style"],
+              margin: obj.style && obj.style["margin"],
+              "margin-left": obj.style && obj.style["margin-left"],
+              "margin-right": obj.style && obj.style["margin-right"],
+              "margin-bottom": obj.style && obj.style["margin-bottom"],
+              "margin-top": obj.style && obj.style["margin-top"],
+              padding: obj.style && obj.style["padding"],
+              "padding-top": obj.style && obj.style["padding-top"],
+              "padding-bottom": obj.style && obj.style["padding-bottom"],
+              "padding-right": obj.style && obj.style["padding-right"],
+              "padding-left": obj.style && obj.style["padding-left"],
+              "text-align": obj.style && obj.style["text-align"],
+              color: obj.style && obj.style["color"],
+              italic: obj.style && obj.style["italic"],
+              underline: obj.style && obj.style["underline"],
+              width: obj.style && obj.style["width"],
+              height: obj.style && obj.style["height"],
+              "text-decoration": obj.style && obj.style["text-decoration"],
+              transform: obj.style && obj.style["transform"],
+              type: obj.style && obj.type,
+              refItem: obj.refItem,
+              children: "",
+              title: obj.title,
+              format: obj.format,
+              id: obj.id,
+              refEtiquette: idEtiquette,
+              dataMatrixCode: obj.dataMatrixCode,
+              dataMatrixFormat: obj.dataMatrixFormat,
+            })
+            .toPromise();
+          obj.type == "QRcode" &&
+            (await this.gestionProduitHttpService
+              .updateProduit(
+                { ref: this.labelInfo.refProd, datamatrixData: obj.data },
+                this.labelInfo.refProd
+              )
+              .toPromise());
+          console.log(
+            `composent num ${index} with id : ${obj.type} insered successefly `
+          );
+        }
+      })
+    );
+  }
 }
+
+//TODO: ajout la régle dans l'etiquette
+//TODO: affiche la grille
+//TODO: ajoute les formes

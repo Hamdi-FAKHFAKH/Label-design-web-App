@@ -14,7 +14,7 @@
   <legend>Config</legend>
 </fieldset>
 <select class="form-control" (change)="change('refProd', $event.target.value)">
-  <option selected>-- Référence Produit --</option>
+  <option selected [value]="null">-- Référence Produit --</option>
   <option *ngFor="let item of listProd" value="{{ item.ref }}">
     {{ item.ref }}
   </option>
@@ -27,7 +27,9 @@
     aria-label="Example select with button addon"
     (change)="DownloadLabelData($event.target.value)"
   >
-    <option selected>-- Référence Produit Similaire --</option>
+    <option selected value="{{ null }}">
+      -- Référence Produit Similaire --
+    </option>
     <option *ngFor="let item of refProdWithEtiquette" value="{{ item.ref }}">
       {{ item.ref }}
     </option>

@@ -46,19 +46,20 @@ export class DataMatrixStyleFormComponent implements OnInit {
     this.marginCliked = "margin";
     this.getAllItems(this.dragDropService.list1);
     this.labelService.labelInfo.subscribe((val) => {
-      this.gestionProduitHttpService
-        .getOneProduit(val.refProd)
-        .toPromise()
-        .then((resProduit) => {
-          this.produit = resProduit.produit;
-          Object.keys(resProduit.produit).forEach((item) => {
-            if (
-              resProduit.produit[item] &&
-              typeof resProduit.produit[item] != "boolean"
-            )
-              this.valueList.push(resProduit.produit[item]);
+      val.refProd !== null &&
+        this.gestionProduitHttpService
+          .getOneProduit(val.refProd)
+          .toPromise()
+          .then((resProduit) => {
+            this.produit = resProduit.produit;
+            Object.keys(resProduit.produit).forEach((item) => {
+              if (
+                resProduit.produit[item] &&
+                typeof resProduit.produit[item] != "boolean"
+              )
+                this.valueList.push(resProduit.produit[item]);
+            });
           });
-        });
     });
   }
 
@@ -67,7 +68,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
       this.items[this.itemId].dataMatrixFormat = champval;
     } else if (champName == "code") {
       this.items[this.itemId].dataMatrixCode = champval;
-    } else if (champName == "longueur") {
+    } else if (champName == "hauteur") {
       this.items[this.itemId].style.height = champval;
     } else if (champName == "largeur") {
       this.items[this.itemId].style.width = champval;

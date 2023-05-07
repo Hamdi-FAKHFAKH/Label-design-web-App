@@ -19,11 +19,11 @@ export interface ComposentHttpData {
   id: string;
   refEtiquette: string;
   type: string;
+  ordre: number;
   refItem: string;
   title: string; //titre a afficher
   format: string; //format de icon(shape)
   children: string;
-  data: string;
   dataMatrixFormat: string;
   dataMatrixCode: string;
   height: string;
@@ -56,4 +56,12 @@ export interface ComposentHttpData {
   "border-width": string;
   createur?: string;
   modificateur?: string;
+}
+export interface GetComposentResultData {
+  Status: string;
+  composents: ComposentHttpData[];
+}
+export interface GetOneComposentResultData {
+  Status: string;
+  composent: ComposentHttpData;
 }

@@ -49,7 +49,6 @@ export class FieldStyleFormComponent implements OnInit {
         this.getAllItems(item.children);
       }
     });
-    console.log("items");
   }
   changeStyle(itemName: string, itemValue: string | number | boolean) {
     if (itemName == "bold") {
@@ -91,14 +90,6 @@ export class FieldStyleFormComponent implements OnInit {
     };
     console.log("comp Style");
 
-    console.log(this.componentstyle);
     this.items[this.itemId].style = this.componentstyle;
-    console.log("list1");
-    console.log(this.dragDropService.list1);
   }
 }
-//TODO: Add  DataMatrix
-//TODO: Add  Container Style
-//TODO: Add  forms
-//TODO: Laison avec BD
-//TODO: Border

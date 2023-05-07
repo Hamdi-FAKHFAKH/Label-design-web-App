@@ -1,10 +1,4 @@
-import {
-  CdkDragMove,
-  CdkDragRelease,
-  CdkDropList,
-  copyArrayItem,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
+import { moveItemInArray } from "@angular/cdk/drag-drop";
 import { DOCUMENT } from "@angular/common";
 import { Inject, Injectable } from "@angular/core";
 import { v4 as uuidv4 } from "uuid";
@@ -12,28 +6,28 @@ import { GestionProduitHttpService } from "../GestionProduits/GestionProduitHttp
 import { LabelService } from "./label.service";
 import { ComponentTitle, ComponetList } from "./ComposentData";
 import { ProduitData } from "../GestionProduits/GestionProduit.data";
-
 export interface DropInfo {
   targetId: string;
   action?: string;
 }
-
 @Injectable()
 export class DragDropService {
   // ids for connected drop lists
   dropTargetIds = ["label"]; //contient tous les id
-  nodeLookup = {}; // {id : object(node)}
-  nodeLookup2 = {};
-  items = {};
+  nodeLookup2 = {}; // object containe all elements in list2 {key : element id , value : element}
+  items = {}; // object containe all elements in list1 {key : element id , value : element}
   showDragPlaceholder;
   refproduit: string;
   produit: ProduitData;
+  // list of elements in the label
   list1: ComponetList[] = [];
-  //TODO: modifier liste 2 comme BD
+  // list of draggable elements
   list2: ComponetList[];
+  // determine the type of action to be taken and the target ID
   dropActionTodo: DropInfo = {
     targetId: "label",
   };
+  //fill dropTargetIds list and nodeLookup2 object
   prepareDragDrop(nodes: ComponetList[]) {
     nodes.forEach((node) => {
       this.dropTargetIds.push(node.id);
@@ -43,6 +37,7 @@ export class DragDropService {
       }
     });
   }
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -65,6 +60,7 @@ export class DragDropService {
                 data: "",
                 refItem: null,
                 title: "",
+                style: null,
               },
               {
                 id: uuidv4(),
@@ -73,6 +69,7 @@ export class DragDropService {
                 data: "",
                 title: "",
                 refItem: null,
+                style: null,
               },
             ],
           },
@@ -89,6 +86,7 @@ export class DragDropService {
                 children: [],
                 data: "",
                 refItem: null,
+                style: null,
                 title: "",
               },
               {
@@ -98,10 +96,12 @@ export class DragDropService {
                 data: "",
                 refItem: null,
                 title: "",
+                style: null,
               },
               {
                 id: uuidv4(),
                 type: "container-1",
+                style: null,
                 children: [],
                 data: "",
                 refItem: null,
@@ -118,6 +118,7 @@ export class DragDropService {
                 type: "container-1",
                 children: [],
                 data: "",
+                style: null,
                 refItem: null,
                 title: "",
               },
@@ -143,6 +144,7 @@ export class DragDropService {
                 item !== "Createur" &&
                 item !== "Modificateur" &&
                 item !== "formes" &&
+                item !== "datamatrixData" &&
                 resProduit.produit[item]
               ) {
                 if (
@@ -267,7 +269,7 @@ export class DragDropService {
                         : item == "formes"
                         ? "shape"
                         : "text",
-                    refItem: item,
+                    refItem: item == "withDataMatrix" ? "datamatrixData" : item,
                     title: ComponentTitle[item],
                     data:
                       item == "withDataMatrix"
@@ -305,6 +307,7 @@ export class DragDropService {
             data: "",
             refItem: null,
             title: "",
+            style: null,
           },
           {
             id: uuidv4(),
@@ -334,10 +337,12 @@ export class DragDropService {
           {
             id: uuidv4(),
             type: "container-1",
+
             children: [],
             data: "",
             refItem: null,
             title: "",
+            style: null,
           },
           {
             id: uuidv4(),
@@ -346,6 +351,7 @@ export class DragDropService {
             data: "",
             refItem: null,
             title: "",
+            style: null,
           },
         ],
       },
@@ -360,6 +366,7 @@ export class DragDropService {
             data: "",
             refItem: null,
             title: "",
+            style: null,
           },
         ],
         data: "",
@@ -373,14 +380,13 @@ export class DragDropService {
         refItem: null,
         title: "",
         children: [],
+        style: null,
       },
     ];
     this.showDragPlaceholder = true;
   }
+  // called when element dragged
   dragMoved(event) {
-    this.dropActionTodo = {
-      targetId: "label",
-    };
     let e = this.document.elementFromPoint(
       event.pointerPosition.x,
       event.pointerPosition.y
@@ -400,17 +406,7 @@ export class DragDropService {
     };
     const targetRect = container.getBoundingClientRect();
     const oneThirdHeight = targetRect.height / 4;
-
-    // if (event.pointerPosition.y - targetRect.top < oneThirdHeight) {
-    //   // before
-    //   this.dropActionTodo["action"] = "before";
-    // } else if (event.pointerPosition.y - targetRect.top > 4 * oneThirdHeight) {
-    //   // after
-    //   this.dropActionTodo["action"] = "after";
-    // } else {
-    // inside
-    //  this.dropActionTodo["action"] = "inside";
-    if (this.nodeLookup[this.dropActionTodo.targetId].type === "container-2") {
+    if (this.items[this.dropActionTodo.targetId].type === "container-2") {
       const demiWidth = targetRect.width / 2;
       if (event.pointerPosition.x - targetRect.left < demiWidth) {
         this.dropActionTodo["action"] = "insideLeft";
@@ -418,7 +414,7 @@ export class DragDropService {
         this.dropActionTodo["action"] = "insideRight";
       }
     } else if (
-      this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
+      this.items[this.dropActionTodo.targetId].type === "container-3"
     ) {
       const oneThirdWidth = targetRect.width / 3;
       if (event.pointerPosition.x - targetRect.left < oneThirdWidth) {
@@ -434,7 +430,6 @@ export class DragDropService {
     } else {
       this.dropActionTodo["action"] = "inside";
     }
-    //}
   }
 
   drop(event) {
@@ -444,35 +439,49 @@ export class DragDropService {
     const targetListId: string = "label"; //parent of drag area
     //get object of the dragebel item
     const draggedItem = this.nodeLookup2[draggedItemId];
-    if (this.dropActionTodo.action == "insideLeft" && draggedItem) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[0].children.push({
+    if (
+      this.dropActionTodo.action == "insideLeft" &&
+      draggedItem &&
+      !["container-2", "container-3", "container"].includes(draggedItem.type)
+    ) {
+      this.items[this.dropActionTodo.targetId].children[0].children.push({
         ...draggedItem,
         id: uuidv4(),
       });
     } else if (
-      (this.dropActionTodo.action == "insideMiddle" && draggedItem) ||
+      (this.dropActionTodo.action == "insideMiddle" &&
+        draggedItem &&
+        !["container-2", "container-3", "container"].includes(
+          draggedItem.type
+        )) ||
       (this.dropActionTodo.action == "insideRight" &&
-        this.nodeLookup[this.dropActionTodo.targetId].type === "container-2" &&
-        draggedItem)
+        this.items[this.dropActionTodo.targetId].type === "container-2" &&
+        draggedItem &&
+        !["container-2", "container-3", "container"].includes(draggedItem.type))
     ) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[1].children.push({
+      this.items[this.dropActionTodo.targetId].children[1].children.push({
         ...draggedItem,
         id: uuidv4(),
       });
     } else if (
       this.dropActionTodo.action == "insideRight" &&
       draggedItem &&
-      this.nodeLookup[this.dropActionTodo.targetId].type === "container-3"
+      this.items[this.dropActionTodo.targetId].type === "container-3" &&
+      !["container-2", "container-3", "container"].includes(draggedItem.type)
     ) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[2].children.push({
+      this.items[this.dropActionTodo.targetId].children[2].children.push({
         ...draggedItem,
         id: uuidv4(),
       });
-    } else if (this.dropActionTodo.action == "inside" && draggedItem) {
-      this.nodeLookup[this.dropActionTodo.targetId].children[0].type ==
+    } else if (
+      this.dropActionTodo.action == "inside" &&
+      draggedItem &&
+      !["container-2", "container-3", "container"].includes(draggedItem.type)
+    ) {
+      this.items[this.dropActionTodo.targetId].children[0].type ==
         "container-1" &&
-        this.nodeLookup[this.dropActionTodo.targetId].children.splice(0, 1);
-      this.nodeLookup[this.dropActionTodo.targetId].children.push({
+        this.items[this.dropActionTodo.targetId].children.splice(0, 1);
+      this.items[this.dropActionTodo.targetId].children.push({
         ...draggedItem,
         id: uuidv4(),
       });
@@ -496,14 +505,16 @@ export class DragDropService {
                 ...draggedItem,
                 children: [
                   {
-                    id: "item11",
+                    id: uuidv4(),
                     type: "container-1",
                     children: [],
+                    style: null,
                   },
                   {
-                    id: "container-1",
+                    id: uuidv4(),
                     type: "container-1",
                     children: [],
+                    style: null,
                   },
                 ],
                 id: id,
@@ -520,19 +531,22 @@ export class DragDropService {
                 ...draggedItem,
                 children: [
                   {
-                    id: "item11",
+                    id: uuidv4(),
                     type: "container-1",
                     children: [],
+                    style: null,
                   },
                   {
-                    id: "item12",
+                    id: uuidv4(),
                     type: "container-1",
                     children: [],
+                    style: null,
                   },
                   {
-                    id: "item13",
+                    id: uuidv4(),
                     type: "container-1",
                     children: [],
+                    style: null,
                   },
                 ],
                 id: id,
@@ -549,7 +563,7 @@ export class DragDropService {
                 ...draggedItem,
                 children: [
                   {
-                    id: "item11",
+                    id: uuidv4(),
                     type: "container-1",
                     children: [],
                   },
@@ -572,7 +586,7 @@ export class DragDropService {
             )
           );
         }
-        this.nodeLookup[id] = this.list1[event.currentIndex];
+        this.items[id] = this.list1[event.currentIndex];
       }
       console.log("list1");
       console.log(this.list1);
@@ -580,6 +594,7 @@ export class DragDropService {
 
     this.getAllItems(this.list1);
   }
+  // fill items object with all elements in list1
   getAllItems(list: ComponetList[]) {
     list.forEach((item) => {
       this.items[item.id] = item;

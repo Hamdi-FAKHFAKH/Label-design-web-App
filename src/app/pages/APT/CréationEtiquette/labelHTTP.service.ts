@@ -4,7 +4,9 @@ import { GetProduitResponseData } from "../GestionProduits/GestionProduit.data";
 import {
   ComposentHttpData,
   EtiquetteData,
+  GetComposentResultData,
   GetEtiquetteResponseData,
+  GetOneComposentResultData,
 } from "./EtiquetteHttp.data";
 @Injectable()
 export class LabeltHttpService {
@@ -28,7 +30,22 @@ export class LabeltHttpService {
   UpdateEtiquette(id: string, obj: EtiquetteData) {
     return this.http.put(`http://localhost:3080/api/v1/etiquette/${id}`, obj);
   }
-  CreateComopsent(obj: ComposentHttpData) {
+  CreateComponent(obj: ComposentHttpData) {
     return this.http.post(`http://localhost:3080/api/v1/Composent`, obj);
+  }
+  deleteComponentsByEtiquette(id: string) {
+    return this.http.delete(
+      `http://localhost:3080/api/v1/composent/byEtiquette/${id}`
+    );
+  }
+  GetAllComponentsByEtiquette(id: string) {
+    return this.http.get<GetComposentResultData>(
+      `http://localhost:3080/api/v1/composent/byEtiquette/${id}`
+    );
+  }
+  GetOneComponent(id: string) {
+    return this.http.get<GetOneComposentResultData>(
+      `http://localhost:3080/api/v1/composent/${id}`
+    );
   }
 }

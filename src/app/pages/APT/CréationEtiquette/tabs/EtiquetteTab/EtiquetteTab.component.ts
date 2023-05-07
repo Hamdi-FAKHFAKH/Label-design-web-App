@@ -3,6 +3,13 @@ import { LabelService } from "../../label.service";
 import { GestionProduitHttpService } from "../../../GestionProduits/GestionProduitHttp.service";
 import { LabeltHttpService } from "../../labelHTTP.service";
 import { DragDropService } from "../../drag-drop.service";
+import { ComposentHttpData } from "../../EtiquetteHttp.data";
+import {
+  ClientData,
+  FournisseurData,
+  ProduitData,
+} from "../../../GestionProduits/GestionProduit.data";
+import { ComponetList } from "../../ComposentData";
 @Component({
   selector: "ngx-etiquette-tab",
   templateUrl: "./EtiquetteTab.component.html",
@@ -20,6 +27,8 @@ export class EtiquetteTabComponent implements OnInit {
   listProd;
   refProdWithEtiquette;
   minPadding;
+  componentsExtractedFromDB = [];
+  listOfComponentFromDB: ComponetList[];
 
   constructor(
     private lableService: LabelService,
@@ -29,6 +38,7 @@ export class EtiquetteTabComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.listOfComponentFromDB = [];
     this.unitLarg = "mm";
     this.unitLong = "mm";
     this.unitPadding = "mm";
@@ -167,39 +177,183 @@ export class EtiquetteTabComponent implements OnInit {
     this.minPadding = 3;
   }
   async DownloadLabelData(val) {
-    this.change("refProdSimlaire", val);
-    const { produit } = await this.gestionProduitHttpService
-      .getOneProduit(val)
-      .toPromise();
-    const { etiquette } = await this.labelHttpService
-      .GetOneEtiquette(produit.idEtiquette)
-      .toPromise();
-    console.log(etiquette);
-    this.lableService.labelInfo.next({
-      ...this.labelInfo,
-      color: etiquette.couleur,
-      format: etiquette.format,
-      refProdSimlaire: etiquette.id1,
-      longueur: etiquette.longeur,
-      largeur: etiquette.largeur,
-      padding: etiquette.padding,
+    if (val && val !== null) {
+      this.change("refProdSimlaire", val);
+      const { produit } = await this.gestionProduitHttpService
+        .getOneProduit(val)
+        .toPromise();
+      const { etiquette } = await this.labelHttpService
+        .GetOneEtiquette(produit.idEtiquette)
+        .toPromise();
+      console.log(etiquette);
+      this.lableService.labelInfo.next({
+        ...this.labelInfo,
+        color: etiquette.couleur,
+        format: etiquette.format,
+        refProdSimlaire: etiquette.id1,
+        longueur: etiquette.longeur,
+        largeur: etiquette.largeur,
+        padding: etiquette.padding,
+      });
+      // download all components of label from DB
+      const { composents } = await this.labelHttpService
+        .GetAllComponentsByEtiquette(produit.idEtiquette)
+        .toPromise();
+      const client = await this.gestionProduitHttpService
+        .getClient(produit.codeClient)
+        .toPromise();
+      const fournisseur = await this.gestionProduitHttpService
+        .getFournisseur(produit.codeFournisseur)
+        .toPromise();
+      this.dragDropService.list1.length = 0;
+      this.listFromDB = [...composents];
+      this.list = [];
+      this.uploadData(
+        produit,
+        client.body.client,
+        fournisseur.body.fournisseur
+      );
+      // remplir la list des champs dans la list de drag & drop
+      this.list.forEach((val, index) => {
+        this.dragDropService.list1.push({
+          id: val.id,
+          data: val.data,
+          refItem: val.refItem,
+          title: val.title,
+          type: val.type,
+          children: val.children,
+          dataMatrixCode: val.dataMatrixCode,
+          dataMatrixFormat: val.dataMatrixFormat,
+          format: val.format,
+          style: {},
+        });
+        Object.keys(val.style).forEach((key) => {
+          if (val.style[key] != null) {
+            this.dragDropService.list1[index].style[key] = val.style[key];
+          }
+        });
+      });
+      // this.fillList1(composents, this.list, this.dragDropService.list1);
+      // save all items in list1 into object
+      this.dragDropService.getAllItems(this.dragDropService.list1);
+      console.log("****list 1 ******");
+      console.log(this.dragDropService.list1);
+
+      if (this.labelInfo) {
+        this.longueur = this.labelInfo.longueur;
+        this.largeur = this.labelInfo.largeur;
+        this.padding = this.labelInfo.padding;
+        this.minPadding = this.labelInfo.padding;
+      }
+    }
+  }
+  list: ComponetList[] = [];
+  ComponentToInsert(
+    obj,
+    produit,
+    client: ClientData,
+    fournisseur: FournisseurData
+  ) {
+    return {
+      id: obj.id,
+      data:
+        obj.refItem == "desClient"
+          ? client.desClient
+          : obj.refItem == "desFournisseur"
+          ? fournisseur.desFournisseur
+          : produit[obj.refItem],
+      refItem: obj.refItem,
+      title: obj.title,
+      type: obj.type,
+      children: [],
+      dataMatrixCode: obj.dataMatrixCode,
+      dataMatrixFormat: obj.dataMatrixFormat,
+      format: obj.format,
+      style: {
+        "background-color": obj["background-color"],
+        "border-color": obj["border-color"],
+        "border-style": obj["border-style"],
+        "border-width": obj["border-width"],
+        bold: obj.bold,
+        "font-family": obj["font-family"],
+        "font-size": obj["font-size"],
+        "font-style": obj["font-style"],
+        margin: obj["margin"],
+        "margin-left": obj["margin-left"],
+        "margin-right": obj["margin-right"],
+        "margin-bottom": obj["margin-bottom"],
+        "margin-top": obj["margin-top"],
+        padding: obj["padding"],
+        "padding-top": obj["padding-top"],
+        "padding-bottom": obj["padding-bottom"],
+        "padding-right": obj["padding-right"],
+        "padding-left": obj["padding-left"],
+        "text-align": obj["text-align"],
+        color: obj["color"],
+        italic: obj["italic"],
+        underline: obj["underline"],
+        width: obj["width"],
+        height: obj["height"],
+        "text-decoration": obj["text-decoration"],
+        transform: obj["transform"],
+      },
+    };
+  }
+  findCompoent(list: ComponetList[], component: ComponetList) {
+    list.forEach((val) => {
+      console.log("egale");
+
+      console.log(val.id);
+      console.log(component.id);
     });
-    if (this.labelInfo) {
-      this.longueur = this.labelInfo.longueur;
-      this.largeur = this.labelInfo.largeur;
-      this.padding = this.labelInfo.padding;
-      this.minPadding = this.labelInfo.padding;
+    return list.some((val) => val.id === component.id);
+  }
+  listFromDB: ComposentHttpData[];
+  nochildren = false;
+
+  uploadData(produit, client, fournisseur) {
+    this.listFromDB.map((item) => {
+      if (item && item.children == "") {
+        this.list.push(
+          this.ComponentToInsert(item, produit, client, fournisseur)
+        );
+        this.listFromDB[
+          this.listFromDB.findIndex((obj) => obj && obj.id == item.id)
+        ] = null;
+      }
+    });
+    this.listFromDB.forEach((item) => {
+      if (item && item.children != "") {
+        const listOfChildrenId = item.children.split(";") || [item.children];
+        const inseredComponent = this.ComponentToInsert(
+          item,
+          produit,
+          client,
+          fournisseur
+        );
+        const listofIdFromList = this.list.map((val) => val.id);
+        if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
+          listOfChildrenId.forEach((obj) => {
+            if (this.list.map((val) => val.id).includes(obj)) {
+              const index = this.list.findIndex(
+                (searched) => searched.id == obj
+              );
+              inseredComponent.children.push(this.list[index]);
+              this.list.splice(index, 1);
+            }
+          });
+          this.list.push(inseredComponent);
+          const index1 = this.listFromDB.findIndex(
+            (obj) => obj && obj.id === item.id
+          );
+          if (index1 !== -1) this.listFromDB[index1] = null;
+        }
+      }
+    });
+
+    if (this.listFromDB.some((val) => val !== null)) {
+      this.uploadData(produit, client, fournisseur);
     }
   }
 }
-
-//   id: "dddd",
-//   refProd: "dcddcd",
-//   refProdSimlaire: "ssxsxsx",
-//   hauteur: 552,
-//   largeur: 888,
-//   format: "dzdz",
-//   color: "sdzz",
-//   withRule: false,
-//   withGrid: false,
-// }
+//TODO: add element order

@@ -19,6 +19,7 @@ export interface ProduitData {
   nomProduit?: string;
   numLot?: string;
   codeFournisseur?: string;
+  datamatrixData?: string;
   codeClient?: string;
   idEtiquette?: string;
   idSN?: string;
