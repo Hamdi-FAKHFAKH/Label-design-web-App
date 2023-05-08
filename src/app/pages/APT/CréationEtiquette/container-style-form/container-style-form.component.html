@@ -19,6 +19,12 @@
         name="longueur"
         id="longueur"
         class="form-control"
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style.height &&
+          dragDropService.items[itemId].style.height !== 'fit-content' &&
+          +dragDropService.items[itemId].style.height.replace('mm', '')
+        "
       />
     </div>
     <div class="col px-1">
@@ -37,6 +43,12 @@
               : $event.target.value + 'mm'
           )
         "
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style.width &&
+          dragDropService.items[itemId].style.width !== 'fit-content' &&
+          +dragDropService.items[itemId].style.width.replace('mm', '')
+        "
       />
     </div>
   </div>
@@ -52,6 +64,10 @@
         id="bg-color"
         class="form-control"
         (input)="changeStyle('background-color', $event.target.value)"
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style['background-color']
+        "
       />
     </div>
     <div class="col-2 px-1">
@@ -62,6 +78,10 @@
         id="bg-color"
         class="form-control"
         (input)="changeStyle('border-color', $event.target.value)"
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style['border-color']
+        "
       />
     </div>
     <div class="col-4 px-1">
@@ -72,6 +92,11 @@
           name="borderType"
           id="borderType"
           (input)="changeStyle('border-style', $event.target.value)"
+          [ngModel]="
+            (dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style['border-style']) ||
+            'none'
+          "
         >
           <option value="dashed">dashed</option>
           <option value="solid">solid</option>
@@ -87,6 +112,15 @@
         id="bg-color"
         class="form-control"
         (input)="changeStyle('border-width', $event.target.value + 'pt')"
+        [ngModel]="
+          (dragDropService.items[itemId].style &&
+            dragDropService.items[itemId].style['border-width'] &&
+            +dragDropService.items[itemId].style['border-width'].replace(
+              'pt',
+              ''
+            )) ||
+          0
+        "
       />
     </div>
   </div>
@@ -105,6 +139,15 @@
           (input)="changeStyle(paddingClicked, $event.target.value + 'mm')"
           (keyup.enter)="
             changeStyle(paddingClicked, $event.target.value + 'mm')
+          "
+          [ngModel]="
+            (dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style[paddingClicked] &&
+              +dragDropService.items[itemId].style[paddingClicked].replace(
+                'mm',
+                ''
+              )) ||
+            0
           "
         />
         <button
@@ -195,6 +238,15 @@
           class="form-control"
           (input)="changeStyle(marginCliked, $event.target.value + 'mm')"
           (keyup.enter)="changeStyle(marginCliked, $event.target.value + 'mm')"
+          [ngModel]="
+            (dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style[marginCliked] &&
+              +dragDropService.items[itemId].style[marginCliked].replace(
+                'mm',
+                ''
+              )) ||
+            0
+          "
         />
         <button
           class="btn btn-outline-primary dropdown-toggle"
@@ -287,6 +339,7 @@
         (input)="
           changeStyle('transform', 'rotate(' + $event.target.value + 'deg)')
         "
+        [ngModel]="defaultrotation || 0"
         class="form-control"
       />
     </div>

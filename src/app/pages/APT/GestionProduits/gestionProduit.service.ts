@@ -3,37 +3,27 @@ import { GestionProduitHttpService } from "./GestionProduitHttp.service";
 import { v4 as uuidv4 } from "uuid";
 @Injectable()
 export class GestionProduitService {
-  formes: { name: string; path: string; clicked: boolean }[];
+  formes: { id: string; name: string; path: string; clicked: boolean }[];
   constructor(private gestionProduitHttpService: GestionProduitHttpService) {
-    this.formes = [
-      {
-        name: "square",
-        path: "../../../../../assets/images/square-regular.svg",
-        clicked: false,
-      },
-      {
-        name: "cercle",
-        path: "../../../../../assets/images/icons8-circle-50.png",
-        clicked: false,
-      },
-      {
-        name: "left-arrow",
-        path: "../../../../../assets/images/icons8-left-arrow-32.png",
-        clicked: false,
-      },
-      {
-        name: "right-arrow",
-        path: "../../../../../assets/images/icons8-right-arrow-32.png",
-        clicked: false,
-      },
-      {
-        name: "reflech",
-        path: "../../../../../assets/images/icons8-refresh-32.png",
-        clicked: false,
-      },
-    ];
+    this.formes = [];
+    this.getFormes();
   }
-
+  getFormes() {
+    this.formes.length = 0;
+    this.gestionProduitHttpService
+      .getForms()
+      .toPromise()
+      .then((val) => {
+        val.forms.forEach((obj) => {
+          this.formes.push({
+            id: obj.id,
+            name: obj.name,
+            path: obj.path,
+            clicked: false,
+          });
+        });
+      });
+  }
   async AddClient(data) {
     const client = await this.gestionProduitHttpService
       .getClient(data.codeClient)
@@ -179,7 +169,7 @@ export class GestionProduitService {
       .toPromise();
     return !!produit;
   }
-  async updateProduit(data, id, numLot, idSN) {
+  async updateProduit(data, id, numLot, idSN, forms) {
     const produitUpdated = await this.gestionProduitHttpService
       .updateProduit(
         {
@@ -189,8 +179,8 @@ export class GestionProduitService {
           codeClient: data.codeClient || null,
           codeFournisseur: data.codeFournisseur || null,
           nomProduit: data.nomProduit,
-          idEtiquette: null,
-          formes: null,
+          idEtiquette: data.idEtiquette,
+          formes: forms,
           idSN: idSN || null,
           numLot: numLot || null,
           withDataMatrix: data.withDataMatrix || false,

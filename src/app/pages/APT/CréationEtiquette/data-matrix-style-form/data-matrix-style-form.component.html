@@ -15,6 +15,15 @@
             class="form-control"
             [value]="format.value === 'qrcode' && largeur.value"
             (input)="change('hauteur', $event.target.value)"
+            [ngModel]="
+              (dragDropService.items[itemId].style &&
+                dragDropService.items[itemId].style.height &&
+                +dragDropService.items[itemId].style.height.replace(
+                  'mm',
+                  ''
+                )) ||
+              '20mm'
+            "
           />
         </div>
         <div class="col">
@@ -26,6 +35,12 @@
             id=""
             class="form-control"
             (input)="change('largeur', $event.target.value)"
+            [ngModel]="
+              (dragDropService.items[itemId].style &&
+                dragDropService.items[itemId].style.width &&
+                +dragDropService.items[itemId].style.width.replace('mm', '')) ||
+              '20mm'
+            "
           />
         </div>
       </div>
@@ -45,6 +60,10 @@
             id="fg-color"
             class="form-control"
             (input)="changeStyle('color', $event.target.value)"
+            [ngModel]="
+              dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style['color']
+            "
           />
         </div>
         <div class="col px-1">
@@ -55,6 +74,10 @@
             id="bg-color"
             class="form-control"
             (input)="changeStyle('background-color', $event.target.value)"
+            [ngModel]="
+              dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style['background-color']
+            "
           />
         </div>
       </div>
@@ -73,6 +96,15 @@
           class="form-control"
           (input)="changeStyle(marginCliked, $event.target.value)"
           (keyup.enter)="changeStyle(marginCliked, $event.target.value)"
+          [ngModel]="
+            (dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style[marginCliked] &&
+              +dragDropService.items[itemId].style[marginCliked].replace(
+                'mm',
+                ''
+              )) ||
+            0
+          "
         />
         <button
           class="btn btn-outline-primary dropdown-toggle"
@@ -164,6 +196,11 @@
           name="format"
           id=""
           (change)="change('format', $event.target.value)"
+          [ngModel]="
+            (dragDropService.items[itemId].style &&
+              dragDropService.items[itemId].style.format) ||
+            'qrcode'
+          "
         >
           <option *ngFor="let format of barcodeObjs" value="{{ format.value }}">
             {{ format.name }}

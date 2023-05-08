@@ -16,6 +16,7 @@ export class FieldStyleFormComponent implements OnInit {
   componentstyle: ComponentStyle = {};
   paddingClicked;
   marginCliked;
+  defaultrotation;
   fontFamily = [
     "Verdana",
     "Geneva",
@@ -38,9 +39,26 @@ export class FieldStyleFormComponent implements OnInit {
       italic: false,
       "font-style": "normal",
       "text-decoration": "none",
+      "font-family": "Times New Roman",
+      "font-size": "12pt",
+      color: "#000000",
+      "background-color": "#ffffff",
       underline: false,
     };
-    this.items[this.itemId].style = this.componentstyle;
+
+    Object.keys(this.componentstyle).forEach((key) => {
+      if (!this.items[this.itemId].style[key])
+        this.items[this.itemId].style[key] = this.componentstyle[key];
+    });
+    const transformvalue: string = this.dragDropService.items[this.itemId].style
+      ? this.dragDropService.items[this.itemId].style.transform
+      : null;
+    if (transformvalue) {
+      this.defaultrotation = transformvalue.substring(
+        transformvalue.indexOf("(") + 1,
+        transformvalue.indexOf(")")
+      );
+    }
   }
   getAllItems(list: ComponetList[]) {
     list.forEach((item) => {

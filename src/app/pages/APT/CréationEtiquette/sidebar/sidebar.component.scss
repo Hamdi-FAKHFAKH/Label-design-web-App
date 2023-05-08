@@ -47,7 +47,7 @@ nb-layout-column {
   padding: 0px;
 }
 .row:hover .notVideContainer {
-  border: 1px dashed gray;
+  border: 1px dashed gray !important;
 }
 .qrcode {
   margin-bottom: -1px;
@@ -63,13 +63,6 @@ svg {
   padding: 0px;
 }
 
-#container1 > div > div:nth-child(1) {
-  border-right: 0px;
-}
-.tab .tab-link {
-  padding-right: 40px !important;
-  padding-left: 40px !important;
-}
-.tabset {
-  margin: 0px 20px !important;
-}
+// #container1 > div > div:nth-child(1) {
+//   border-right: 0px;
+// }

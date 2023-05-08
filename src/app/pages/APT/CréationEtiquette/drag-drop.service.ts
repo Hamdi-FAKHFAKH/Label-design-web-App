@@ -143,7 +143,6 @@ export class DragDropService {
                 item !== "withOF" &&
                 item !== "Createur" &&
                 item !== "Modificateur" &&
-                item !== "formes" &&
                 item !== "datamatrixData" &&
                 resProduit.produit[item]
               ) {
@@ -176,6 +175,30 @@ export class DragDropService {
                       });
                       this.prepareDragDrop(this.list2);
                     });
+                } else if (item === "formes" && resProduit.produit.formes) {
+                  resProduit.produit.formes.split(";").forEach((val, index) => {
+                    if (val) {
+                      gestionProduitHttpService
+                        .getOneForm(val)
+                        .toPromise()
+                        .then((obj) => {
+                          const id = uuidv4();
+                          const icon = {
+                            id: id,
+                            type: "forme",
+                            refItem: `${item}-${index}`,
+                            title: ComponentTitle.forms,
+                            children: [],
+                            data: obj.form.path,
+                          };
+                          this.list2.push(icon);
+                          this.nodeLookup2[id] = icon;
+                        })
+                        .catch((err) => {
+                          console.log(err.message);
+                        });
+                    }
+                  });
                 } else if (
                   resProduit.produit.codeClient &&
                   item === "codeClient"
@@ -263,12 +286,7 @@ export class DragDropService {
                 } else {
                   this.list2.push({
                     id: uuidv4(),
-                    type:
-                      item == "withDataMatrix"
-                        ? "QRcode"
-                        : item == "formes"
-                        ? "shape"
-                        : "text",
+                    type: item == "withDataMatrix" ? "QRcode" : "text",
                     refItem: item == "withDataMatrix" ? "datamatrixData" : item,
                     title: ComponentTitle[item],
                     data:

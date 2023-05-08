@@ -1,4 +1,12 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from "@angular/core";
 import { LabelService } from "../label.service";
 import { LabeltHttpService } from "../labelHTTP.service";
 import { v4 as uuidv4 } from "uuid";
@@ -13,6 +21,7 @@ import { ComponetList } from "../ComposentData";
   styleUrls: ["./sidebar.component.scss"],
 })
 export class SidebarComponent implements OnInit {
+  @ViewChildren("dimension") elReference: QueryList<ElementRef>;
   @ViewChild(CdkDropList) dropList?: CdkDropList;
   containerNotVide;
   container2NotVide;
@@ -52,7 +61,20 @@ export class SidebarComponent implements OnInit {
       this.labelInfo = info;
     });
   }
+  // pour récuperer la hauteur et la largeur des containers
+  // ngAfterViewInit() {
+  //   console.log(
+  //     this.elReference.toArray().forEach((val) => {
+  //       console.log("item");
+  //       console.log(val.nativeElement.getAttribute("item"));
 
+  //       console.log("height");
+  //       console.log(val.nativeElement.offsetHeight);
+  //       console.log("width");
+  //       console.log(val.nativeElement.offsetWidth);
+  //     })
+  //   );
+  // }
   zoomIn() {
     this.labelStyle = {
       ...this.labelStyle,
@@ -234,12 +256,15 @@ export class SidebarComponent implements OnInit {
             .CreateComponent({
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
-              "border-color": obj.style && obj.style["border-color"],
-              "border-style": obj.style && obj.style["border-style"],
-              "border-width": obj.style && obj.style["border-width"],
+              "border-color":
+                (obj.style && obj.style["border-color"]) || "#ffffff",
+              "border-style":
+                (obj.style && obj.style["border-style"]) || "none",
+              "border-width": (obj.style && obj.style["border-width"]) || "0pt",
               bold: obj.style && obj.style.bold,
-              "font-family": obj.style && obj.style["font-family"],
-              "font-size": obj.style && obj.style["font-size"],
+              "font-family":
+                (obj.style && obj.style["font-family"]) || "Times New Roman",
+              "font-size": (obj.style && obj.style["font-size"]) || "12pt",
               "font-style": obj.style && obj.style["font-style"],
               margin: obj.style && obj.style["margin"],
               "margin-left": obj.style && obj.style["margin-left"],
@@ -252,11 +277,17 @@ export class SidebarComponent implements OnInit {
               "padding-right": obj.style && obj.style["padding-right"],
               "padding-left": obj.style && obj.style["padding-left"],
               "text-align": obj.style && obj.style["text-align"],
-              color: obj.style && obj.style["color"],
+              color: (obj.style && obj.style["color"]) || "#000000",
               italic: obj.style && obj.style["italic"],
               underline: obj.style && obj.style["underline"],
-              width: obj.style && obj.style["width"],
-              height: obj.style && obj.style["height"],
+              width:
+                obj.type == "QRcode"
+                  ? "20mm"
+                  : (obj.style && obj.style["width"]) || "fit-content",
+              height:
+                obj.type == "QRcode"
+                  ? "20mm"
+                  : (obj.style && obj.style["height"]) || "fit-content",
               "text-decoration": obj.style && obj.style["text-decoration"],
               transform: obj.style && obj.style["transform"],
               type: obj.type,
@@ -282,12 +313,15 @@ export class SidebarComponent implements OnInit {
             .CreateComponent({
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
-              "border-color": obj.style && obj.style["border-color"],
-              "border-style": obj.style && obj.style["border-style"],
-              "border-width": obj.style && obj.style["border-width"],
+              "border-color":
+                (obj.style && obj.style["border-color"]) || "#ffffff",
+              "border-style":
+                (obj.style && obj.style["border-style"]) || "none",
+              "border-width": (obj.style && obj.style["border-width"]) || "0pt",
               bold: obj.style && obj.style.bold,
-              "font-family": obj.style && obj.style["font-family"],
-              "font-size": obj.style && obj.style["font-size"],
+              "font-family":
+                (obj.style && obj.style["font-family"]) || "Times New Roman",
+              "font-size": (obj.style && obj.style["font-size"]) || "12pt",
               "font-style": obj.style && obj.style["font-style"],
               margin: obj.style && obj.style["margin"],
               "margin-left": obj.style && obj.style["margin-left"],
@@ -300,11 +334,17 @@ export class SidebarComponent implements OnInit {
               "padding-right": obj.style && obj.style["padding-right"],
               "padding-left": obj.style && obj.style["padding-left"],
               "text-align": obj.style && obj.style["text-align"],
-              color: obj.style && obj.style["color"],
+              color: (obj.style && obj.style["color"]) || "#000000",
               italic: obj.style && obj.style["italic"],
               underline: obj.style && obj.style["underline"],
-              width: obj.style && obj.style["width"],
-              height: obj.style && obj.style["height"],
+              width:
+                obj.type == "QRcode"
+                  ? "20mm"
+                  : (obj.style && obj.style["width"]) || "fit-content",
+              height:
+                obj.type == "QRcode"
+                  ? "20mm"
+                  : (obj.style && obj.style["height"]) || "fit-content",
               "text-decoration": obj.style && obj.style["text-decoration"],
               transform: obj.style && obj.style["transform"],
               type: obj.style && obj.type,
@@ -337,3 +377,4 @@ export class SidebarComponent implements OnInit {
 //TODO: ajout la régle dans l'etiquette
 //TODO: affiche la grille
 //TODO: ajoute les formes
+//TODO: verifier les champs des produits similaire

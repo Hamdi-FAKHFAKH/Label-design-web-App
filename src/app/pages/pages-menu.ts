@@ -32,6 +32,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
             icon: "edit-2-outline",
           },
           {
+            title: "Impression Etiquettes",
+            link: "/pages/apt/ImpressionEtiquettes",
+            icon: "printer-outline",
+          },
+          {
             title: "Historique OF",
             link: "/pages/layout/infinite-list",
             icon: "clock",

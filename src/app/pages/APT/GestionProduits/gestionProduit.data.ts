@@ -136,3 +136,17 @@ export interface GetOneSerialNumberResultData {
   status: string;
   serialNumber: SerialNumberData;
 }
+export interface FormeData {
+  id: string;
+  name: string;
+  path: string;
+  clicked: boolean;
+}
+export interface CreateFormeResultData {
+  Status: string;
+  form: FormeData;
+}
+export interface GetFormeResultData {
+  Status: string;
+  forms: FormeData[];
+}

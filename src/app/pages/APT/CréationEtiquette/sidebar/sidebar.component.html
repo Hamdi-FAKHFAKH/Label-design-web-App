@@ -40,7 +40,6 @@
             (cdkDragMoved)="dragMoved($event)"
           >
             <ng-container
-              (keyup.delete)="delete(item.id)"
               *ngTemplateOutlet="tmplNode; context: { item: item }"
             ></ng-container>
             <div
@@ -59,15 +58,17 @@
                 *ngIf="item.children.length"
                 class="row"
                 [ngStyle]="rowStyle(item)"
-                style="border-style: none !important"
               >
                 <div
                   *ngFor="let child of item.children; let i = index"
+                  #dimension
+                  [attr.item]="item"
                   class="col"
                   [ngClass]="{
                     videContainer:
                       item.type === 'container'
-                        ? !containerNotVide
+                        ? item.children.length === 1 &&
+                          item.children[0].type === 'container-1'
                         : item.type === 'container-2' &&
                           (item.children[0].children.length > 0 ||
                             item.children[1].children.length > 0)
@@ -80,7 +81,7 @@
                         : true,
                     notVideContainer:
                       item.type === 'container'
-                        ? !containerNotVide
+                        ? item.children.length >= 1
                         : item.type === 'container-2' &&
                           (item.children[0].children.length > 0 ||
                             item.children[1].children.length > 0)
@@ -145,6 +146,16 @@
   >
     {{ item.data }}
   </div>
+  <img
+    *ngIf="item.type === 'forme'"
+    [attr.data-id]="item.id"
+    [ngStyle]="item.style"
+    style="cursor: move"
+    src="{{ item.data }}"
+    alt=""
+    height="20"
+    width="20"
+  />
   <div
     *ngIf="item.type === 'QRcode'"
     [attr.data-id]="item.id"

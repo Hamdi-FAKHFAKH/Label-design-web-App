@@ -14,6 +14,7 @@ import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.c
 import { WindowFormComponent } from "./GestionProduits/create-produit/window-form.component";
 import { CommonModule } from "@angular/common";
 import { UpdateProduitComponent } from "./GestionProduits/update-produit/update-produit.component";
+import { ImpressionEtiquetteComponent } from './ImpressionEtiquette/impression-etiquette/impression-etiquette.component';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { UpdateProduitComponent } from "./GestionProduits/update-produit/update-
     SmartTableComponent,
     WindowFormComponent,
     UpdateProduitComponent,
+    ImpressionEtiquetteComponent,
   ],
   exports: [],
   providers: [],

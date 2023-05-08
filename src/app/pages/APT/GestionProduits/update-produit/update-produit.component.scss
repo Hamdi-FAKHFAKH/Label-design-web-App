@@ -26,5 +26,22 @@
     .card-body {
       padding-top: 8px !important;
     }
+    img {
+      margin-right: 14px;
+    }
+    img:hover {
+      background-color: #3374b5;
+      padding: 4px;
+      width: 25px;
+      height: 25px;
+      border-radius: 2px;
+    }
+    .imgClicked {
+      background-color: #3374b5;
+      padding: 4px;
+      width: 25px;
+      height: 25px;
+      border-radius: 2px;
+    }
   }
 }

@@ -36,6 +36,7 @@ import {
 } from "@syncfusion/ej2-angular-barcode-generator";
 import { NgxBarcodeModule } from "ngx-barcode";
 import { ContainerStyleFormComponent } from './container-style-form/container-style-form.component';
+import { FormeStyleFormComponent } from './forme-style-form/forme-style-form.component';
 @NgModule({
   imports: [
     FormsModule,
@@ -70,6 +71,7 @@ import { ContainerStyleFormComponent } from './container-style-form/container-st
     FieldStyleFormComponent,
     DataMatrixStyleFormComponent,
     ContainerStyleFormComponent,
+    FormeStyleFormComponent,
   ],
   exports: [],
   providers: [

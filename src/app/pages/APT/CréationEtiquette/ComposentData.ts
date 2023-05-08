@@ -58,4 +58,5 @@ export enum ComponentTitle {
   text3 = "Text3",
   text4 = "Text4",
   text5 = "Text5",
+  forms = "Icon",
 }

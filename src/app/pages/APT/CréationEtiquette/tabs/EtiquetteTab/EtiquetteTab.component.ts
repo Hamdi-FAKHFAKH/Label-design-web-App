@@ -6,7 +6,9 @@ import { DragDropService } from "../../drag-drop.service";
 import { ComposentHttpData } from "../../EtiquetteHttp.data";
 import {
   ClientData,
+  CreateFormeResultData,
   FournisseurData,
+  GetFormeResultData,
   ProduitData,
 } from "../../../GestionProduits/GestionProduit.data";
 import { ComponetList } from "../../ComposentData";
@@ -199,42 +201,60 @@ export class EtiquetteTabComponent implements OnInit {
       const { composents } = await this.labelHttpService
         .GetAllComponentsByEtiquette(produit.idEtiquette)
         .toPromise();
-      const client = await this.gestionProduitHttpService
-        .getClient(produit.codeClient)
-        .toPromise();
-      const fournisseur = await this.gestionProduitHttpService
-        .getFournisseur(produit.codeFournisseur)
-        .toPromise();
+      const client = produit.codeClient
+        ? (
+            await this.gestionProduitHttpService
+              .getClient(produit.codeClient)
+              .toPromise()
+          ).body.client
+        : null;
+      const fournisseur = produit.codeFournisseur
+        ? (
+            await this.gestionProduitHttpService
+              .getFournisseur(produit.codeFournisseur)
+              .toPromise()
+          ).body.fournisseur
+        : null;
       this.dragDropService.list1.length = 0;
       this.listFromDB = [...composents];
       this.list = [];
-      this.uploadData(
-        produit,
-        client.body.client,
-        fournisseur.body.fournisseur
-      );
-      // remplir la list des champs dans la list de drag & drop
-      this.list.forEach((val, index) => {
-        this.dragDropService.list1.push({
-          id: val.id,
-          data: val.data,
-          refItem: val.refItem,
-          title: val.title,
-          type: val.type,
-          children: val.children,
-          dataMatrixCode: val.dataMatrixCode,
-          dataMatrixFormat: val.dataMatrixFormat,
-          format: val.format,
-          style: {},
-        });
-        Object.keys(val.style).forEach((key) => {
-          if (val.style[key] != null) {
-            this.dragDropService.list1[index].style[key] = val.style[key];
+      const forme = await Promise.all(
+        produit.formes.split(";").map((val) => {
+          if (val) {
+            return this.gestionProduitHttpService.getOneForm(val).toPromise();
           }
-        });
-      });
-      // this.fillList1(composents, this.list, this.dragDropService.list1);
+        })
+      );
+      this.uploadData(produit, client, fournisseur, forme);
+      // remplir la list des champs dans la list de drag & drop
+      // this.list.forEach((val, index) => {
+      //   this.dragDropService.list1.push({
+      //     id: val.id,
+      //     data: val.data,
+      //     refItem: val.refItem,
+      //     title: val.title,
+      //     type: val.type,
+      //     children: val.children,
+      //     dataMatrixCode: val.dataMatrixCode,
+      //     dataMatrixFormat: val.dataMatrixFormat,
+      //     format: val.format,
+      //     style: {},
+      //   });
+      //   Object.keys(val.style).forEach((key) => {
+      //     if (val.style[key] != null) {
+      //       this.dragDropService.list1[index].style[key] = val.style[key];
+      //     }
+      //   });
+      // });
+      console.log("****list  avant fill list******");
+      console.log(this.list);
+      console.log("composents");
+      console.log(composents);
+      const list = [];
+      this.fillList1(composents, this.list, list);
+      this.dragDropService.list1 = [...list];
       // save all items in list1 into object
+      // this.dragDropService.list1 = this.list;
       this.dragDropService.getAllItems(this.dragDropService.list1);
       console.log("****list 1 ******");
       console.log(this.dragDropService.list1);
@@ -249,22 +269,25 @@ export class EtiquetteTabComponent implements OnInit {
   }
   list: ComponetList[] = [];
   ComponentToInsert(
-    obj,
+    obj: ComposentHttpData,
     produit,
     client: ClientData,
-    fournisseur: FournisseurData
+    fournisseur: FournisseurData,
+    form: CreateFormeResultData[]
   ) {
     return {
       id: obj.id,
       data:
-        obj.refItem == "desClient"
+        obj.refItem == "desClient" && client
           ? client.desClient
-          : obj.refItem == "desFournisseur"
+          : obj.refItem == "desFournisseur" && fournisseur
           ? fournisseur.desFournisseur
+          : obj.refItem.includes("formes") && form
+          ? form[+obj.refItem.split("-")[1]].form.path
           : produit[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,
-      type: obj.type,
+      type: obj.refItem.includes("formes") && form ? "forme" : obj.type,
       children: [],
       dataMatrixCode: obj.dataMatrixCode,
       dataMatrixFormat: obj.dataMatrixFormat,
@@ -311,11 +334,11 @@ export class EtiquetteTabComponent implements OnInit {
   listFromDB: ComposentHttpData[];
   nochildren = false;
 
-  uploadData(produit, client, fournisseur) {
+  uploadData(produit, client, fournisseur, form) {
     this.listFromDB.map((item) => {
       if (item && item.children == "") {
         this.list.push(
-          this.ComponentToInsert(item, produit, client, fournisseur)
+          this.ComponentToInsert(item, produit, client, fournisseur, form)
         );
         this.listFromDB[
           this.listFromDB.findIndex((obj) => obj && obj.id == item.id)
@@ -329,7 +352,8 @@ export class EtiquetteTabComponent implements OnInit {
           item,
           produit,
           client,
-          fournisseur
+          fournisseur,
+          form
         );
         const listofIdFromList = this.list.map((val) => val.id);
         if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
@@ -352,8 +376,40 @@ export class EtiquetteTabComponent implements OnInit {
     });
 
     if (this.listFromDB.some((val) => val !== null)) {
-      this.uploadData(produit, client, fournisseur);
+      this.uploadData(produit, client, fournisseur, form);
     }
   }
+  fillList1(
+    listFromDB: ComposentHttpData[],
+    listIn: ComponetList[],
+    listOut: ComponetList[]
+  ) {
+    listIn.forEach((val, index) => {
+      listFromDB.forEach((itemFromDB) => {
+        if (itemFromDB.id == val.id) {
+          listOut[+itemFromDB.ordre] = {
+            data: val.data,
+            id: val.id,
+            refItem: val.refItem,
+            title: val.title,
+            type: val.type,
+            dataMatrixCode: val.dataMatrixCode,
+            dataMatrixFormat: val.dataMatrixFormat,
+            format: val.format,
+            style: { ...val.style },
+            children: [],
+          };
+          if (val.children && val.children.length > 0) {
+            this.fillList1(
+              listFromDB,
+              val.children,
+              listOut[+itemFromDB.ordre].children
+            );
+          }
+        }
+      });
+    });
+  }
 }
+
 //TODO: add element order

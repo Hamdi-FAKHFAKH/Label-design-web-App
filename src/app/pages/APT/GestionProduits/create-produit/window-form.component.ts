@@ -2,21 +2,22 @@ import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { NbWindowRef } from "@nebular/theme";
 import { GestionProduitHttpService } from "../GestionProduitHttp.service";
-
+import { saveAs } from "file-saver";
 import { Observable, forkJoin } from "rxjs";
 import { GestionProduitService } from "../GestionProduit.service";
 import { SerialNumberData } from "../GestionProduit.data";
+import { v4 as uuidv4 } from "uuid";
 @Component({
   templateUrl: "./window-form.component.html",
   styleUrls: ["window-form.component.scss"],
 })
 export class WindowFormComponent implements OnInit {
-  formes: { name: string; path: string; clicked: boolean }[];
-  addForme(name, path, clicked, index) {
+  formes: { id: string; name: string; path: string; clicked: boolean }[];
+  addForme(id, name, path, clicked, index) {
     if (clicked) {
-      this.formes[index] = { name: name, path: path, clicked: true };
+      this.formes[index] = { id: id, name: name, path: path, clicked: true };
     } else {
-      this.formes[index] = { name: name, path: path, clicked: false };
+      this.formes[index] = { id: id, name: name, path: path, clicked: false };
     }
     console.log(this.gestionProduitService.formes);
   }
@@ -126,7 +127,7 @@ export class WindowFormComponent implements OnInit {
     let formes = "";
     this.formes.map((val) => {
       if (val.clicked) {
-        formes += val.name + ";";
+        formes += val.id + ";";
       }
     });
     // créer un produit
@@ -148,4 +149,44 @@ export class WindowFormComponent implements OnInit {
     console.log(event.target.checked);
     console.log(this.selectedSerialNumber);
   }
+  getBase641 = (e) => {
+    var file = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      /** ******* console ********** */
+      console.log("name");
+      console.log(e.target.files[0]);
+      console.log(reader.result.toString());
+      this.gestionProduitHttpService
+        .createForm({
+          id: uuidv4(),
+          name: e.target.files[0].name.substring(
+            0,
+            e.target.files[0].name.indexOf(".")
+          ),
+          clicked: false,
+          path: reader.result.toString(),
+        })
+        .toPromise()
+        .then((val) => {
+          console.log("image saved");
+          // this.gestionProduitService.formes.push({
+          //   name: e.target.files[0].name.substring(
+          //     0,
+          //     e.target.files[0].name.indexOf(".")
+          //   ),
+          //   clicked: false,
+          //   path: reader.result.toString(),
+          // });
+          this.gestionProduitService.getFormes();
+        })
+        .catch((e) => {
+          alert("Icon déja existe");
+        });
+    };
+    reader.onerror = function (error) {
+      console.log("Error: ", error);
+    };
+  };
 }

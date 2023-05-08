@@ -11,19 +11,20 @@ import { SerialNumberData } from "../GestionProduit.data";
   styleUrls: ["./update-produit.component.scss"],
 })
 export class UpdateProduitComponent implements OnInit {
-  formes: { nom: string; class: string; clicked: boolean }[] = [
-    {
-      nom: "square",
-      class: "",
-      clicked: false,
-    },
-  ];
+  formes: { id: string; name: string; path: string; clicked: boolean }[];
+  addForme(id, name, path, clicked, index) {
+    if (clicked) {
+      this.formes[index] = { id: id, name: name, path: path, clicked: true };
+    } else {
+      this.formes[index] = { id: id, name: name, path: path, clicked: false };
+    }
+    console.log(this.gestionProduitService.formes);
+  }
   windowdata;
   produits: String[] = [];
   lotData: string[] = [];
   refProd: string;
 
-  format;
   constructor(
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -31,6 +32,8 @@ export class UpdateProduitComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.formes = this.gestionProduitService.formes;
+    this.gestionProduitService.getFormes();
     this.gestionProduitHttpService.getSDTPRA().subscribe((res) => {
       this.produits = res.SDTPRA;
       // console.log(this.produits[0]);
@@ -81,13 +84,31 @@ export class UpdateProduitComponent implements OnInit {
         (await this.gestionProduitService.AddFournisseur(form.value)) &&
         success;
     }
+    // add formes
+    let formes = "";
+    this.formes.map((val) => {
+      if (val.clicked) {
+        formes += val.id + ";";
+      }
+    });
+
     // update un produit
     if (success && this.windowdata.ref && form.value.nomProduit) {
+      const idEtiquette = await (
+        await this.gestionProduitHttpService
+          .getOneProduit(this.windowdata.ref)
+          .toPromise()
+      ).produit.idEtiquette;
       success = await this.gestionProduitService.updateProduit(
-        { ...form.value, ref: this.windowdata.ref },
+        {
+          ...form.value,
+          ref: this.windowdata.ref,
+          idEtiquette: idEtiquette || null,
+        },
         this.windowdata.ref,
         numLot,
-        this.windowdata.idSN
+        this.windowdata.idSN,
+        formes
       );
       success ? this.windowRef.close() : alert("Produit creation Failed");
     }

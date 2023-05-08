@@ -1,0 +1,34 @@
+legend {
+  text-align: center;
+  padding: 5px;
+  font: 15px Arial, sans-serif;
+  color: #3374b5;
+  width: fit-content;
+  font-weight: 650;
+}
+fieldset {
+  border: none;
+  border-top: 2px solid #3374b5;
+  margin-bottom: -17px;
+  margin-top: 9px;
+}
+li {
+  display: table-cell;
+  width: 20px;
+}
+li:hover > a {
+  --bs-icon-link-transform: translate3d(0, -0.125rem, 0);
+  border-bottom: 3px solid #007bff;
+  text-decoration: underline;
+}
+li > a {
+  padding: 4px 10px;
+  padding-bottom: 9px;
+}
+li {
+  width: 5px;
+}
+.itemClicked {
+  border-bottom: 3px solid #007bff;
+  background-color: #c9ddf0;
+}

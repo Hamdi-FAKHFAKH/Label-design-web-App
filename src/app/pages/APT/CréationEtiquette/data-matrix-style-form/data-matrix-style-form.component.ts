@@ -29,7 +29,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
     { name: "Code39", value: "CODE39" },
   ];
   constructor(
-    private dragDropService: DragDropService,
+    public dragDropService: DragDropService,
     private labelService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService
   ) {}
@@ -43,6 +43,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.xmlForm = this.dragDropService.items[this.itemId].data;
     this.marginCliked = "margin";
     this.getAllItems(this.dragDropService.list1);
     this.labelService.labelInfo.subscribe((val) => {

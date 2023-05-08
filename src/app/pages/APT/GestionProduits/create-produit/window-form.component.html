@@ -357,10 +357,29 @@
                 width="20"
                 (click)="
                   item.clicked = !item.clicked;
-                  addForme(item.name, item.path, item.clicked, i)
+                  addForme(item.id, item.name, item.path, item.clicked, i)
                 "
                 [ngClass]="{ imgClicked: item.clicked }"
+                style="margin-top: 6px"
               />
+              <input
+                #formeInput
+                type="file"
+                ref="{hiddenFileInput}"
+                style="display: 'none'"
+                (change)="getBase641($event)"
+              />
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="formeInput.click()"
+                style="padding: 0px; margin-top: 6px"
+              >
+                <nb-icon
+                  icon="plus-outline"
+                  style="height: 25px; width: 25px"
+                ></nb-icon>
+              </button>
             </div>
             <br />
             <input

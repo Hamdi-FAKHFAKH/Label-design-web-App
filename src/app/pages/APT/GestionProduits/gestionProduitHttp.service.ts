@@ -18,6 +18,9 @@ import {
   UpdateLotResponseData,
   getOneProduitResponseData,
   GetOneSerialNumberResultData,
+  FormeData,
+  CreateFormeResultData,
+  GetFormeResultData,
 } from "./GestionProduit.data";
 
 @Injectable()
@@ -143,6 +146,22 @@ export class GestionProduitHttpService {
   getOneSerialNumber(id: string) {
     return this.http.get<GetOneSerialNumberResultData>(
       `http://localhost:3080/api/v1/serialNumber/${id}`
+    );
+  }
+  createForm(obj: FormeData) {
+    return this.http.post<CreateFormeResultData>(
+      "http://localhost:3080/api/v1/forms",
+      obj
+    );
+  }
+  getForms() {
+    return this.http.get<GetFormeResultData>(
+      "http://localhost:3080/api/v1/forms"
+    );
+  }
+  getOneForm(id: string) {
+    return this.http.get<CreateFormeResultData>(
+      `http://localhost:3080/api/v1/forms/${id}`
     );
   }
 }
