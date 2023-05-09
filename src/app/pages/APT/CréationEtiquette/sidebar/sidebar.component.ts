@@ -215,6 +215,9 @@ export class SidebarComponent implements OnInit {
         .catch((err) => {
           console.log(err.error.Status);
         });
+      console.log("***list1***");
+      console.log(this.dragDropService.list1);
+
       await this.createComponent(this.dragDropService.list1, this.idEtiquette);
     }
     //this.labelService.convertToPdf();
