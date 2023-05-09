@@ -130,6 +130,7 @@ export class FieldStyleFormComponent implements OnInit {
       [itemName]: itemValue,
     };
 
-    this.items[this.itemId].style = this.componentstyle;
+    //this.items[this.itemId].style = this.componentstyle;
+    Object.assign(this.items[this.itemId].style, this.componentstyle);
   }
 }
