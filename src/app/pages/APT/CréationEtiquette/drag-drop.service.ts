@@ -170,6 +170,8 @@ export class DragDropService {
                           "font-style": "normal",
                           "text-decoration": "none",
                           underline: false,
+                          height: "fit-content",
+                          width: "fit-content",
                         },
                         children: [],
                       });
@@ -221,6 +223,8 @@ export class DragDropService {
                             "font-style": "normal",
                             "text-decoration": "none",
                             underline: false,
+                            width: "fit-content",
+                            height: "fit-content",
                           },
                         },
                         {
@@ -236,6 +240,8 @@ export class DragDropService {
                             "font-style": "normal",
                             "text-decoration": "none",
                             underline: false,
+                            width: "fit-content",
+                            height: "fit-content",
                           },
                         }
                       );
@@ -263,6 +269,8 @@ export class DragDropService {
                             "font-style": "normal",
                             "text-decoration": "none",
                             underline: false,
+                            width: "fit-content",
+                            height: "fit-content",
                           },
                         },
                         {
@@ -278,6 +286,8 @@ export class DragDropService {
                             "font-style": "normal",
                             "text-decoration": "none",
                             underline: false,
+                            height: "fit-content",
+                            width: "fit-content",
                           },
                         }
                       );
@@ -300,6 +310,8 @@ export class DragDropService {
                       "font-style": "normal",
                       "text-decoration": "none",
                       underline: false,
+                      height: item == "withDataMatrix" ? "110" : "fit-content",
+                      width: item == "withDataMatrix" ? "110" : "fit-content",
                     },
                     dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
                   });
@@ -608,6 +620,8 @@ export class DragDropService {
       }
       console.log("list1");
       console.log(this.list1);
+      console.log("list2");
+      console.log(this.list2);
     }
 
     this.getAllItems(this.list1);

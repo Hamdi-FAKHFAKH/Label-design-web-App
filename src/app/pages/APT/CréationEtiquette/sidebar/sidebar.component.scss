@@ -58,11 +58,14 @@ svg {
 .videContainer {
   min-height: 60px;
   border: 1px dashed gray;
+  width: 100%;
 }
 .col {
   padding: 0px;
 }
-
+.rowvide {
+  width: auto !important;
+}
 // #container1 > div > div:nth-child(1) {
 //   border-right: 0px;
 // }

@@ -18,6 +18,7 @@
             [ngModel]="
               (dragDropService.items[itemId].style &&
                 dragDropService.items[itemId].style.height &&
+                dragDropService.items[itemId].style.height !== 'fit-content' &&
                 +dragDropService.items[itemId].style.height.replace(
                   'mm',
                   ''
@@ -38,6 +39,7 @@
             [ngModel]="
               (dragDropService.items[itemId].style &&
                 dragDropService.items[itemId].style.width &&
+                dragDropService.items[itemId].style.width !== 'fit-content' &&
                 +dragDropService.items[itemId].style.width.replace('mm', '')) ||
               '20mm'
             "
@@ -94,8 +96,8 @@
           type="number"
           min="0"
           class="form-control"
-          (input)="changeStyle(marginCliked, $event.target.value)"
-          (keyup.enter)="changeStyle(marginCliked, $event.target.value)"
+          (input)="changeStyle(marginCliked, $event.target.value + 'mm')"
+          (keyup.enter)="changeStyle(marginCliked, $event.target.value + 'mm')"
           [ngModel]="
             (dragDropService.items[itemId].style &&
               dragDropService.items[itemId].style[marginCliked] &&

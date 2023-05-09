@@ -20,10 +20,11 @@
         id="longueur"
         class="form-control"
         [ngModel]="
-          dragDropService.items[itemId].style &&
-          dragDropService.items[itemId].style.height &&
-          dragDropService.items[itemId].style.height !== 'fit-content' &&
-          +dragDropService.items[itemId].style.height.replace('mm', '')
+          (dragDropService.items[itemId].style &&
+            dragDropService.items[itemId].style.height &&
+            dragDropService.items[itemId].style.height !== 'fit-content' &&
+            +dragDropService.items[itemId].style.height.replace('mm', '')) ||
+          changeStyle('height', 'fit-content')
         "
       />
     </div>
@@ -44,10 +45,11 @@
           )
         "
         [ngModel]="
-          dragDropService.items[itemId].style &&
-          dragDropService.items[itemId].style.width &&
-          dragDropService.items[itemId].style.width !== 'fit-content' &&
-          +dragDropService.items[itemId].style.width.replace('mm', '')
+          (dragDropService.items[itemId].style &&
+            dragDropService.items[itemId].style.width &&
+            dragDropService.items[itemId].style.width !== 'fit-content' &&
+            +dragDropService.items[itemId].style.width.replace('mm', '')) ||
+          changeStyle('width', 'fit-content')
         "
       />
     </div>

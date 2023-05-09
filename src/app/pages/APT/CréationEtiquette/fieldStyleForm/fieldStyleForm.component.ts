@@ -15,6 +15,8 @@ export class FieldStyleFormComponent implements OnInit {
   produit: ProduitData;
   componentstyle: ComponentStyle = {};
   paddingClicked;
+  paddingValue;
+  marginValue;
   marginCliked;
   defaultrotation;
   fontFamily = [
@@ -31,8 +33,29 @@ export class FieldStyleFormComponent implements OnInit {
   ngOnInit(): void {
     this.getAllItems(this.dragDropService.list1);
     this.produit = this.dragDropService.produit;
-    this.paddingClicked = "padding";
-    this.marginCliked = "margin";
+    this.paddingClicked = this.dragDropService.items[this.itemId].style[
+      "padding-right"
+    ]
+      ? "padding-right"
+      : this.dragDropService.items[this.itemId].style["padding-left"]
+      ? "padding-left"
+      : this.dragDropService.items[this.itemId].style["padding-top"]
+      ? "padding-top"
+      : this.dragDropService.items[this.itemId].style["padding-bottom"]
+      ? "padding-bottom"
+      : "padding";
+    this.marginCliked = this.dragDropService.items[this.itemId].style[
+      "margin-right"
+    ]
+      ? "margin-right"
+      : this.dragDropService.items[this.itemId].style["margin-left"]
+      ? "margin-left"
+      : this.dragDropService.items[this.itemId].style["margin-top"]
+      ? "margin-top"
+      : this.dragDropService.items[this.itemId].style["margin-bottom"]
+      ? "margin-bottom"
+      : "margin";
+
     this.componentstyle = {
       "font-weight": "normal",
       bold: false,
@@ -106,7 +129,6 @@ export class FieldStyleFormComponent implements OnInit {
       ...this.componentstyle,
       [itemName]: itemValue,
     };
-    console.log("comp Style");
 
     this.items[this.itemId].style = this.componentstyle;
   }

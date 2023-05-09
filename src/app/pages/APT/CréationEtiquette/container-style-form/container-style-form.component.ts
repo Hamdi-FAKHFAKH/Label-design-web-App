@@ -32,7 +32,5 @@ export class ContainerStyleFormComponent implements OnInit {
       ...this.dragDropService.items[this.itemId].style,
       [itemName]: itemValue,
     };
-    console.log("list1");
-    console.log(this.dragDropService.list1);
   }
 }

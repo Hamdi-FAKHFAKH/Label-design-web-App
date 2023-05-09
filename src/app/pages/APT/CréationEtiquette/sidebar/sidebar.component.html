@@ -58,6 +58,22 @@
                 *ngIf="item.children.length"
                 class="row"
                 [ngStyle]="rowStyle(item)"
+                [ngClass]="{
+                  rowvide:
+                    item.type === 'container'
+                      ? item.children.length === 1 &&
+                        item.children[0].type === 'container-1'
+                      : item.type === 'container-2' &&
+                        item.children[0].children.length > 0 &&
+                          item.children[1].children.length > 0
+                      ? false
+                      : item.type === 'container-3' &&
+                        item.children[0].children.length > 0 &&
+                          item.children[1].children.length > 0 &&
+                          item.children[2].children.length > 0
+                      ? false
+                      : true
+                }"
               >
                 <div
                   *ngFor="let child of item.children; let i = index"

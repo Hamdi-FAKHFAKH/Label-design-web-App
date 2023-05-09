@@ -282,12 +282,15 @@ export class EtiquetteTabComponent implements OnInit {
           ? client.desClient
           : obj.refItem == "desFournisseur" && fournisseur
           ? fournisseur.desFournisseur
-          : obj.refItem.includes("formes") && form
+          : (obj.refItem && obj.refItem.includes("formes") ? form : null)
           ? form[+obj.refItem.split("-")[1]].form.path
           : produit[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,
-      type: obj.refItem.includes("formes") && form ? "forme" : obj.type,
+      type:
+        obj.refItem && obj.refItem.includes("formes") && form
+          ? "forme"
+          : obj.type,
       children: [],
       dataMatrixCode: obj.dataMatrixCode,
       dataMatrixFormat: obj.dataMatrixFormat,
