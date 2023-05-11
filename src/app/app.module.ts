@@ -38,7 +38,8 @@ import {
   FaIconLibrary,
 } from "@fortawesome/angular-fontawesome";
 import { ShareService } from "./pages/APT/CréationEtiquette/share.service";
-
+import { NbDateFnsDateModule } from "@nebular/date-fns";
+import { NbMomentDateModule } from "@nebular/moment";
 // import { FormsModule } from "@angular/forms";
 @NgModule({
   declarations: [AppComponent, LoginComponent],
@@ -59,11 +60,20 @@ import { ShareService } from "./pages/APT/CréationEtiquette/share.service";
     NbDialogModule.forRoot(),
     NbWindowModule.forRoot(),
     NbToastrModule.forRoot(),
-    NbChatModule.forRoot({
-      messageGoogleMapKey: "AIzaSyA_wNuCzia92MAmdLRzmqitRGvCF7wCZPY",
-    }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
+    NbDatepickerModule.forRoot(),
+    NbDateFnsDateModule.forRoot({
+      parseOptions: {
+        useAdditionalWeekYearTokens: true,
+        useAdditionalDayOfYearTokens: true,
+      },
+      formatOptions: {
+        useAdditionalWeekYearTokens: true,
+        useAdditionalDayOfYearTokens: true,
+      },
+    }),
+    NbMomentDateModule,
     FontAwesomeModule,
   ],
   bootstrap: [AppComponent],

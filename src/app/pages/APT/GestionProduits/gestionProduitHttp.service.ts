@@ -21,6 +21,7 @@ import {
   FormeData,
   CreateFormeResultData,
   GetFormeResultData,
+  GetOneLotResponseData,
 } from "./GestionProduit.data";
 
 @Injectable()
@@ -78,6 +79,11 @@ export class GestionProduitHttpService {
     return this.http.put<UpdateLotResponseData>(
       `http://localhost:3080/api/v1/lot/${id}`,
       obj
+    );
+  }
+  getOneLot(id: string) {
+    return this.http.get<GetOneLotResponseData>(
+      `http://localhost:3080/api/v1/lot/${id}`
     );
   }
   /****************************************************** Client *************************************************************/

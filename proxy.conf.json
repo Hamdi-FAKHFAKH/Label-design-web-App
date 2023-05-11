@@ -2,5 +2,9 @@
   "/api": {
     "target": "http://localhost:3080",
     "secure": false
+  },
+  "/printer": {
+    "target": "https://localhost:5001",
+    "secure": true
   }
 }

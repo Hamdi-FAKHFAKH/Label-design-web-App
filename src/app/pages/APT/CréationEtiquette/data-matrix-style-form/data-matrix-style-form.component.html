@@ -14,7 +14,7 @@
             id=""
             class="form-control"
             [value]="format.value === 'qrcode' && largeur.value"
-            (input)="change('hauteur', $event.target.value)"
+            (input)="changeStyle('height', $event.target.value)"
             [ngModel]="
               (dragDropService.items[itemId].style &&
                 dragDropService.items[itemId].style.height &&
@@ -35,7 +35,7 @@
             name="largeur"
             id=""
             class="form-control"
-            (input)="change('largeur', $event.target.value)"
+            (input)="changeStyle('width', $event.target.value)"
             [ngModel]="
               (dragDropService.items[itemId].style &&
                 dragDropService.items[itemId].style.width &&

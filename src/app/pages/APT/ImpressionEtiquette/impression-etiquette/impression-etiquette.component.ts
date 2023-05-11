@@ -1,10 +1,87 @@
 import { Component, OnInit } from "@angular/core";
+import { ImpressionService } from "../impressionService";
+import { ComponetList } from "../../CréationEtiquette/ComposentData";
+import { format, compareAsc } from "date-fns";
 
+class RegexFormatLot {
+  public static readonly "date" =
+    /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
+  public static readonly "dd/MM" = /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])$/gm;
+  public static readonly "MM/yyyy" = /^(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
+}
 @Component({
   selector: "ngx-impression-etiquette",
   templateUrl: "./impression-etiquette.component.html",
   styleUrls: ["./impression-etiquette.component.scss"],
 })
-export class ImpressionEtiquetteComponent {
-  constructor() {}
+export class ImpressionEtiquetteComponent implements OnInit {
+  refProd;
+  OfList;
+  printerList;
+  formatLot;
+  lot;
+  formatLotValid;
+  nbrCopieValid;
+  constructor(private impressionService: ImpressionService) {}
+  async ngOnInit() {
+    this.formatLotValid = false;
+    this.nbrCopieValid = false;
+    this.OfList = (await this.impressionService.GetAllOF().toPromise()).of.map(
+      (res) => res.ofnum
+    );
+    this.printerList = await this.impressionService
+      .GetPrinterList()
+      .toPromise();
+  }
+  async getOFinfo(ofnum) {
+    const of = (
+      await this.impressionService.GetRefProduitByOF(ofnum).toPromise()
+    ).of;
+    this.refProd = of.proref;
+    console.log(this.refProd);
+  }
+  loadList1Data(data: ComponetList[]) {
+    this.lot = this.findDateFormat(data);
+    if (this.lot) this.formatLot = this.lot.data;
+  }
+  findDateFormat(data: ComponetList[]) {
+    const res = data.find((val) => val.refItem == "format" && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children.length > 0) {
+          return this.findDateFormat(val.children);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res || resarray.find((val) => val && val.refItem == "format" && val.data)
+    );
+  }
+  filterFn = (date: Date) =>
+    this.formatLot == "dd/MM"
+      ? date.getFullYear() === new Date().getFullYear()
+      : this.formatLot == "MM/yyyy" && date.getDate() == 1;
+  changeDate(e: Date) {
+    this.lot.data = format(e, this.formatLot);
+    this.formatLotValid = true;
+  }
+  changeLot(data: string) {
+    if (data.match(RegexFormatLot[this.formatLot])) {
+      this.formatLotValid = true;
+      this.lot.data = data;
+    } else {
+      this.formatLotValid = false;
+    }
+  }
+  changenbrCopie(data: string) {
+    console.log(data.match(/^[1-9]{1}([0-9]){0,2}$/gm));
+
+    data.match(/^[1-9]{1}([0-9]){0,2}$/gm)
+      ? (this.nbrCopieValid = true)
+      : (this.nbrCopieValid = false);
+  }
 }
+//TODO: Numero de serie lors de l'impression de l'etiquette

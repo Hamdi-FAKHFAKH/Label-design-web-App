@@ -9,6 +9,7 @@ import {
   CreateFormeResultData,
   FournisseurData,
   GetFormeResultData,
+  LotData,
   ProduitData,
 } from "../../../GestionProduits/GestionProduit.data";
 import { ComponetList } from "../../ComposentData";
@@ -201,6 +202,7 @@ export class EtiquetteTabComponent implements OnInit {
       const { composents } = await this.labelHttpService
         .GetAllComponentsByEtiquette(produit.idEtiquette)
         .toPromise();
+      //get Client
       const client = produit.codeClient
         ? (
             await this.gestionProduitHttpService
@@ -208,12 +210,21 @@ export class EtiquetteTabComponent implements OnInit {
               .toPromise()
           ).body.client
         : null;
+      //get Fournisseur
       const fournisseur = produit.codeFournisseur
         ? (
             await this.gestionProduitHttpService
               .getFournisseur(produit.codeFournisseur)
               .toPromise()
           ).body.fournisseur
+        : null;
+      //get Lot
+      const lot = produit.numLot
+        ? (
+            await this.gestionProduitHttpService
+              .getOneLot(produit.numLot)
+              .toPromise()
+          ).lot
         : null;
       this.dragDropService.list1.length = 0;
       this.listFromDB = [...composents];
@@ -225,27 +236,8 @@ export class EtiquetteTabComponent implements OnInit {
           }
         })
       );
-      this.uploadData(produit, client, fournisseur, forme);
-      // remplir la list des champs dans la list de drag & drop
-      // this.list.forEach((val, index) => {
-      //   this.dragDropService.list1.push({
-      //     id: val.id,
-      //     data: val.data,
-      //     refItem: val.refItem,
-      //     title: val.title,
-      //     type: val.type,
-      //     children: val.children,
-      //     dataMatrixCode: val.dataMatrixCode,
-      //     dataMatrixFormat: val.dataMatrixFormat,
-      //     format: val.format,
-      //     style: {},
-      //   });
-      //   Object.keys(val.style).forEach((key) => {
-      //     if (val.style[key] != null) {
-      //       this.dragDropService.list1[index].style[key] = val.style[key];
-      //     }
-      //   });
-      // });
+      this.uploadData(produit, client, fournisseur, forme, lot);
+
       console.log("****list  avant fill list******");
       console.log(this.list);
       console.log("composents");
@@ -273,7 +265,8 @@ export class EtiquetteTabComponent implements OnInit {
     produit,
     client: ClientData,
     fournisseur: FournisseurData,
-    form: CreateFormeResultData[]
+    form: CreateFormeResultData[],
+    lot: LotData
   ) {
     return {
       id: obj.id,
@@ -282,6 +275,8 @@ export class EtiquetteTabComponent implements OnInit {
           ? client.desClient
           : obj.refItem == "desFournisseur" && fournisseur
           ? fournisseur.desFournisseur
+          : obj.refItem == "format" && lot
+          ? lot.format
           : (obj.refItem && obj.refItem.includes("formes") ? form : null)
           ? form[+obj.refItem.split("-")[1]].form.path
           : produit[obj.refItem],
@@ -337,11 +332,11 @@ export class EtiquetteTabComponent implements OnInit {
   listFromDB: ComposentHttpData[];
   nochildren = false;
 
-  uploadData(produit, client, fournisseur, form) {
+  uploadData(produit, client, fournisseur, form, lot) {
     this.listFromDB.map((item) => {
       if (item && item.children == "") {
         this.list.push(
-          this.ComponentToInsert(item, produit, client, fournisseur, form)
+          this.ComponentToInsert(item, produit, client, fournisseur, form, lot)
         );
         this.listFromDB[
           this.listFromDB.findIndex((obj) => obj && obj.id == item.id)
@@ -356,7 +351,8 @@ export class EtiquetteTabComponent implements OnInit {
           produit,
           client,
           fournisseur,
-          form
+          form,
+          lot
         );
         const listofIdFromList = this.list.map((val) => val.id);
         if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
@@ -379,7 +375,7 @@ export class EtiquetteTabComponent implements OnInit {
     });
 
     if (this.listFromDB.some((val) => val !== null)) {
-      this.uploadData(produit, client, fournisseur, form);
+      this.uploadData(produit, client, fournisseur, form, lot);
     }
   }
   fillList1(
@@ -414,5 +410,3 @@ export class EtiquetteTabComponent implements OnInit {
     });
   }
 }
-
-//TODO: add element order

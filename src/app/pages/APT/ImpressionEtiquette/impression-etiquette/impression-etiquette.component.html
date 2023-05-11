@@ -1,1 +1,128 @@
-<p>impression-etiquette works!</p>
+<div class="container" style="margin: 36px">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="/pages/apt/gestionProduits"
+          >S500 - Atelier Protection Thermique</a
+        >
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Impression Etiquettes
+      </li>
+    </ol>
+  </nav>
+</div>
+<div class="container" style="margin: 40px">
+  <div class="row">
+    <div class="col-4">
+      <div class="col my-1">
+        <label class="label" for="of">N° OF </label>
+        <select
+          #ofnum
+          class="form-control"
+          name="of"
+          id="of"
+          (change)="getOFinfo($event.target.value)"
+        >
+          <option value="" selected>-- Sélectionnez le numéro OF --</option>
+          <option *ngFor="let item of OfList" value="{{ item }}">
+            {{ item }}
+          </option>
+        </select>
+      </div>
+      <div class="col my-1">
+        <label class="label" for="refProd">Référence Produit </label>
+        <input
+          type="text"
+          class="form-control"
+          name="refProd"
+          id="refProd"
+          [ngModel]="refProd"
+          disabled
+        />
+      </div>
+      <div class="col my-1">
+        <label class="label" for="lot">N°Lot </label>
+        <!-- <input type="text" class="form-control" name="lot" id="lot" /> -->
+        <div *ngIf="ofnum.value">
+          <input
+            [nbDatepicker]="datepicker"
+            ngModel
+            #FormatLot="ngModel"
+            [ngClass]="{
+              'is-valid': formatLotValid && FormatLot.touched,
+              'is-invalid': !formatLotValid && FormatLot.touched
+            }"
+            class="form-control"
+            required
+            [placeholder]="formatLot"
+            (input)="changeLot($event.target.value)"
+            (change)="changeLot($event.target.value)"
+          />
+          <nb-datepicker
+            (dateChange)="changeDate($event)"
+            #datepicker
+            [format]="formatLot"
+            [filter]="filterFn"
+          ></nb-datepicker>
+          <span
+            *ngIf="!formatLotValid && FormatLot.touched"
+            class="caption status-danger mt-1"
+          >
+            veuillez vérifier le Format de Lot
+          </span>
+        </div>
+      </div>
+      <div class="col my-1">
+        <label class="label" for="nombreEtiquette"
+          >Nombre d'étiquettes à imprimer
+        </label>
+        <input
+          #impr="ngModel"
+          ngModel
+          required
+          type="text"
+          class="form-control"
+          name="nombreEtiquette"
+          id="nombreEtiquette"
+          (input)="changenbrCopie($event.target.value)"
+          [ngClass]="{
+            'is-valid': nbrCopieValid && impr.touched && impr.valid,
+            'is-invalid': !nbrCopieValid && impr.touched
+          }"
+        />
+      </div>
+      <div class="col my-1">
+        <div class="form-group">
+          <label class="label" for="imp">Imprimante </label>
+          <select class="form-control" name="imp" id="imp">
+            <option *ngFor="let item of printerList">{{ item }}</option>
+          </select>
+        </div>
+      </div>
+      <div
+        class="col rounded mx-auto d-block"
+        style="margin: auto; width: 100%"
+      >
+        <button
+          type="button"
+          class="btn btn-primary"
+          style="padding-top: 5px; width: 100%"
+        >
+          <nb-icon
+            icon="printer-outline"
+            style="height: 30px; width: 30px"
+          ></nb-icon>
+        </button>
+      </div>
+    </div>
+    <div class="col">
+      <div id="label">
+        <ngx-label-component
+          [refProd]="refProd"
+          (list1Event)="loadList1Data($event)"
+        ></ngx-label-component>
+      </div>
+    </div>
+  </div>
+</div>

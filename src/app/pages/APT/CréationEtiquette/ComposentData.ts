@@ -47,6 +47,7 @@ export enum ComponentTitle {
   ref1 = "Référence 1",
   ref2 = "Référence 2",
   numLot = "Numéro de Lot",
+  formatLot = "Format de Lot",
   codeFournisseur = "Code Fournisseur",
   desFournisseur = "Désination Fournisseur",
   codeClient = "Code Client",

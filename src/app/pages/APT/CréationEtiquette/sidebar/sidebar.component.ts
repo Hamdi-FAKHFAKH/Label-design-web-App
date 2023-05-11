@@ -11,7 +11,7 @@ import { LabelService } from "../label.service";
 import { LabeltHttpService } from "../labelHTTP.service";
 import { v4 as uuidv4 } from "uuid";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
-import { CdkDropList } from "@angular/cdk/drag-drop";
+import { CdkDragEnd, CdkDropList } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
 import { ComponetList } from "../ComposentData";
 
@@ -31,6 +31,7 @@ export class SidebarComponent implements OnInit {
   list1;
   list3 = [];
   list4 = [];
+  dragPosition = { x: 0, y: 0 };
   idEtiquette;
   constructor(
     private labelService: LabelService,
@@ -38,6 +39,12 @@ export class SidebarComponent implements OnInit {
     private gestionProduitHttpService: GestionProduitHttpService,
     public dragDropService: DragDropService
   ) {}
+  changePosition(x, y) {
+    this.dragPosition = {
+      x: x ? x : this.dragPosition.x,
+      y: y ? y : this.dragPosition.y,
+    };
+  }
   ngOnInit(): void {
     this.containerNotVide = false;
     this.container2NotVide = false;
@@ -220,7 +227,7 @@ export class SidebarComponent implements OnInit {
 
       await this.createComponent(this.dragDropService.list1, this.idEtiquette);
     }
-    //this.labelService.convertToPdf();
+    this.labelService.convertToPdf();
   }
 
   onDrop(event) {
@@ -283,14 +290,8 @@ export class SidebarComponent implements OnInit {
               color: (obj.style && obj.style["color"]) || "#000000",
               italic: obj.style && obj.style["italic"],
               underline: obj.style && obj.style["underline"],
-              width:
-                obj.type == "QRcode"
-                  ? "20mm"
-                  : (obj.style && obj.style["width"]) || "fit-content",
-              height:
-                obj.type == "QRcode"
-                  ? "20mm"
-                  : (obj.style && obj.style["height"]) || "fit-content",
+              width: (obj.style && obj.style["width"]) || "50",
+              height: (obj.style && obj.style["height"]) || "50",
               "text-decoration": obj.style && obj.style["text-decoration"],
               transform: obj.style && obj.style["transform"],
               type: obj.type,
@@ -340,14 +341,8 @@ export class SidebarComponent implements OnInit {
               color: (obj.style && obj.style["color"]) || "#000000",
               italic: obj.style && obj.style["italic"],
               underline: obj.style && obj.style["underline"],
-              width:
-                obj.type == "QRcode"
-                  ? "20mm"
-                  : (obj.style && obj.style["width"]) || "fit-content",
-              height:
-                obj.type == "QRcode"
-                  ? "20mm"
-                  : (obj.style && obj.style["height"]) || "fit-content",
+              width: (obj.style && obj.style["width"]) || "50",
+              height: (obj.style && obj.style["height"]) || "50",
               "text-decoration": obj.style && obj.style["text-decoration"],
               transform: obj.style && obj.style["transform"],
               type: obj.style && obj.type,
@@ -374,6 +369,11 @@ export class SidebarComponent implements OnInit {
         }
       })
     );
+  }
+  dragEnd($event: CdkDragEnd) {
+    this.dragPosition.x = Math.round(+$event.source.getFreeDragPosition().x);
+    this.dragPosition.y = Math.round(+$event.source.getFreeDragPosition().y);
+    console.log($event.source.getFreeDragPosition());
   }
 }
 

@@ -48,6 +48,10 @@ export interface SDTPRAResponseData {
 }
 
 //---------------------------------------------------  LotData --------------------------------------------------------------
+export interface GetOneLotResponseData {
+  Status: string;
+  lot: LotData;
+}
 export interface GetLotResponseData {
   status: string;
   lots: string[];

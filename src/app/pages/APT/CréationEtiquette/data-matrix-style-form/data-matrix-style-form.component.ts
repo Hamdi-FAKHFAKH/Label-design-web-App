@@ -82,6 +82,15 @@ export class DataMatrixStyleFormComponent implements OnInit {
       ...this.items[this.itemId].style,
       [champName]: champval,
     };
+    if (
+      champName == "width" &&
+      this.items[this.itemId].dataMatrixFormat == "qrcode"
+    ) {
+      this.items[this.itemId].style = {
+        ...this.items[this.itemId].style,
+        height: champval,
+      };
+    }
   }
   addItem(tag: string, val: string) {
     let tagexiste = false;

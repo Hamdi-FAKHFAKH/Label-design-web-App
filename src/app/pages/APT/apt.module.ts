@@ -9,12 +9,20 @@ import {
   NbInputModule,
   NbTreeGridModule,
   NbButtonModule,
+  NbDatepickerModule,
 } from "@nebular/theme";
 import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.component";
 import { WindowFormComponent } from "./GestionProduits/create-produit/window-form.component";
 import { CommonModule } from "@angular/common";
 import { UpdateProduitComponent } from "./GestionProduits/update-produit/update-produit.component";
-import { ImpressionEtiquetteComponent } from './ImpressionEtiquette/impression-etiquette/impression-etiquette.component';
+import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
+import { LabelComponentComponent } from "./ImpressionEtiquette/label-component/label-component.component";
+import { ImpressionService } from "./ImpressionEtiquette/impressionService";
+import { LabeltHttpService } from "./CréationEtiquette/labelHTTP.service";
+import { QRCodeModule } from "angularx-qrcode";
+import { NgxBarcodeModule } from "ngx-barcode";
+import { NbDateFnsDateModule } from "@nebular/date-fns";
+import { NbMomentDateModule } from "@nebular/moment";
 
 @NgModule({
   imports: [
@@ -27,6 +35,20 @@ import { ImpressionEtiquetteComponent } from './ImpressionEtiquette/impression-e
     NbTreeGridModule,
     Ng2SmartTableModule,
     CommonModule,
+    QRCodeModule,
+    NgxBarcodeModule,
+    NbDatepickerModule,
+    NbDateFnsDateModule.forRoot({
+      parseOptions: {
+        useAdditionalWeekYearTokens: true,
+        useAdditionalDayOfYearTokens: true,
+      },
+      formatOptions: {
+        useAdditionalWeekYearTokens: true,
+        useAdditionalDayOfYearTokens: true,
+      },
+    }),
+    NbMomentDateModule,
   ],
   declarations: [
     AptComponent,
@@ -34,8 +56,9 @@ import { ImpressionEtiquetteComponent } from './ImpressionEtiquette/impression-e
     WindowFormComponent,
     UpdateProduitComponent,
     ImpressionEtiquetteComponent,
+    LabelComponentComponent,
   ],
   exports: [],
-  providers: [],
+  providers: [ImpressionService, LabeltHttpService],
 })
 export class AptModule {}

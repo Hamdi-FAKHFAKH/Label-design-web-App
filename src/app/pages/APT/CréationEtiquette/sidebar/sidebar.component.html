@@ -65,12 +65,12 @@
                         item.children[0].type === 'container-1'
                       : item.type === 'container-2' &&
                         item.children[0].children.length > 0 &&
-                          item.children[1].children.length > 0
+                        item.children[1].children.length > 0
                       ? false
                       : item.type === 'container-3' &&
                         item.children[0].children.length > 0 &&
-                          item.children[1].children.length > 0 &&
-                          item.children[2].children.length > 0
+                        item.children[1].children.length > 0 &&
+                        item.children[2].children.length > 0
                       ? false
                       : true
                 }"
@@ -150,6 +150,22 @@
         <fa-icon [icon]="['fas', 'eye']"></fa-icon>
       </button>
     </div>
+    <!-- <div>
+      <label for="x"></label>
+      <input
+        name="x"
+        type="number"
+        (input)="changePosition(+$event.target.value, null)"
+        [ngModel]="dragPosition.x"
+      />
+      <label for="y"></label>
+      <input
+        name="x"
+        type="number"
+        (input)="changePosition(null, +$event.target.value)"
+        [ngModel]="dragPosition.y"
+      />
+    </div> -->
   </nb-layout-column>
 </nb-layout>
 <!-- **************************************************************** ng Template ******************************************* -->
@@ -239,3 +255,8 @@
     <button mat-menu-item>Fixed menu</button>
   </ng-template>
 </mat-menu> -->
+
+<!-- cdkDrag
+    cdkDragBoundary=".figure"
+    (cdkDragEnded)="dragEnd($event)"
+    [cdkDragFreeDragPosition]="dragPosition" -->

@@ -201,6 +201,49 @@ export class DragDropService {
                         });
                     }
                   });
+                } else if (resProduit.produit.numLot && item === "numLot") {
+                  gestionProduitHttpService
+                    .getOneLot(resProduit.produit.numLot)
+                    .toPromise()
+                    .then((lot) => {
+                      this.list2.push(
+                        {
+                          id: uuidv4(),
+                          type: "text",
+                          refItem: item,
+                          title: ComponentTitle.numLot,
+                          data: resProduit.produit.numLot,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                            width: "fit-content",
+                            height: "fit-content",
+                          },
+                        },
+                        {
+                          id: uuidv4(),
+                          type: "text",
+                          title: ComponentTitle.formatLot,
+                          refItem: "format",
+                          data: lot.lot.format,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                            width: "fit-content",
+                            height: "fit-content",
+                          },
+                        }
+                      );
+                      this.prepareDragDrop(this.list2);
+                    });
                 } else if (
                   resProduit.produit.codeClient &&
                   item === "codeClient"
