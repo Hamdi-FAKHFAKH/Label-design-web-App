@@ -2,8 +2,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Input,
+  OnChanges,
   OnInit,
   QueryList,
+  SimpleChanges,
   ViewChild,
   ViewChildren,
 } from "@angular/core";
@@ -20,9 +23,10 @@ import { ComponetList } from "../ComposentData";
   templateUrl: "./sidebar.component.html",
   styleUrls: ["./sidebar.component.scss"],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnChanges {
   @ViewChildren("dimension") elReference: QueryList<ElementRef>;
   @ViewChild(CdkDropList) dropList?: CdkDropList;
+  @Input("cdkDragFreeDragPosition") freeDragPosition: { x: number; y: number };
   containerNotVide;
   container2NotVide;
   container3NotVide;
@@ -31,7 +35,7 @@ export class SidebarComponent implements OnInit {
   list1;
   list3 = [];
   list4 = [];
-  dragPosition = { x: 0, y: 0 };
+
   idEtiquette;
   constructor(
     private labelService: LabelService,
@@ -39,11 +43,14 @@ export class SidebarComponent implements OnInit {
     private gestionProduitHttpService: GestionProduitHttpService,
     public dragDropService: DragDropService
   ) {}
-  changePosition(x, y) {
-    this.dragPosition = {
-      x: x ? x : this.dragPosition.x,
-      y: y ? y : this.dragPosition.y,
-    };
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("freeDragPosition");
+
+    console.log(this.freeDragPosition);
+  }
+  entred(e) {
+    console.log("entred");
+    console.log(e);
   }
   ngOnInit(): void {
     this.containerNotVide = false;
@@ -264,6 +271,8 @@ export class SidebarComponent implements OnInit {
         if (obj.children && obj.children.length > 0) {
           await this.lablHttpService
             .CreateComponent({
+              x: this.dragDropService.dragPosition[obj.id].x,
+              y: this.dragDropService.dragPosition[obj.id].y,
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
               "border-color":
@@ -315,6 +324,8 @@ export class SidebarComponent implements OnInit {
         } else {
           await this.lablHttpService
             .CreateComponent({
+              x: this.dragDropService.dragPosition[obj.id].x,
+              y: this.dragDropService.dragPosition[obj.id].y,
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
               "border-color":
@@ -370,10 +381,20 @@ export class SidebarComponent implements OnInit {
       })
     );
   }
-  dragEnd($event: CdkDragEnd) {
-    this.dragPosition.x = Math.round(+$event.source.getFreeDragPosition().x);
-    this.dragPosition.y = Math.round(+$event.source.getFreeDragPosition().y);
-    console.log($event.source.getFreeDragPosition());
+  dragEnd($event: CdkDragEnd, itemId: string) {
+    console.log(itemId);
+
+    this.dragDropService.dragPosition[itemId].x = Math.round(
+      +$event.source.getFreeDragPosition().x < 0
+        ? 0
+        : +$event.source.getFreeDragPosition().x
+    );
+    this.dragDropService.dragPosition[itemId].y = Math.round(
+      +$event.source.getFreeDragPosition().y < 0
+        ? 0
+        : +$event.source.getFreeDragPosition().y
+    );
+    console.log($event.source);
   }
 }
 
@@ -381,3 +402,4 @@ export class SidebarComponent implements OnInit {
 //TODO: affiche la grille
 //TODO: ajoute les formes
 //TODO: verifier les champs des produits similaire
+//TODO: supprimer placeHolder de draggebl elements and disable list order

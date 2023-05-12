@@ -150,35 +150,29 @@
         <fa-icon [icon]="['fas', 'eye']"></fa-icon>
       </button>
     </div>
-    <!-- <div>
-      <label for="x"></label>
-      <input
-        name="x"
-        type="number"
-        (input)="changePosition(+$event.target.value, null)"
-        [ngModel]="dragPosition.x"
-      />
-      <label for="y"></label>
-      <input
-        name="x"
-        type="number"
-        (input)="changePosition(null, +$event.target.value)"
-        [ngModel]="dragPosition.y"
-      />
-    </div> -->
   </nb-layout-column>
 </nb-layout>
 <!-- **************************************************************** ng Template ******************************************* -->
 <ng-template #tmplNode let-item="item">
   <div
+    cdkDrag
+    [cdkDragData]="item.id"
+    cdkDragBoundary=".figure"
+    (cdkDragEnded)="dragEnd($event, item.id)"
+    [cdkDragFreeDragPosition]="dragDropService.dragPosition[item.id]"
     *ngIf="item.type === 'text'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
     style="cursor: move"
+    class="draggedText"
   >
     {{ item.data }}
   </div>
   <img
+    cdkDrag
+    cdkDragBoundary=".figure"
+    (cdkDragEnded)="dragEnd($event, item.id)"
+    [cdkDragFreeDragPosition]="dragDropService.dragPosition[item.id]"
     *ngIf="item.type === 'forme'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
@@ -187,12 +181,18 @@
     alt=""
     height="20"
     width="20"
+    class="draggedText"
   />
   <div
+    cdkDrag
+    cdkDragBoundary=".figure"
+    (cdkDragEnded)="dragEnd($event, item.id)"
+    [cdkDragFreeDragPosition]="dragDropService.dragPosition[item.id]"
     *ngIf="item.type === 'QRcode'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
     style="width: fit-content !important; display: block"
+    class="draggedText"
   >
     <div
       *ngIf="item.dataMatrixFormat === 'qrcode'"
@@ -255,8 +255,3 @@
     <button mat-menu-item>Fixed menu</button>
   </ng-template>
 </mat-menu> -->
-
-<!-- cdkDrag
-    cdkDragBoundary=".figure"
-    (cdkDragEnded)="dragEnd($event)"
-    [cdkDragFreeDragPosition]="dragPosition" -->

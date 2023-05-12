@@ -12,6 +12,7 @@ import { ProduitData } from "../../GestionProduits/GestionProduit.data";
 export class FieldStyleFormComponent implements OnInit {
   @Input() itemId;
   items = {};
+  math = Math;
   produit: ProduitData;
   componentstyle: ComponentStyle = {};
   paddingClicked;
@@ -135,5 +136,16 @@ export class FieldStyleFormComponent implements OnInit {
     console.log("***style***");
 
     console.log(this.items[this.itemId].style);
+  }
+  changePosition(x, y) {
+    const xround = Math.round(+x / 0.26);
+    const yround = Math.round(+y / 0.26);
+    this.dragDropService.dragPosition[this.itemId] = {
+      x: x != null ? +xround : this.dragDropService.dragPosition[this.itemId].x,
+      y: y != null ? +yround : this.dragDropService.dragPosition[this.itemId].y,
+    };
+    console.log(Math.round(+y / 0.26));
+
+    console.log(this.dragDropService.dragPosition[this.itemId]);
   }
 }

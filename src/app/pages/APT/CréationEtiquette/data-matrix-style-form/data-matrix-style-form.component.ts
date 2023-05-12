@@ -12,6 +12,7 @@ import { toXML } from "jstoxml";
 export class DataMatrixStyleFormComponent implements OnInit {
   @Input() itemId;
   xmlForm: string;
+  math = Math;
   listItem = [];
   marginCliked;
   items = {};
@@ -119,5 +120,16 @@ export class DataMatrixStyleFormComponent implements OnInit {
     const res = toXML(this.listItem, config);
     this.xmlForm = this.fixString + res;
     this.change("data", this.xmlForm);
+  }
+  changePosition(x, y) {
+    const xround = Math.round(+x / 0.26);
+    const yround = Math.round(+y / 0.26);
+    this.dragDropService.dragPosition[this.itemId] = {
+      x: x != null ? +xround : this.dragDropService.dragPosition[this.itemId].x,
+      y: y != null ? +yround : this.dragDropService.dragPosition[this.itemId].y,
+    };
+    console.log(Math.round(+y / 0.26));
+
+    console.log(this.dragDropService.dragPosition[this.itemId]);
   }
 }

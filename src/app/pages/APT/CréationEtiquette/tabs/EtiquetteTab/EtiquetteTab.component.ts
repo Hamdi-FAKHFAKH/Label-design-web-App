@@ -236,17 +236,25 @@ export class EtiquetteTabComponent implements OnInit {
           }
         })
       );
-      this.uploadData(produit, client, fournisseur, forme, lot);
+      //this.uploadData(produit, client, fournisseur, forme, lot);
 
       console.log("****list  avant fill list******");
       console.log(this.list);
       console.log("composents");
       console.log(composents);
-      const list = [];
-      this.fillList1(composents, this.list, list);
-      this.dragDropService.list1 = [...list];
+      const list: ComponetList[] = [];
+      this.dragDropService.dragPosition = {};
+      composents.forEach((comp) => {
+        this.dragDropService.list1.push(
+          this.ComponentToInsert(comp, produit, client, fournisseur, forme, lot)
+        );
+        this.dragDropService.dragPosition[comp.id] = { x: +comp.x, y: +comp.y };
+      });
+      console.log("dragPosition From db");
+      console.log(this.dragDropService.dragPosition);
+      //this.fillList1(composents, this.list, list);
+      //this.dragDropService.list1 = [...list];
       // save all items in list1 into object
-      // this.dragDropService.list1 = this.list;
       this.dragDropService.getAllItems(this.dragDropService.list1);
       console.log("****list 1 ******");
       console.log(this.dragDropService.list1);

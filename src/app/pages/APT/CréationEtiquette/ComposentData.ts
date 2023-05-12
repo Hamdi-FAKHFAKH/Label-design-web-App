@@ -9,6 +9,8 @@ export interface ComponetList {
   data: string;
   dataMatrixFormat?: string;
   dataMatrixCode?: string;
+  x?: number;
+  y?: number;
 }
 export interface ComponentStyle {
   height?: string;

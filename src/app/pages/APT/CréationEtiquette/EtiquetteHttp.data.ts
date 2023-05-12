@@ -56,6 +56,8 @@ export interface ComposentHttpData {
   "border-width": string;
   createur?: string;
   modificateur?: string;
+  x?: number;
+  y?: number;
 }
 export interface GetComposentResultData {
   Status: string;

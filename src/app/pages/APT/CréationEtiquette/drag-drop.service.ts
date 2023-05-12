@@ -27,6 +27,8 @@ export class DragDropService {
   dropActionTodo: DropInfo = {
     targetId: "label",
   };
+  // position of draggable elements
+  dragPosition = {};
   //fill dropTargetIds list and nodeLookup2 object
   prepareDragDrop(nodes: ComponetList[]) {
     nodes.forEach((node) => {
@@ -175,7 +177,6 @@ export class DragDropService {
                         },
                         children: [],
                       });
-                      this.prepareDragDrop(this.list2);
                     });
                 } else if (item === "formes" && resProduit.produit.formes) {
                   resProduit.produit.formes.split(";").forEach((val, index) => {
@@ -358,7 +359,6 @@ export class DragDropService {
                     },
                     dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
                   });
-                  this.prepareDragDrop(this.list2);
                 }
               }
             });
@@ -660,6 +660,9 @@ export class DragDropService {
           );
         }
         this.items[id] = this.list1[event.currentIndex];
+        this.dragPosition[id] = { x: 0, y: 0 };
+        console.log("dragPosition");
+        console.log(this.dragPosition);
       }
       console.log("list1");
       console.log(this.list1);

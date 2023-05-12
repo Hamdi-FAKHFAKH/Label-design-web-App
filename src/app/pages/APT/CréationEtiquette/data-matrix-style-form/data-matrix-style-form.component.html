@@ -86,6 +86,37 @@
     </div>
   </div>
   <fieldset>
+    <legend>Position</legend>
+  </fieldset>
+  <div class="row">
+    <div class="col px-1">
+      <label for="x" class="label">X</label>
+      <div class="input-group mb-3">
+        <input
+          name="x"
+          type="number"
+          class="form-control"
+          (input)="changePosition(+$event.target.value, null)"
+          [ngModel]="math.round(dragDropService.dragPosition[itemId].x * 0.26)"
+        />
+        <span class="input-group-text" id="basic-addon2">mm</span>
+      </div>
+    </div>
+    <div class="col px-1">
+      <label for="y" class="label">Y</label>
+      <div class="input-group mb-3">
+        <input
+          name="x"
+          type="number"
+          class="form-control"
+          (input)="changePosition(null, +$event.target.value)"
+          [ngModel]="math.round(dragDropService.dragPosition[itemId].y * 0.26)"
+        />
+        <span class="input-group-text" id="basic-addon2">mm</span>
+      </div>
+    </div>
+  </div>
+  <fieldset>
     <legend>Espacement</legend>
   </fieldset>
   <div class="row">
