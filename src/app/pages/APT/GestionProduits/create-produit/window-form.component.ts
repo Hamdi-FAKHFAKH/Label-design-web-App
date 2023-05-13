@@ -12,6 +12,10 @@ import { v4 as uuidv4 } from "uuid";
   styleUrls: ["window-form.component.scss"],
 })
 export class WindowFormComponent implements OnInit {
+  checkValueByRegex(value, id) {
+    if (value) return value.match(/^[^a-zA-Z]+$/);
+    return false;
+  }
   formes: { id: string; name: string; path: string; clicked: boolean }[];
   addForme(id, name, path, clicked, index) {
     if (clicked) {

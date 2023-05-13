@@ -1,7 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { ImpressionService } from "../impressionService";
 import { ComponetList } from "../../CréationEtiquette/ComposentData";
-import { format, compareAsc } from "date-fns";
+import { format } from "date-fns";
+import { LabelService } from "../../CréationEtiquette/label.service";
 
 class RegexFormatLot {
   public static readonly "date" =
@@ -22,7 +23,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
   lot;
   formatLotValid;
   nbrCopieValid;
-  constructor(private impressionService: ImpressionService) {}
+  constructor(
+    private impressionService: ImpressionService,
+    private labelService: LabelService
+  ) {}
   async ngOnInit() {
     this.formatLotValid = false;
     this.nbrCopieValid = false;
@@ -82,6 +86,55 @@ export class ImpressionEtiquetteComponent implements OnInit {
     data.match(/^[1-9]{1}([0-9]){0,2}$/gm)
       ? (this.nbrCopieValid = true)
       : (this.nbrCopieValid = false);
+  }
+  async print(nbrcopie, printerName) {
+    const timeout = (ms) => {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    };
+    if (this.refProd) {
+      this.labelService.convertToPdf();
+      let i = 0;
+      let fileexist;
+      while (i < 3) {
+        await timeout(2000);
+        try {
+          fileexist = (
+            await this.impressionService
+              .CheckFileExistence({
+                path: "C:/Users/hamdi/Downloads/label.pdf",
+              })
+              .toPromise()
+          ).exist;
+        } catch (error) {
+          console.log("File Not Found");
+        }
+        fileexist ? (i = 3) : i++;
+      }
+
+      let printStatus;
+      console.log(fileexist);
+      console.log(printerName);
+      console.log(nbrcopie);
+      if (fileexist) {
+        printStatus = (
+          await this.impressionService
+            .PrintLabel({
+              copies: +nbrcopie,
+              filePath: "C:/Users/hamdi/Downloads/label.pdf",
+              printerName: printerName,
+            })
+            .toPromise()
+        ).status;
+      }
+      if (fileexist && printStatus == 200) {
+        let res = await this.impressionService
+          .DeleteFile({
+            path: "C:/Users/hamdi/Downloads/label.pdf",
+          })
+          .toPromise();
+        console.log(res.deleted);
+      }
+    }
   }
 }
 //TODO: Numero de serie lors de l'impression de l'etiquette

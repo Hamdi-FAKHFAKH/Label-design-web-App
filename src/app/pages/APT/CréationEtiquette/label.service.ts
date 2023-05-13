@@ -22,9 +22,9 @@ export class LabelService {
   convertToPdf() {
     var element = document.getElementById("test");
     var options = {
-      filename: "test.pdf",
+      filename: "label.pdf",
       compression: "FAST",
-      scale: 5,
+      scale: 10,
     };
     domToPdf(element, options, function (pdf) {
       console.log("done");

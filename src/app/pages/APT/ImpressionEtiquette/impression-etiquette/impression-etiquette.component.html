@@ -41,10 +41,10 @@
           disabled
         />
       </div>
-      <div class="col my-1">
+      <div class="col my-1" *ngIf="ofnum.value && formatLot">
         <label class="label" for="lot">N°Lot </label>
         <!-- <input type="text" class="form-control" name="lot" id="lot" /> -->
-        <div *ngIf="ofnum.value">
+        <div>
           <input
             [nbDatepicker]="datepicker"
             ngModel
@@ -95,7 +95,7 @@
       <div class="col my-1">
         <div class="form-group">
           <label class="label" for="imp">Imprimante </label>
-          <select class="form-control" name="imp" id="imp">
+          <select class="form-control" name="imp" id="imp" #printerName>
             <option *ngFor="let item of printerList">{{ item }}</option>
           </select>
         </div>
@@ -108,6 +108,7 @@
           type="button"
           class="btn btn-primary"
           style="padding-top: 5px; width: 100%"
+          (click)="print(+impr.value, printerName.value)"
         >
           <nb-icon
             icon="printer-outline"

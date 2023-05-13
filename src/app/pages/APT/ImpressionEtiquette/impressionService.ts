@@ -15,6 +15,23 @@ export class ImpressionService {
   GetPrinterList() {
     return this.http.get(`https://localhost:5001/printer`);
   }
+  PrintLabel(obj: PrintData) {
+    return this.http.post(`https://localhost:5001/print`, obj, {
+      observe: "response",
+    });
+  }
+  CheckFileExistence(obj) {
+    return this.http.post<FileExist>(
+      `http://localhost:3080/api/v1/LabelFile/`,
+      obj
+    );
+  }
+  DeleteFile(obj) {
+    return this.http.delete<FileDeleted>(
+      `http://localhost:3080/api/v1/LabelFile/`,
+      { body: obj }
+    );
+  }
 }
 export interface GetOneOFResultData {
   Status: string;
@@ -30,4 +47,17 @@ export interface OFHttpData {
   liecod: string;
   createdAt: string;
   updatedAt: string;
+}
+export interface PrintData {
+  copies: number;
+  filePath: string;
+  printerName: string;
+}
+export interface FileExist {
+  exist: boolean;
+  message: string;
+}
+export interface FileDeleted {
+  deleted: boolean;
+  message: string;
 }

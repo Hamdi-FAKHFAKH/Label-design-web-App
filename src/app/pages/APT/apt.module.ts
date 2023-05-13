@@ -23,9 +23,13 @@ import { QRCodeModule } from "angularx-qrcode";
 import { NgxBarcodeModule } from "ngx-barcode";
 import { NbDateFnsDateModule } from "@nebular/date-fns";
 import { NbMomentDateModule } from "@nebular/moment";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { DragDropService } from "./CréationEtiquette/drag-drop.service";
+import { LabelService } from "./CréationEtiquette/label.service";
 
 @NgModule({
   imports: [
+    DragDropModule,
     FormsModule,
     NbButtonModule,
     AptRoutingModule,
@@ -59,6 +63,11 @@ import { NbMomentDateModule } from "@nebular/moment";
     LabelComponentComponent,
   ],
   exports: [],
-  providers: [ImpressionService, LabeltHttpService],
+  providers: [
+    ImpressionService,
+    LabeltHttpService,
+    DragDropService,
+    LabelService,
+  ],
 })
 export class AptModule {}

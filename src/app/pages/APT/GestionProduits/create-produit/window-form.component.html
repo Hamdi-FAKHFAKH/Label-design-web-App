@@ -422,6 +422,7 @@
           <div class="row">
             <div class="col">
               <input
+                #addNewSN
                 type="checkbox"
                 [defaultChecked]="false"
                 (change)="addSN($event)"
@@ -438,6 +439,7 @@
                   class="form-control"
                   (change)="SelectSn(snFormat.value)"
                   [disabled]="addNewSerialNumber"
+                  [ngModel]="addNewSN.checked && ''"
                 >
                   <option
                     *ngFor="let item of SerialNumberData; let i = index"
@@ -456,13 +458,23 @@
                   "
                   name="prefix"
                   #prefix="ngModel"
-                  type="text"
+                  [type]="typeCompteur.value === 'AN' ? 'text' : 'number'"
                   class="form-control"
                   placeholder="Préfix"
                   aria-label="Préfix"
                   aria-describedby="Préfix"
                   val
                   [disabled]="!addNewSerialNumber"
+                  [ngClass]="{
+                    'is-valid':
+                      prefix.touched &&
+                      typeCompteur.value === 'N' &&
+                      checkValueByRegex(prefix.value, 'prefix'),
+                    'is-invalid':
+                      prefix.touched &&
+                      typeCompteur.value === 'N' &&
+                      !checkValueByRegex(prefix.value, 'prefix')
+                  }"
                   value="{{
                     selectedSerialNumber && selectedSerialNumber.prefix
                   }}"

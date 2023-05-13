@@ -45,7 +45,7 @@ export class DragDropService {
     private gestionProduitHttpService: GestionProduitHttpService,
     private labelService: LabelService
   ) {
-    labelService.labelInfo.subscribe((val) => {
+    this.labelService.labelInfo.subscribe((val) => {
       if (this.refproduit !== val.refProd && val.refProd !== null) {
         this.list2 = [
           {
@@ -131,7 +131,7 @@ export class DragDropService {
           },
         ];
         this.refproduit = val.refProd;
-        gestionProduitHttpService
+        this.gestionProduitHttpService
           .getOneProduit(this.refproduit)
           .toPromise()
           .then((resProduit) => {
@@ -148,40 +148,38 @@ export class DragDropService {
                 item !== "datamatrixData" &&
                 resProduit.produit[item]
               ) {
-                if (
-                  item === "idSN" &&
-                  resProduit.produit.idSN &&
-                  resProduit.produit.withSN
-                ) {
-                  gestionProduitHttpService
-                    .getOneSerialNumber(resProduit.produit.idSN)
-                    .toPromise()
-                    .then((serialNumber) => {
-                      this.list2.push({
-                        id: uuidv4(),
-                        type: "text",
-                        refItem: item,
-                        title: ComponentTitle.SN,
-                        data:
-                          serialNumber.serialNumber.prefix +
-                          serialNumber.serialNumber.suffix,
-                        style: {
-                          "font-weight": "normal",
-                          bold: false,
-                          italic: false,
-                          "font-style": "normal",
-                          "text-decoration": "none",
-                          underline: false,
-                          height: "fit-content",
-                          width: "fit-content",
-                        },
-                        children: [],
+                if (item === "idSN" && resProduit.produit.idSN) {
+                  resProduit.produit.withSN &&
+                    this.gestionProduitHttpService
+                      .getOneSerialNumber(resProduit.produit.idSN)
+                      .toPromise()
+                      .then((serialNumber) => {
+                        this.list2.push({
+                          id: uuidv4(),
+                          type: "text",
+                          refItem: item,
+                          title: ComponentTitle.SN,
+                          data:
+                            serialNumber.serialNumber.prefix +
+                            serialNumber.serialNumber.suffix,
+                          style: {
+                            "font-weight": "normal",
+                            bold: false,
+                            italic: false,
+                            "font-style": "normal",
+                            "text-decoration": "none",
+                            underline: false,
+                            height: "fit-content",
+                            width: "fit-content",
+                          },
+                          children: [],
+                        });
+                        this.prepareDragDrop(this.list2);
                       });
-                    });
                 } else if (item === "formes" && resProduit.produit.formes) {
                   resProduit.produit.formes.split(";").forEach((val, index) => {
                     if (val) {
-                      gestionProduitHttpService
+                      this.gestionProduitHttpService
                         .getOneForm(val)
                         .toPromise()
                         .then((obj) => {
@@ -203,7 +201,7 @@ export class DragDropService {
                     }
                   });
                 } else if (resProduit.produit.numLot && item === "numLot") {
-                  gestionProduitHttpService
+                  this.gestionProduitHttpService
                     .getOneLot(resProduit.produit.numLot)
                     .toPromise()
                     .then((lot) => {
@@ -249,7 +247,7 @@ export class DragDropService {
                   resProduit.produit.codeClient &&
                   item === "codeClient"
                 ) {
-                  gestionProduitHttpService
+                  this.gestionProduitHttpService
                     .getClient(resProduit.produit.codeClient)
                     .toPromise()
                     .then((client) => {
@@ -295,7 +293,7 @@ export class DragDropService {
                   resProduit.produit.codeFournisseur &&
                   item === "codeFournisseur"
                 ) {
-                  gestionProduitHttpService
+                  this.gestionProduitHttpService
                     .getFournisseur(resProduit.produit.codeFournisseur)
                     .toPromise()
                     .then((fournisseur) => {

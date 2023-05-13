@@ -23,10 +23,9 @@ import { ComponetList } from "../ComposentData";
   templateUrl: "./sidebar.component.html",
   styleUrls: ["./sidebar.component.scss"],
 })
-export class SidebarComponent implements OnInit, OnChanges {
+export class SidebarComponent implements OnInit {
   @ViewChildren("dimension") elReference: QueryList<ElementRef>;
   @ViewChild(CdkDropList) dropList?: CdkDropList;
-  @Input("cdkDragFreeDragPosition") freeDragPosition: { x: number; y: number };
   containerNotVide;
   container2NotVide;
   container3NotVide;
@@ -43,11 +42,7 @@ export class SidebarComponent implements OnInit, OnChanges {
     private gestionProduitHttpService: GestionProduitHttpService,
     public dragDropService: DragDropService
   ) {}
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log("freeDragPosition");
 
-    console.log(this.freeDragPosition);
-  }
   entred(e) {
     console.log("entred");
     console.log(e);
@@ -234,7 +229,6 @@ export class SidebarComponent implements OnInit, OnChanges {
 
       await this.createComponent(this.dragDropService.list1, this.idEtiquette);
     }
-    this.labelService.convertToPdf();
   }
 
   onDrop(event) {

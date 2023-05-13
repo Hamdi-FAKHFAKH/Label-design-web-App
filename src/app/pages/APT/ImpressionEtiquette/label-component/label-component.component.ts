@@ -16,8 +16,10 @@ import {
   ClientData,
   CreateFormeResultData,
   FournisseurData,
+  GetOneSerialNumberResultData,
   LotData,
 } from "../../GestionProduits/GestionProduit.data";
+import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
 
 @Component({
   selector: "ngx-label-component",
@@ -33,7 +35,8 @@ export class LabelComponentComponent implements OnChanges {
   list;
   constructor(
     private gestionProduitHttpService: GestionProduitHttpService,
-    private labelHttpService: LabeltHttpService
+    private labelHttpService: LabeltHttpService,
+    public dragDropService: DragDropService
   ) {}
   rowStyle(item: ComponetList) {
     return {
@@ -110,7 +113,6 @@ export class LabelComponentComponent implements OnChanges {
         ).lot
       : null;
     this.list1 = [];
-    this.list = [];
     //get Forme
     const forme = await Promise.all(
       produit.formes.split(";").map((val) => {
@@ -119,25 +121,60 @@ export class LabelComponentComponent implements OnChanges {
         }
       })
     );
-    this.uploadData(
-      Array.from(composents),
-      produit,
-      client,
-      fournisseur,
-      forme,
-      lot
-    );
-    const list = [];
-    this.fillList1(composents, this.list, list);
-    this.list1 = [...list];
+    //get SN
+    const SN = produit.idSN
+      ? await this.gestionProduitHttpService
+          .getOneSerialNumber(produit.idSN)
+          .toPromise()
+      : null;
+    // fill list1
+    this.dragDropService.dragPosition = {};
+    composents.forEach((comp) => {
+      this.list1.push(
+        this.ComponentToInsert(
+          comp,
+          produit,
+          client,
+          fournisseur,
+          forme,
+          lot,
+          SN
+        )
+      );
+      this.dragDropService.dragPosition[comp.id] = {
+        x: +comp.x,
+        y: +comp.y,
+      };
+    });
+    console.log("dragPosition From db");
+    console.log(this.dragDropService.dragPosition);
+    // this.uploadData(
+    //   Array.from(composents),
+    //   produit,
+    //   client,
+    //   fournisseur,
+    //   forme,
+    //   lot
+    // );
+    // const list = [];
+    // this.fillList1(composents, this.list, list);
+    // this.list1 = [...list];
     this.list1Event.emit(this.list1);
   }
 
-  uploadData(listFromDB, produit, client, fournisseur, form, lot) {
+  uploadData(listFromDB, produit, client, fournisseur, form, lot, SN) {
     listFromDB.map((item) => {
       if (item && item.children == "") {
         this.list.push(
-          this.ComponentToInsert(item, produit, client, fournisseur, form, lot)
+          this.ComponentToInsert(
+            item,
+            produit,
+            client,
+            fournisseur,
+            form,
+            lot,
+            SN
+          )
         );
         listFromDB[listFromDB.findIndex((obj) => obj && obj.id == item.id)] =
           null;
@@ -152,7 +189,8 @@ export class LabelComponentComponent implements OnChanges {
           client,
           fournisseur,
           form,
-          lot
+          lot,
+          SN
         );
         const listofIdFromList = this.list.map((val) => val.id);
         if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
@@ -175,7 +213,7 @@ export class LabelComponentComponent implements OnChanges {
     });
 
     if (listFromDB.some((val) => val !== null)) {
-      this.uploadData(listFromDB, produit, client, fournisseur, form, lot);
+      this.uploadData(listFromDB, produit, client, fournisseur, form, lot, SN);
     }
   }
   fillList1(
@@ -215,13 +253,16 @@ export class LabelComponentComponent implements OnChanges {
     client: ClientData,
     fournisseur: FournisseurData,
     form: CreateFormeResultData[],
-    lot: LotData
+    lot: LotData,
+    SN: GetOneSerialNumberResultData
   ) {
     return {
       id: obj.id,
       data:
         obj.refItem == "desClient" && client
           ? client.desClient
+          : obj.refItem == "idSN" && SN
+          ? SN.serialNumber.prefix + SN.serialNumber.suffix
           : obj.refItem == "desFournisseur" && fournisseur
           ? fournisseur.desFournisseur
           : obj.refItem == "format" && lot
@@ -269,4 +310,5 @@ export class LabelComponentComponent implements OnChanges {
       },
     };
   }
+  
 }
