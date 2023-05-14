@@ -7,7 +7,6 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { LabelService } from "../../CréationEtiquette/label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { LabeltHttpService } from "../../CréationEtiquette/labelHTTP.service";
 import { ComposentHttpData } from "../../CréationEtiquette/EtiquetteHttp.data";
@@ -26,18 +25,29 @@ import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
   templateUrl: "./label-component.component.html",
   styleUrls: ["./label-component.component.scss"],
 })
-export class LabelComponentComponent implements OnChanges {
+export class LabelComponentComponent implements OnChanges, OnInit {
   @Input() refProd;
+  @Input() changeSN;
   @Output() list1Event = new EventEmitter<ComponetList[]>();
+  @Output() withSN = new EventEmitter<boolean>();
   list1;
   labelStyle;
   labelInfo;
   list;
+  SN;
+
+  snComp: ComponetList;
   constructor(
     private gestionProduitHttpService: GestionProduitHttpService,
     private labelHttpService: LabeltHttpService,
     public dragDropService: DragDropService
   ) {}
+  ngOnInit(): void {
+    this.changeSN.subscribe(() => {
+      this.changeSn();
+    });
+  }
+
   rowStyle(item: ComponetList) {
     return {
       ...item.style,
@@ -127,11 +137,15 @@ export class LabelComponentComponent implements OnChanges {
           .getOneSerialNumber(produit.idSN)
           .toPromise()
       : null;
+    this.SN = SN.serialNumber;
+    SN ? this.withSN.emit(true) : this.withSN.emit(false);
+
     // fill list1
+
     this.dragDropService.dragPosition = {};
     composents.forEach((comp) => {
-      this.list1.push(
-        this.ComponentToInsert(
+      if (comp.refItem == "idSN") {
+        this.snComp = this.ComponentToInsert(
           comp,
           produit,
           client,
@@ -139,8 +153,22 @@ export class LabelComponentComponent implements OnChanges {
           forme,
           lot,
           SN
-        )
-      );
+        );
+        this.list1.push(this.snComp);
+      } else {
+        this.list1.push(
+          this.ComponentToInsert(
+            comp,
+            produit,
+            client,
+            fournisseur,
+            forme,
+            lot,
+            SN
+          )
+        );
+      }
+
       this.dragDropService.dragPosition[comp.id] = {
         x: +comp.x,
         y: +comp.y,
@@ -255,7 +283,7 @@ export class LabelComponentComponent implements OnChanges {
     form: CreateFormeResultData[],
     lot: LotData,
     SN: GetOneSerialNumberResultData
-  ) {
+  ): ComponetList {
     return {
       id: obj.id,
       data:
@@ -310,5 +338,10 @@ export class LabelComponentComponent implements OnChanges {
       },
     };
   }
-  
+  changeSn = () => {
+    const suff = parseInt(this.SN.suffix) + +this.SN.pas;
+    this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");
+    this.snComp.data = this.SN.prefix + this.SN.suffix;
+    console.log(this.snComp);
+  };
 }

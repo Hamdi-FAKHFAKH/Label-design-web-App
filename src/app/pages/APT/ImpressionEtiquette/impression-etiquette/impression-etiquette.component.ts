@@ -1,8 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, Input } from "@angular/core";
 import { ImpressionService } from "../impressionService";
 import { ComponetList } from "../../CréationEtiquette/ComposentData";
 import { format } from "date-fns";
 import { LabelService } from "../../CréationEtiquette/label.service";
+import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
+import { SerialNumberData } from "../../GestionProduits/GestionProduit.data";
 
 class RegexFormatLot {
   public static readonly "date" =
@@ -23,9 +25,13 @@ export class ImpressionEtiquetteComponent implements OnInit {
   lot;
   formatLotValid;
   nbrCopieValid;
+  withSN;
+  changeSn = new EventEmitter();
+  //Sérial Number
   constructor(
     private impressionService: ImpressionService,
-    private labelService: LabelService
+    private labelService: LabelService,
+    private gestionProduitHttpService: GestionProduitHttpService
   ) {}
   async ngOnInit() {
     this.formatLotValid = false;
@@ -44,9 +50,23 @@ export class ImpressionEtiquetteComponent implements OnInit {
     this.refProd = of.proref;
     console.log(this.refProd);
   }
-  loadList1Data(data: ComponetList[]) {
+  async loadList1Data(data: ComponetList[]) {
+    console.log(data);
+
     this.lot = this.findDateFormat(data);
+    const idsn = this.findSN(data);
+    const produit = (
+      await this.gestionProduitHttpService
+        .getOneProduit(this.refProd)
+        .toPromise()
+    ).produit;
+
     if (this.lot) this.formatLot = this.lot.data;
+  }
+  withSNFunction(data) {
+    this.withSN = data;
+    console.log("withSN");
+    console.log(this.withSN);
   }
   findDateFormat(data: ComponetList[]) {
     const res = data.find((val) => val.refItem == "format" && val.data);
@@ -62,6 +82,22 @@ export class ImpressionEtiquetteComponent implements OnInit {
     }
     return (
       res || resarray.find((val) => val && val.refItem == "format" && val.data)
+    );
+  }
+  findSN(data: ComponetList[]) {
+    const res = data.find((val) => val.refItem == "idSN" && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children.length > 0) {
+          return this.findDateFormat(val.children);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res || resarray.find((val) => val && val.refItem == "idSN" && val.data)
     );
   }
   filterFn = (date: Date) =>
@@ -80,6 +116,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
       this.formatLotValid = false;
     }
   }
+
   changenbrCopie(data: string) {
     console.log(data.match(/^[1-9]{1}([0-9]){0,2}$/gm));
 
@@ -87,11 +124,14 @@ export class ImpressionEtiquetteComponent implements OnInit {
       ? (this.nbrCopieValid = true)
       : (this.nbrCopieValid = false);
   }
+  changeSNFunction() {
+    this.changeSn.emit();
+  }
   async print(nbrcopie, printerName) {
     const timeout = (ms) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
     };
-    if (this.refProd) {
+    if (this.refProd && !this.withSN) {
       this.labelService.convertToPdf();
       let i = 0;
       let fileexist;
@@ -134,7 +174,51 @@ export class ImpressionEtiquetteComponent implements OnInit {
           .toPromise();
         console.log(res.deleted);
       }
+    } else if (this.refProd && this.withSN) {
+      for (let i = 0; i < +nbrcopie; i++) {
+        this.labelService.convertToPdf();
+        let j = 0;
+        let fileexist;
+        while (j < 3) {
+          await timeout(2000);
+          try {
+            fileexist = (
+              await this.impressionService
+                .CheckFileExistence({
+                  path: "C:/Users/hamdi/Downloads/label.pdf",
+                })
+                .toPromise()
+            ).exist;
+          } catch (error) {
+            console.log("File Not Found");
+          }
+          fileexist ? (j = 3) : j++;
+        }
+
+        let printStatus;
+        if (fileexist) {
+          printStatus = (
+            await this.impressionService
+              .PrintLabel({
+                copies: 1,
+                filePath: "C:/Users/hamdi/Downloads/label.pdf",
+                printerName: printerName,
+              })
+              .toPromise()
+          ).status;
+        }
+        if (fileexist && printStatus == 200) {
+          this.changeSn.emit();
+          let res = await this.impressionService
+            .DeleteFile({
+              path: "C:/Users/hamdi/Downloads/label.pdf",
+            })
+            .toPromise();
+          console.log(res.deleted);
+        }
+      }
     }
   }
 }
+
 //TODO: Numero de serie lors de l'impression de l'etiquette

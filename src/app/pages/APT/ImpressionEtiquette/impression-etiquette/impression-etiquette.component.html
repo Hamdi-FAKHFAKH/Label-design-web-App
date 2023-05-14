@@ -115,13 +115,16 @@
             style="height: 30px; width: 30px"
           ></nb-icon>
         </button>
+        <button (click)="changeSNFunction()">Change SN</button>
       </div>
     </div>
     <div class="col">
       <div id="label">
         <ngx-label-component
           [refProd]="refProd"
+          [changeSN]="changeSn"
           (list1Event)="loadList1Data($event)"
+          (withSN)="withSNFunction($event)"
         ></ngx-label-component>
       </div>
     </div>
