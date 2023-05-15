@@ -1,58 +1,28 @@
 <div class="col px-1">
   <fieldset>
-    <legend>Taille</legend>
+    <legend>Style</legend>
   </fieldset>
   <div class="row">
-    <div class="col px-1">
-      <label for="longueur" class="label">Hauteur</label>
-      <input
-        (input)="
-          changeStyle(
-            'height',
-            $event.target.value === '0'
-              ? 'fit-content'
-              : $event.target.value + 'mm'
-          )
-        "
-        type="number"
-        min="0"
-        name="longueur"
-        id="longueur"
+    <div class="col px-1" style="padding-right: 0px; padding-left: 0px">
+      <label for="police" class="label">Police</label>
+      <select
         class="form-control"
+        name="police"
+        id="police"
+        (change)="changeStyle('font-family', $event.target.value)"
         [ngModel]="
-          dragDropService.items[itemId].style &&
-          dragDropService.items[itemId].style.height &&
-          dragDropService.items[itemId].style.height !== 'fit-content' &&
-          +dragDropService.items[itemId].style.height.replace('mm', '')
+          (dragDropService.items[itemId].style &&
+            dragDropService.items[itemId].style['font-family']) ||
+          'Times New Roman'
         "
-      />
+      >
+        <option *ngFor="let font of fontFamily" value="{{ font }}">
+          {{ font }}
+        </option>
+      </select>
     </div>
-    <div class="col px-1">
-      <label for="largeur" class="label">largeur</label>
-      <input
-        type="number"
-        min="0"
-        name="largeur"
-        id="largeur"
-        class="form-control"
-        (input)="
-          changeStyle(
-            'width',
-            $event.target.value === '0'
-              ? 'fit-content'
-              : $event.target.value + 'mm'
-          )
-        "
-        [ngModel]="
-          dragDropService.items[itemId].style &&
-          dragDropService.items[itemId].style.width &&
-          dragDropService.items[itemId].style.width !== 'fit-content' &&
-          +dragDropService.items[itemId].style.width.replace('mm', '')
-        "
-      />
-    </div>
-    <div class="col px-1">
-      <label for="taille" class="label">Taille</label>
+    <div class="col-3" style="padding-right: 0px; padding-left: 0px">
+      <label for="taille" class="label">Taille(mm)</label>
       <input
         type="number"
         min="0"
@@ -60,16 +30,76 @@
         id="taille"
         class="form-control"
         (input)="changeStyle('font-size', $event.target.value + 'pt')"
+        [defaultValue]="12"
         [ngModel]="
-          (dragDropService.items[itemId].style &&
-            dragDropService.items[itemId].style['font-size'] &&
-            +dragDropService.items[itemId].style['font-size'].replace(
-              'pt',
-              ''
-            )) ||
-          12
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style['font-size'] &&
+          +dragDropService.items[itemId].style['font-size'].replace('pt', '')
         "
       />
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col px-1">
+      <div
+        class="btn-group"
+        role="group"
+        aria-label="Basic example"
+        style="margin: auto; width: 100%"
+      >
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="changeStyle('text-align', 'left')"
+        >
+          <fa-icon icon="align-left"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="changeStyle('text-align', 'center')"
+        >
+          <fa-icon icon="align-center"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="changeStyle('text-align', 'right')"
+        >
+          <fa-icon icon="align-right"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            componentstyle.bold = !componentstyle.bold;
+            changeStyle('bold', componentstyle.bold)
+          "
+        >
+          <fa-icon icon="bold"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            componentstyle.italic = !componentstyle.italic;
+            changeStyle('italic', componentstyle.italic)
+          "
+        >
+          <fa-icon icon="italic"> </fa-icon>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            componentstyle.underline = !componentstyle.underline;
+            changeStyle('underline', componentstyle.underline)
+          "
+        >
+          <fa-icon icon="underline"> </fa-icon>
+        </button>
+      </div>
     </div>
   </div>
   <fieldset>
@@ -122,10 +152,10 @@
       />
     </div>
   </div>
-  <fieldset>
+  <fieldset *ngIf="dragDropService.dragDropLibre">
     <legend>Position</legend>
   </fieldset>
-  <div class="row">
+  <div class="row" *ngIf="dragDropService.dragDropLibre">
     <div class="col px-1">
       <label for="x" class="label">X</label>
       <div class="input-group mb-3">
@@ -374,89 +404,56 @@
     </div>
   </div>
   <fieldset>
-    <legend>Style</legend>
+    <legend>Taille</legend>
   </fieldset>
   <div class="row">
     <div class="col px-1">
-      <label for="police" class="label">Police</label>
-      <select
-        class="form-control"
-        name="police"
-        id="police"
-        (change)="changeStyle('font-family', $event.target.value)"
-        [ngModel]="
-          (dragDropService.items[itemId].style &&
-            dragDropService.items[itemId].style['font-family']) ||
-          'Times New Roman'
+      <label for="longueur" class="label">Hauteur</label>
+      <input
+        (input)="
+          changeStyle(
+            'height',
+            $event.target.value === '0'
+              ? 'fit-content'
+              : $event.target.value + 'mm'
+          )
         "
-      >
-        <option *ngFor="let font of fontFamily" value="{{ font }}">
-          {{ font }}
-        </option>
-      </select>
+        type="number"
+        min="0"
+        name="longueur"
+        id="longueur"
+        class="form-control"
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style.height &&
+          dragDropService.items[itemId].style.height !== 'fit-content' &&
+          +dragDropService.items[itemId].style.height.replace('mm', '')
+        "
+      />
     </div>
-  </div>
-  <br />
-  <div class="row">
     <div class="col px-1">
-      <div
-        class="btn-group"
-        role="group"
-        aria-label="Basic example"
-        style="margin: auto; width: 100%"
-      >
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="changeStyle('text-align', 'left')"
-        >
-          <fa-icon icon="align-left"> </fa-icon>
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="changeStyle('text-align', 'center')"
-        >
-          <fa-icon icon="align-center"> </fa-icon>
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="changeStyle('text-align', 'right')"
-        >
-          <fa-icon icon="align-right"> </fa-icon>
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="
-            componentstyle.bold = !componentstyle.bold;
-            changeStyle('bold', componentstyle.bold)
-          "
-        >
-          <fa-icon icon="bold"> </fa-icon>
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="
-            componentstyle.italic = !componentstyle.italic;
-            changeStyle('italic', componentstyle.italic)
-          "
-        >
-          <fa-icon icon="italic"> </fa-icon>
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="
-            componentstyle.underline = !componentstyle.underline;
-            changeStyle('underline', componentstyle.underline)
-          "
-        >
-          <fa-icon icon="underline"> </fa-icon>
-        </button>
-      </div>
+      <label for="largeur" class="label">largeur</label>
+      <input
+        type="number"
+        min="0"
+        name="largeur"
+        id="largeur"
+        class="form-control"
+        (input)="
+          changeStyle(
+            'width',
+            $event.target.value === '0'
+              ? 'fit-content'
+              : $event.target.value + 'mm'
+          )
+        "
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style.width &&
+          dragDropService.items[itemId].style.width !== 'fit-content' &&
+          +dragDropService.items[itemId].style.width.replace('mm', '')
+        "
+      />
     </div>
   </div>
   <fieldset>

@@ -27,6 +27,7 @@ export class DragDropService {
   dropActionTodo: DropInfo = {
     targetId: "label",
   };
+  dragDropLibre: boolean = true;
   // position of draggable elements
   dragPosition = {};
   //fill dropTargetIds list and nodeLookup2 object

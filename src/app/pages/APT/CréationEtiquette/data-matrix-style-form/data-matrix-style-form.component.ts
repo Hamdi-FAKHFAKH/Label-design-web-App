@@ -103,7 +103,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
     });
 
     if (tag == "|)>") {
-      this.fixString = "|)>";
+      this.xmlForm = "|)>" + this.xmlForm;
     }
     // !tagexiste && val && tag
     //   ? this.listItem.push({ [tag]: val })
@@ -121,7 +121,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
       indent: "    ",
     };
     const res = toXML(listItem, config);
-    this.xmlForm = this.fixString + res;
+    this.xmlForm = this.xmlForm + res;
     this.change("data", this.xmlForm);
   }
   changePosition(x, y) {

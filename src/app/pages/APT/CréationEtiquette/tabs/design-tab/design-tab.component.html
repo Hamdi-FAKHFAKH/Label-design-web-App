@@ -1,3 +1,18 @@
+<div class="form-check form-switch">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    role="switch"
+    id="flexSwitchCheckChecked"
+    checked
+    [(ngModel)]="dragDropService.dragDropLibre"
+    [disabled]="dragDropService.list1.length > 0"
+  />
+  <label class="form-check-label" for="flexSwitchCheckChecked"
+    >Mode Drag & Drop Libre
+    {{ dragDropService.dragDropLibre ? "activer" : "désactiver" }}
+  </label>
+</div>
 <fieldset>
   <legend>Liste des champs à glisser</legend>
 </fieldset>
@@ -10,6 +25,42 @@
   id="design"
 >
   <nb-accordion>
+    <nb-accordion-item *ngIf="!dragDropService.dragDropLibre">
+      <nb-accordion-item-header> Containers </nb-accordion-item-header>
+      <nb-accordion-item-body>
+        <div
+          *ngFor="let item of dragDropService.list2"
+          cdkDrag
+          [cdkDragData]="item.id"
+          (cdkDragMoved)="dragMoved($event)"
+        >
+          <div *cdkDragPlaceholder>
+            <div
+              class="example-custom-placeholder"
+              *ngIf="dragDropService.showDragPlaceholder"
+            ></div>
+          </div>
+          <div
+            *ngIf="item.type === 'container'"
+            [attr.data-id]="item.id"
+            class="example-box"
+          >
+            Container
+          </div>
+          <div
+            *ngIf="item.type === 'container-2'"
+            [attr.data-id]="item.id"
+            class="example-box"
+          >
+            Container-2
+          </div>
+          <div *ngIf="item.type === 'container-3'" class="example-box">
+            Container-3
+          </div>
+          <div *cdkDragPreview>{{ item.type }}</div>
+        </div>
+      </nb-accordion-item-body>
+    </nb-accordion-item>
     <nb-accordion-item>
       <nb-accordion-item-header> Champs </nb-accordion-item-header>
       <nb-accordion-item-body>
@@ -84,42 +135,6 @@
               {{ item1.type }}
             </div>
           </div>
-        </div>
-      </nb-accordion-item-body>
-    </nb-accordion-item>
-    <nb-accordion-item>
-      <nb-accordion-item-header> Containers </nb-accordion-item-header>
-      <nb-accordion-item-body>
-        <div
-          *ngFor="let item of dragDropService.list2"
-          cdkDrag
-          [cdkDragData]="item.id"
-          (cdkDragMoved)="dragMoved($event)"
-        >
-          <div *cdkDragPlaceholder>
-            <div
-              class="example-custom-placeholder"
-              *ngIf="dragDropService.showDragPlaceholder"
-            ></div>
-          </div>
-          <div
-            *ngIf="item.type === 'container'"
-            [attr.data-id]="item.id"
-            class="example-box"
-          >
-            Container
-          </div>
-          <div
-            *ngIf="item.type === 'container-2'"
-            [attr.data-id]="item.id"
-            class="example-box"
-          >
-            Container-2
-          </div>
-          <div *ngIf="item.type === 'container-3'" class="example-box">
-            Container-3
-          </div>
-          <div *cdkDragPreview>{{ item.type }}</div>
         </div>
       </nb-accordion-item-body>
     </nb-accordion-item>

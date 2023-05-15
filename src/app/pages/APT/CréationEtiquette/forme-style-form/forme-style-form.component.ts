@@ -11,6 +11,7 @@ export class FormeStyleFormComponent implements OnInit {
   marginCliked;
   paddingClicked;
   defaultrotation;
+  math = Math;
   constructor(public dragDropService: DragDropService) {}
   changeStyle(champName: string, champval: string) {
     this.dragDropService.items[this.itemId].style = {
@@ -30,5 +31,16 @@ export class FormeStyleFormComponent implements OnInit {
         transformvalue.indexOf(")")
       );
     }
+  }
+  changePosition(x, y) {
+    const xround = Math.round(+x / 0.26);
+    const yround = Math.round(+y / 0.26);
+    this.dragDropService.dragPosition[this.itemId] = {
+      x: x != null ? +xround : this.dragDropService.dragPosition[this.itemId].x,
+      y: y != null ? +yround : this.dragDropService.dragPosition[this.itemId].y,
+    };
+    console.log(Math.round(+y / 0.26));
+
+    console.log(this.dragDropService.dragPosition[this.itemId]);
   }
 }

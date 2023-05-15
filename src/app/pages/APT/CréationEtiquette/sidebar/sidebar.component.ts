@@ -265,8 +265,12 @@ export class SidebarComponent implements OnInit {
         if (obj.children && obj.children.length > 0) {
           await this.lablHttpService
             .CreateComponent({
-              x: this.dragDropService.dragPosition[obj.id].x,
-              y: this.dragDropService.dragPosition[obj.id].y,
+              x: this.dragDropService.dragDropLibre
+                ? this.dragDropService.dragPosition[obj.id].x
+                : null,
+              y: this.dragDropService.dragDropLibre
+                ? this.dragDropService.dragPosition[obj.id].y
+                : null,
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
               "border-color":
@@ -305,7 +309,7 @@ export class SidebarComponent implements OnInit {
                   : obj.children[0].id,
               title: obj.title,
               format: obj.format,
-              id: uuidv4(),
+              id: obj.id,
               refEtiquette: idEtiquette,
               dataMatrixCode: obj.dataMatrixCode,
               dataMatrixFormat: obj.dataMatrixFormat,
@@ -318,8 +322,12 @@ export class SidebarComponent implements OnInit {
         } else {
           await this.lablHttpService
             .CreateComponent({
-              x: this.dragDropService.dragPosition[obj.id].x,
-              y: this.dragDropService.dragPosition[obj.id].y,
+              x: this.dragDropService.dragDropLibre
+                ? this.dragDropService.dragPosition[obj.id].x
+                : null,
+              y: this.dragDropService.dragDropLibre
+                ? this.dragDropService.dragPosition[obj.id].y
+                : null,
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
               "border-color":
@@ -355,7 +363,7 @@ export class SidebarComponent implements OnInit {
               children: "",
               title: obj.title,
               format: obj.format,
-              id: uuidv4(),
+              id: obj.id,
               refEtiquette: idEtiquette,
               dataMatrixCode: obj.dataMatrixCode,
               dataMatrixFormat: obj.dataMatrixFormat,
@@ -397,3 +405,4 @@ export class SidebarComponent implements OnInit {
 //TODO: ajoute les formes
 //TODO: verifier les champs des produits similaire
 //TODO: supprimer placeHolder de draggebl elements and disable list order
+// TODO: supprimer les style css contient des valeur null

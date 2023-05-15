@@ -62,6 +62,7 @@
             data-bs-toggle="popover"
             data-bs-placement="bottom"
             data-bs-content="Bottom popover"
+            [(ngModel)]="lotField"
           />
           <nb-datepicker
             (dateChange)="changeDate($event)"
@@ -83,9 +84,9 @@
         </label>
         <input
           #impr="ngModel"
-          ngModel
+          [(ngModel)]="nbrCopie"
           required
-          type="text"
+          type="number"
           class="form-control"
           name="nombreEtiquette"
           id="nombreEtiquette"

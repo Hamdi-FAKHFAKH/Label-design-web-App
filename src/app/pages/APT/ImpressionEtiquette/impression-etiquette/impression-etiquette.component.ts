@@ -25,6 +25,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
   printerList: string[];
   formatLot: string;
   lot: ComponetList;
+  lotField;
+  nbrCopie;
   formatLotValid: boolean;
   nbrCopieValid: boolean;
   withSN: boolean;
@@ -94,6 +96,9 @@ export class ImpressionEtiquetteComponent implements OnInit {
       .toPromise();
   }
   async getOFinfo(ofnum) {
+    this.source.load([]);
+    this.lotField = "";
+    this.nbrCopie = "";
     const of = (
       await this.impressionService.GetRefProduitByOF(ofnum).toPromise()
     ).of;
@@ -167,7 +172,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
     };
   }
   changeLot(data: string) {
-    if (data.match(RegexFormatLot[this.formatLot])) {
+    if (data.match(RegexFormatLot[this.formatLot]) && data) {
       this.formatLotValid = true;
       this.lot.data = data;
       this.impressionDetail = {

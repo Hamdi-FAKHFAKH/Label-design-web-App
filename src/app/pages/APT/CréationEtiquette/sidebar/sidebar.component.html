@@ -9,16 +9,40 @@
   </nb-sidebar>
 
   <nb-layout-column>
-    <div class="btn-group mb-3" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-primary" (click)="zoomIn()">
-        <fa-icon [icon]="['fas', 'plus']"></fa-icon>
-      </button>
-      <button type="button" class="btn btn-primary" (click)="initZoom()">
-        <fa-icon [icon]="['fas', 'expand']"></fa-icon>
-      </button>
-      <button type="button" class="btn btn-primary" (click)="zoomOut()">
-        <fa-icon [icon]="['fas', 'minus']"></fa-icon>
-      </button>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        align-items: center;
+      "
+    >
+      <div class="btn-group mb-3" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary" (click)="zoomIn()">
+          <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+        </button>
+        <button type="button" class="btn btn-primary" (click)="initZoom()">
+          <fa-icon [icon]="['fas', 'expand']"></fa-icon>
+        </button>
+        <button type="button" class="btn btn-primary" (click)="zoomOut()">
+          <fa-icon [icon]="['fas', 'minus']"></fa-icon>
+        </button>
+      </div>
+      <div
+        class="alert alert-primary"
+        role="alert"
+        style="
+          background-color: #e0ecfac0;
+          border-radius: 10px;
+          border-color: #e0ecfa;
+        "
+      >
+        {{
+          dragDropService.dragDropLibre
+            ? "Mode Drag&Drop Libre"
+            : "Mode Drag&Drop Avec Conteneur"
+        }}
+      </div>
     </div>
     <div id="container">
       <div class="label center" [ngStyle]="labelStyle" id="test">
@@ -39,9 +63,19 @@
             cdkDrag
             (cdkDragMoved)="dragMoved($event)"
           >
-            <ng-container
-              *ngTemplateOutlet="tmpDragDropLibre; context: { item: item }"
-            ></ng-container>
+            <div *ngIf="dragDropService.dragDropLibre">
+              <ng-container
+                *ngTemplateOutlet="tmpDragDropLibre; context: { item: item }"
+              ></ng-container>
+            </div>
+            <div *ngIf="!dragDropService.dragDropLibre">
+              <ng-container
+                *ngTemplateOutlet="
+                  tmpDragDropContainer;
+                  context: { item: item }
+                "
+              ></ng-container>
+            </div>
             <div
               class="container1 container"
               *ngIf="
@@ -57,7 +91,7 @@
               <div
                 *ngIf="item.children.length"
                 class="row"
-                [ngStyle]="rowStyle(item)"
+                [ngStyle]="item.style"
                 [ngClass]="{
                   rowvide:
                     item.type === 'container'
@@ -119,6 +153,26 @@
                     *ngIf="item.type !== 'container' && child.children.length"
                   >
                     <div *ngFor="let child1 of child.children">
+                      <div *ngIf="dragDropService.dragDropLibre">
+                        <ng-container
+                          *ngTemplateOutlet="
+                            tmpDragDropLibre;
+                            context: { item: child1 }
+                          "
+                        ></ng-container>
+                      </div>
+                      <div *ngIf="!dragDropService.dragDropLibre">
+                        <ng-container
+                          *ngTemplateOutlet="
+                            tmpDragDropContainer;
+                            context: { item: child1 }
+                          "
+                        ></ng-container>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="item.type === 'container'">
+                    <div *ngIf="dragDropService.dragDropLibre">
                       <ng-container
                         *ngTemplateOutlet="
                           tmpDragDropLibre;
@@ -126,14 +180,14 @@
                         "
                       ></ng-container>
                     </div>
-                  </div>
-                  <div *ngIf="item.type === 'container'">
-                    <ng-container
-                      *ngTemplateOutlet="
-                        tmpDragDropLibre;
-                        context: { item: child }
-                      "
-                    ></ng-container>
+                    <div *ngIf="!dragDropService.dragDropLibre">
+                      <ng-container
+                        *ngTemplateOutlet="
+                          tmpDragDropContainer;
+                          context: { item: child1 }
+                        "
+                      ></ng-container>
+                    </div>
                   </div>
                 </div>
               </div>

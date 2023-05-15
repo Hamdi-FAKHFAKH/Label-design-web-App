@@ -49,16 +49,6 @@ export class EtiquetteTabComponent implements OnInit {
     this.unitPadding = "mm";
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
       this.listProd = res.produits;
-      // this.listProd = res.produits.filter((obj) =>
-      //   Object.keys(obj).every((key) =>
-      //     Object.keys(this.productToBeCreated).some(
-      //       (keyofCreatedObj) =>
-      //         this.productToBeCreated[keyofCreatedObj] !== null &&
-      //         obj[key] !== null &&
-      //         key == keyofCreatedObj
-      //     )
-      //   )
-      // );
     });
     this.lableService.labelInfo.subscribe((info) => {
       this.labelInfo = info;
@@ -273,32 +263,37 @@ export class EtiquetteTabComponent implements OnInit {
           }
         })
       );
-      //this.uploadData(produit, client, fournisseur, forme, lot);
 
       console.log("****list  avant fill list******");
       console.log(this.list);
       console.log("composents");
       console.log(composents);
-      const list: ComponetList[] = [];
-      this.dragDropService.dragPosition = {};
-      composents.forEach((comp) => {
-        this.dragDropService.list1.push(
-          this.ComponentToInsert(
-            comp,
-            produit,
-            client,
-            fournisseur,
-            forme,
-            lot,
-            SN
-          )
-        );
-        this.dragDropService.dragPosition[comp.id] = { x: +comp.x, y: +comp.y };
-      });
-      console.log("dragPosition From db");
-      console.log(this.dragDropService.dragPosition);
-      //this.fillList1(composents, this.list, list);
-      //this.dragDropService.list1 = [...list];
+      if (this.dragDropService.dragDropLibre) {
+        this.dragDropService.dragPosition = {};
+        composents.forEach((comp) => {
+          this.dragDropService.list1.push(
+            this.ComponentToInsert(
+              comp,
+              produit,
+              client,
+              fournisseur,
+              forme,
+              lot,
+              SN
+            )
+          );
+          this.dragDropService.dragPosition[comp.id] = {
+            x: +comp.x,
+            y: +comp.y,
+          };
+        });
+      }
+      if (!this.dragDropService.dragDropLibre) {
+        const list: ComponetList[] = [];
+        this.uploadData(produit, client, fournisseur, forme, lot, SN);
+        this.fillList1(composents, this.list, list);
+        this.dragDropService.list1 = [...list];
+      }
       // save all items in list1 into object
       this.dragDropService.getAllItems(this.dragDropService.list1);
       console.log("****list 1 ******");
