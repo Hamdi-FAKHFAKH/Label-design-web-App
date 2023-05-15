@@ -105,19 +105,22 @@ export class DataMatrixStyleFormComponent implements OnInit {
     if (tag == "|)>") {
       this.fixString = "|)>";
     }
-    !tagexiste && val && tag
-      ? this.listItem.push({ [tag]: val })
-      : this.listItem.map((objval, index) => {
-          if (Object.keys(objval)[0] == tag) {
-            this.listItem[index] = { [tag]: val };
-            return;
-          }
-        });
-
+    // !tagexiste && val && tag
+    //   ? this.listItem.push({ [tag]: val })
+    //   : this.listItem.map((objval, index) => {
+    //       if (Object.keys(objval)[0] == tag) {
+    //         this.listItem[index] = { [tag]: val };
+    //         return;
+    //       }
+    //     });
+    let listItem;
+    if (tag !== "|)>") {
+      listItem = [{ [tag]: val }];
+    }
     const config = {
       indent: "    ",
     };
-    const res = toXML(this.listItem, config);
+    const res = toXML(listItem, config);
     this.xmlForm = this.fixString + res;
     this.change("data", this.xmlForm);
   }

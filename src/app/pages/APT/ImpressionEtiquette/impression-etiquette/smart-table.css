@@ -1,0 +1,26 @@
+.window-form {
+  width: 600px;
+}
+:host /deep/ ng2-smart-table thead > tr > th {
+  background-color: #3374b5 !important;
+  border-color: #3374b5;
+  color: white !important;
+  font-weight: 900 !important;
+}
+
+/* ng2-smart-table table tr.ng2-smart-titles th */
+:host /deep/ ng2-smart-table thead > tr > th a {
+  color: white !important;
+  text-align: center;
+}
+:host /deep/ ng2-smart-table thead > tr > td {
+  text-align: center;
+}
+:host /deep/ ng2-smart-table thead > tr > th a.sort.desc::after {
+  border-bottom-color: #f3f6ff;
+  text-align: center;
+}
+:host /deep/ ng2-smart-table thead > tr > th a.sort.asc::after {
+  border-bottom-color: #f3f6ff;
+  text-align: center;
+}

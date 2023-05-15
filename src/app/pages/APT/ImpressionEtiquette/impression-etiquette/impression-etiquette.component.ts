@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { LabelService } from "../../CréationEtiquette/label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { SerialNumberData } from "../../GestionProduits/GestionProduit.data";
+import { LocalDataSource } from "ng2-smart-table";
 
 class RegexFormatLot {
   public static readonly "date" =
@@ -15,19 +16,68 @@ class RegexFormatLot {
 @Component({
   selector: "ngx-impression-etiquette",
   templateUrl: "./impression-etiquette.component.html",
-  styleUrls: ["./impression-etiquette.component.scss"],
+  styleUrls: ["./impression-etiquette.component.scss", "./smart-table.css"],
 })
 export class ImpressionEtiquetteComponent implements OnInit {
-  refProd;
-  OfList;
-  printerList;
-  formatLot;
-  lot;
-  formatLotValid;
-  nbrCopieValid;
-  withSN;
+  sn: SerialNumberData;
+  refProd: string;
+  OfList: string[];
+  printerList: string[];
+  formatLot: string;
+  lot: ComponetList;
+  formatLotValid: boolean;
+  nbrCopieValid: boolean;
+  withSN: boolean;
   changeSn = new EventEmitter();
-  //Sérial Number
+  settings = {
+    actions: false,
+    hideSubHeader: true,
+    pager: { display: true },
+    filter: false,
+    mode: "external",
+    columns: {
+      OF: {
+        title: "Numéro OF",
+        type: "string",
+        filter: false,
+        class: "customformat",
+      },
+      refProduit: {
+        title: "Référence Produit",
+        type: "string",
+        filter: false,
+      },
+      lot: {
+        title: "Numéro de Lot",
+        type: "string",
+        filter: false,
+      },
+      sn: {
+        title: "Numéro de Série",
+        type: "string",
+        filter: false,
+      },
+      codeQR: {
+        title: "Code QR",
+        type: "string",
+        filter: false,
+      },
+      nbrEtiquette: {
+        title: "Nombre d'étiquette",
+        type: "string",
+        filter: false,
+      },
+    },
+  };
+  source: LocalDataSource = new LocalDataSource();
+  impressionDetail: {
+    OF: string;
+    refProduit?: string;
+    lot: string;
+    sn: string;
+    codeQR: string;
+    nbrEtiquette: number;
+  };
   constructor(
     private impressionService: ImpressionService,
     private labelService: LabelService,
@@ -48,7 +98,11 @@ export class ImpressionEtiquetteComponent implements OnInit {
       await this.impressionService.GetRefProduitByOF(ofnum).toPromise()
     ).of;
     this.refProd = of.proref;
-    console.log(this.refProd);
+    this.impressionDetail = {
+      ...this.impressionDetail,
+      OF: of.ofnum,
+      refProduit: of.proref,
+    };
   }
   async loadList1Data(data: ComponetList[]) {
     console.log(data);
@@ -107,11 +161,19 @@ export class ImpressionEtiquetteComponent implements OnInit {
   changeDate(e: Date) {
     this.lot.data = format(e, this.formatLot);
     this.formatLotValid = true;
+    this.impressionDetail = {
+      ...this.impressionDetail,
+      lot: this.lot.data,
+    };
   }
   changeLot(data: string) {
     if (data.match(RegexFormatLot[this.formatLot])) {
       this.formatLotValid = true;
       this.lot.data = data;
+      this.impressionDetail = {
+        ...this.impressionDetail,
+        lot: this.lot.data,
+      };
     } else {
       this.formatLotValid = false;
     }
@@ -120,12 +182,49 @@ export class ImpressionEtiquetteComponent implements OnInit {
   changenbrCopie(data: string) {
     console.log(data.match(/^[1-9]{1}([0-9]){0,2}$/gm));
 
-    data.match(/^[1-9]{1}([0-9]){0,2}$/gm)
-      ? (this.nbrCopieValid = true)
-      : (this.nbrCopieValid = false);
+    if (data.match(/^[1-9]{1}([0-9]){0,2}$/gm)) {
+      this.nbrCopieValid = true;
+
+      let listofImpressionDetail: {
+        OF: string;
+        refProduit?: string;
+        lot: string;
+        sn: string;
+        codeQR: string;
+        nbrEtiquette: number;
+      }[] = [];
+      if (this.sn && this.withSN) {
+        let suffix = this.sn && this.sn.suffix;
+        for (let i = 0; i < +data; i++) {
+          listofImpressionDetail.push({
+            ...this.impressionDetail,
+            sn: this.sn.prefix + suffix,
+            nbrEtiquette: 1,
+          });
+          const suff = parseInt(suffix) + +this.sn.pas;
+          suffix = suff.toString().padStart(+this.sn.nbrCaractere, "0");
+        }
+        listofImpressionDetail && this.source.load(listofImpressionDetail);
+      } else {
+        listofImpressionDetail.push({
+          ...this.impressionDetail,
+          nbrEtiquette: +data,
+          sn: "   -   ",
+        });
+        listofImpressionDetail && this.source.load(listofImpressionDetail);
+      }
+    } else {
+      this.nbrCopieValid = false;
+    }
   }
   changeSNFunction() {
     this.changeSn.emit();
+  }
+  getSN(sn: SerialNumberData) {
+    this.sn = sn;
+  }
+  IswithDataMatrix(data: boolean) {
+    this.impressionDetail.codeQR = data ? "Oui" : "Non";
   }
   async print(nbrcopie, printerName) {
     const timeout = (ms) => {
@@ -221,4 +320,4 @@ export class ImpressionEtiquetteComponent implements OnInit {
   }
 }
 
-//TODO: Numero de serie lors de l'impression de l'etiquette
+//TODO: les différent sénario lors de scanner OF

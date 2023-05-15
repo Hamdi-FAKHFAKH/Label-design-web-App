@@ -9,6 +9,7 @@ import {
   CreateFormeResultData,
   FournisseurData,
   GetFormeResultData,
+  GetOneSerialNumberResultData,
   LotData,
   ProduitData,
 } from "../../../GestionProduits/GestionProduit.data";
@@ -32,7 +33,8 @@ export class EtiquetteTabComponent implements OnInit {
   minPadding;
   componentsExtractedFromDB = [];
   listOfComponentFromDB: ComponetList[];
-
+  productToBeCreated;
+  produitwithEtiquette;
   constructor(
     private lableService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -47,6 +49,16 @@ export class EtiquetteTabComponent implements OnInit {
     this.unitPadding = "mm";
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
       this.listProd = res.produits;
+      // this.listProd = res.produits.filter((obj) =>
+      //   Object.keys(obj).every((key) =>
+      //     Object.keys(this.productToBeCreated).some(
+      //       (keyofCreatedObj) =>
+      //         this.productToBeCreated[keyofCreatedObj] !== null &&
+      //         obj[key] !== null &&
+      //         key == keyofCreatedObj
+      //     )
+      //   )
+      // );
     });
     this.lableService.labelInfo.subscribe((info) => {
       this.labelInfo = info;
@@ -57,10 +69,10 @@ export class EtiquetteTabComponent implements OnInit {
       this.padding = this.labelInfo.padding;
       this.minPadding = this.labelInfo.padding;
     }
-    const res = await this.labelHttpService
+    this.produitwithEtiquette = await this.labelHttpService
       .getAllProduitWithEtiquette()
       .toPromise();
-    this.refProdWithEtiquette = res.produits;
+    console.log("product to creted");
   }
 
   change(elemName, elemValue) {
@@ -101,6 +113,23 @@ export class EtiquetteTabComponent implements OnInit {
         refProd: elemValue,
         id: `TE-${elemValue}`,
       });
+      this.gestionProduitHttpService
+        .getOneProduit(this.lableService.labelInfo.getValue().refProd)
+        .toPromise()
+        .then((val) => {
+          this.productToBeCreated = val.produit;
+          console.log(this.productToBeCreated);
+          console.log(this.produitwithEtiquette.produits);
+          console.log(!!this.productToBeCreated["withSN"]);
+
+          this.refProdWithEtiquette = this.produitwithEtiquette.produits.filter(
+            (obj) =>
+              Object.keys(obj).every(
+                (key) => !!this.productToBeCreated[key] === !!obj[key]
+              )
+          );
+          console.log(this.refProdWithEtiquette);
+        });
     } else {
       this.lableService.labelInfo.next({
         ...this.labelInfo,
@@ -181,10 +210,12 @@ export class EtiquetteTabComponent implements OnInit {
   }
   async DownloadLabelData(val) {
     if (val && val !== null) {
+      this.dragDropService.list1.length = 0;
       this.change("refProdSimlaire", val);
       const { produit } = await this.gestionProduitHttpService
         .getOneProduit(val)
         .toPromise();
+      console.log("label ref prod");
       const { etiquette } = await this.labelHttpService
         .GetOneEtiquette(produit.idEtiquette)
         .toPromise();
@@ -203,34 +234,40 @@ export class EtiquetteTabComponent implements OnInit {
         .GetAllComponentsByEtiquette(produit.idEtiquette)
         .toPromise();
       //get Client
-      const client = produit.codeClient
+      const client = this.productToBeCreated.codeClient
         ? (
             await this.gestionProduitHttpService
-              .getClient(produit.codeClient)
+              .getClient(this.productToBeCreated.codeClient)
               .toPromise()
           ).body.client
         : null;
       //get Fournisseur
-      const fournisseur = produit.codeFournisseur
+      const fournisseur = this.productToBeCreated.codeFournisseur
         ? (
             await this.gestionProduitHttpService
-              .getFournisseur(produit.codeFournisseur)
+              .getFournisseur(this.productToBeCreated.codeFournisseur)
               .toPromise()
           ).body.fournisseur
         : null;
       //get Lot
-      const lot = produit.numLot
+      const lot = this.productToBeCreated.numLot
         ? (
             await this.gestionProduitHttpService
-              .getOneLot(produit.numLot)
+              .getOneLot(this.productToBeCreated.numLot)
               .toPromise()
           ).lot
+        : null;
+      //get SN
+      const SN = this.productToBeCreated.idSN
+        ? await this.gestionProduitHttpService
+            .getOneSerialNumber(this.productToBeCreated.idSN)
+            .toPromise()
         : null;
       this.dragDropService.list1.length = 0;
       this.listFromDB = [...composents];
       this.list = [];
       const forme = await Promise.all(
-        produit.formes.split(";").map((val) => {
+        this.productToBeCreated.formes.split(";").map((val) => {
           if (val) {
             return this.gestionProduitHttpService.getOneForm(val).toPromise();
           }
@@ -246,7 +283,15 @@ export class EtiquetteTabComponent implements OnInit {
       this.dragDropService.dragPosition = {};
       composents.forEach((comp) => {
         this.dragDropService.list1.push(
-          this.ComponentToInsert(comp, produit, client, fournisseur, forme, lot)
+          this.ComponentToInsert(
+            comp,
+            produit,
+            client,
+            fournisseur,
+            forme,
+            lot,
+            SN
+          )
         );
         this.dragDropService.dragPosition[comp.id] = { x: +comp.x, y: +comp.y };
       });
@@ -274,20 +319,23 @@ export class EtiquetteTabComponent implements OnInit {
     client: ClientData,
     fournisseur: FournisseurData,
     form: CreateFormeResultData[],
-    lot: LotData
+    lot: LotData,
+    SN: GetOneSerialNumberResultData
   ) {
     return {
       id: obj.id,
       data:
         obj.refItem == "desClient" && client
           ? client.desClient
+          : obj.refItem == "idSN" && SN
+          ? SN.serialNumber.prefix + SN.serialNumber.suffix
           : obj.refItem == "desFournisseur" && fournisseur
           ? fournisseur.desFournisseur
           : obj.refItem == "format" && lot
           ? lot.format
           : (obj.refItem && obj.refItem.includes("formes") ? form : null)
           ? form[+obj.refItem.split("-")[1]].form.path
-          : produit[obj.refItem],
+          : this.productToBeCreated[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,
       type:
@@ -340,11 +388,19 @@ export class EtiquetteTabComponent implements OnInit {
   listFromDB: ComposentHttpData[];
   nochildren = false;
 
-  uploadData(produit, client, fournisseur, form, lot) {
+  uploadData(produit, client, fournisseur, form, lot, SN) {
     this.listFromDB.map((item) => {
       if (item && item.children == "") {
         this.list.push(
-          this.ComponentToInsert(item, produit, client, fournisseur, form, lot)
+          this.ComponentToInsert(
+            item,
+            produit,
+            client,
+            fournisseur,
+            form,
+            lot,
+            SN
+          )
         );
         this.listFromDB[
           this.listFromDB.findIndex((obj) => obj && obj.id == item.id)
@@ -360,7 +416,8 @@ export class EtiquetteTabComponent implements OnInit {
           client,
           fournisseur,
           form,
-          lot
+          lot,
+          SN
         );
         const listofIdFromList = this.list.map((val) => val.id);
         if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
@@ -383,7 +440,7 @@ export class EtiquetteTabComponent implements OnInit {
     });
 
     if (this.listFromDB.some((val) => val !== null)) {
-      this.uploadData(produit, client, fournisseur, form, lot);
+      this.uploadData(produit, client, fournisseur, form, lot, SN);
     }
   }
   fillList1(

@@ -13,7 +13,7 @@ export class ImpressionService {
     return this.http.get<GetOFResultData>(`http://localhost:3080/api/v1/OF`);
   }
   GetPrinterList() {
-    return this.http.get(`https://localhost:5001/printer`);
+    return this.http.get<string[]>(`https://localhost:5001/printer`);
   }
   PrintLabel(obj: PrintData) {
     return this.http.post(`https://localhost:5001/print`, obj, {

@@ -17,6 +17,7 @@ import {
   FournisseurData,
   GetOneSerialNumberResultData,
   LotData,
+  SerialNumberData,
 } from "../../GestionProduits/GestionProduit.data";
 import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
 
@@ -30,6 +31,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   @Input() changeSN;
   @Output() list1Event = new EventEmitter<ComponetList[]>();
   @Output() withSN = new EventEmitter<boolean>();
+  @Output() sn = new EventEmitter<SerialNumberData>();
+  @Output() withDataMatrix = new EventEmitter<Boolean>();
   list1;
   labelStyle;
   labelInfo;
@@ -68,6 +71,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     const { produit } = await this.gestionProduitHttpService
       .getOneProduit(refProd)
       .toPromise();
+    this.withDataMatrix.emit(produit.withDataMatrix);
     const { etiquette } = await this.labelHttpService
       .GetOneEtiquette(produit.idEtiquette)
       .toPromise();
@@ -137,8 +141,14 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           .getOneSerialNumber(produit.idSN)
           .toPromise()
       : null;
-    this.SN = SN.serialNumber;
-    SN ? this.withSN.emit(true) : this.withSN.emit(false);
+
+    if (SN) {
+      this.SN = SN.serialNumber;
+      this.withSN.emit(true);
+      this.sn.emit(this.SN);
+    } else {
+      this.withSN.emit(false);
+    }
 
     // fill list1
 

@@ -40,7 +40,7 @@
             (cdkDragMoved)="dragMoved($event)"
           >
             <ng-container
-              *ngTemplateOutlet="tmplNode; context: { item: item }"
+              *ngTemplateOutlet="tmpDragDropLibre; context: { item: item }"
             ></ng-container>
             <div
               class="container1 container"
@@ -120,13 +120,19 @@
                   >
                     <div *ngFor="let child1 of child.children">
                       <ng-container
-                        *ngTemplateOutlet="tmplNode; context: { item: child1 }"
+                        *ngTemplateOutlet="
+                          tmpDragDropLibre;
+                          context: { item: child1 }
+                        "
                       ></ng-container>
                     </div>
                   </div>
                   <div *ngIf="item.type === 'container'">
                     <ng-container
-                      *ngTemplateOutlet="tmplNode; context: { item: child }"
+                      *ngTemplateOutlet="
+                        tmpDragDropLibre;
+                        context: { item: child }
+                      "
                     ></ng-container>
                   </div>
                 </div>
@@ -153,7 +159,7 @@
   </nb-layout-column>
 </nb-layout>
 <!-- **************************************************************** ng Template ******************************************* -->
-<ng-template #tmplNode let-item="item">
+<ng-template #tmpDragDropLibre let-item="item">
   <div
     cdkDrag
     [cdkDragData]="item.id"
@@ -249,9 +255,63 @@
     [attr.data-id]="item.id"
   />
 </ng-template>
-<!-- <mat-menu #rightMenu="matMenu">
-  <ng-template matMenuContent let-item="item">
-    <button mat-menu-item>Clicked {{ item.content }}</button>
-    <button mat-menu-item>Fixed menu</button>
-  </ng-template>
-</mat-menu> -->
+<ng-template #tmpDragDropContainer let-item="item">
+  <div
+    *ngIf="item.type === 'text'"
+    [attr.data-id]="item.id"
+    [ngStyle]="item.style"
+  >
+    {{ item.data }}
+  </div>
+  <img
+    *ngIf="item.type === 'forme'"
+    [attr.data-id]="item.id"
+    [ngStyle]="item.style"
+    src="{{ item.data }}"
+    alt=""
+    height="20"
+    width="20"
+  />
+  <div
+    *ngIf="item.type === 'QRcode'"
+    [attr.data-id]="item.id"
+    [ngStyle]="item.style"
+  >
+    <div
+      *ngIf="item.dataMatrixFormat === 'qrcode'"
+      [ngStyle]="{
+        marginLeft: item.style['margin-left'] + 'mm',
+        marginRight: item.style['margin-right'] + 'mm',
+        marginTop: item.style['margin-top'] + 'mm',
+        marginBottom: item.style['margin-bottom'] + 'mm',
+        margin: item.style['margin'] + 'mm'
+      }"
+    >
+      <qrcode
+        [qrdata]="item.data"
+        [width]="item.style.width || 80"
+        [errorCorrectionLevel]="'M'"
+        [elementType]="'svg'"
+        [colorLight]="item.style['background-color']"
+        [colorDark]="item.style['color']"
+      ></qrcode>
+    </div>
+    <ngx-barcode
+      [bc-value]="item.data"
+      [bc-display-value]="true"
+      [bc-format]="item.dataMatrixFormat"
+      *ngIf="item.dataMatrixFormat !== 'qrcode'"
+      [bc-width]="item.style.width / 100 || 1"
+      [bc-height]="item.style.height || 100"
+      [bc-element-type]="'svg'"
+      [bc-background]="item.style['background-color']"
+      [bc-line-color]="item.style['color']"
+      [bc-margin-left]="item.style['margin-left'] || 0"
+      [bc-margin-right]="item.style['margin-right'] || 0"
+      [bc-margin-top]="item.style['margin-top'] || 0"
+      [bc-margin-bottom]="item.style['margin-bottom'] || 0"
+      [bc-margin]="item.style['margin'] || 0"
+    ></ngx-barcode>
+  </div>
+  <div *ngIf="item.type === 'container-1'" [attr.data-id]="item.id"></div>
+</ng-template>
