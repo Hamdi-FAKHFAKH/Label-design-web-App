@@ -45,8 +45,13 @@
       icon="log-out"
       badgeStatus="success"
       (click)="logOut()"
+      title="LogOut"
     ></nb-action>
-    <nb-action class="control-item" icon="settings-2"></nb-action>
+    <nb-action
+      class="control-item"
+      icon="settings-2"
+      title="Gérer Profil"
+    ></nb-action>
     <nb-action class="user-action" *nbIsGranted="['view', 'user']">
       <nb-user
         [onlyPicture]="userPictureOnly"

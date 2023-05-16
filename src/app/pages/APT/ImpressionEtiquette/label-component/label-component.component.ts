@@ -38,7 +38,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   labelInfo;
   list;
   SN;
-
+  dragDropLibre: boolean = true;
   snComp: ComponetList;
   constructor(
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -151,23 +151,12 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     }
 
     // fill list1
-
-    this.dragDropService.dragPosition = {};
-    composents.forEach((comp) => {
-      if (comp.refItem == "idSN") {
-        this.snComp = this.ComponentToInsert(
-          comp,
-          produit,
-          client,
-          fournisseur,
-          forme,
-          lot,
-          SN
-        );
-        this.list1.push(this.snComp);
-      } else {
-        this.list1.push(
-          this.ComponentToInsert(
+    if (!composents.some((val) => val.x == null || val.y == null)) {
+      this.dragDropLibre = true;
+      this.dragDropService.dragPosition = {};
+      composents.forEach((comp) => {
+        if (comp.refItem == "idSN") {
+          this.snComp = this.ComponentToInsert(
             comp,
             produit,
             client,
@@ -175,15 +164,44 @@ export class LabelComponentComponent implements OnChanges, OnInit {
             forme,
             lot,
             SN
-          )
-        );
-      }
+          );
+          this.list1.push(this.snComp);
+        } else {
+          this.list1.push(
+            this.ComponentToInsert(
+              comp,
+              produit,
+              client,
+              fournisseur,
+              forme,
+              lot,
+              SN
+            )
+          );
+        }
+        this.dragDropService.dragPosition[comp.id] = {
+          x: +comp.x,
+          y: +comp.y,
+        };
+      });
+      console.log(this.dragDropService.dragPosition);
+    } else {
+      this.dragDropLibre = false;
+      this.list = [];
+      const list: ComponetList[] = [];
+      this.uploadData(
+        Array.from(composents),
+        produit,
+        client,
+        fournisseur,
+        forme,
+        lot,
+        SN
+      );
+      this.fillList1(composents, this.list, list);
+      this.list1 = list;
+    }
 
-      this.dragDropService.dragPosition[comp.id] = {
-        x: +comp.x,
-        y: +comp.y,
-      };
-    });
     console.log("dragPosition From db");
     console.log(this.dragDropService.dragPosition);
     // this.uploadData(
@@ -203,8 +221,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   uploadData(listFromDB, produit, client, fournisseur, form, lot, SN) {
     listFromDB.map((item) => {
       if (item && item.children == "") {
-        this.list.push(
-          this.ComponentToInsert(
+        if (item.refItem == "idSN") {
+          this.snComp = this.ComponentToInsert(
             item,
             produit,
             client,
@@ -212,8 +230,21 @@ export class LabelComponentComponent implements OnChanges, OnInit {
             form,
             lot,
             SN
-          )
-        );
+          );
+          this.list.push(this.snComp);
+        } else {
+          this.list.push(
+            this.ComponentToInsert(
+              item,
+              produit,
+              client,
+              fournisseur,
+              form,
+              lot,
+              SN
+            )
+          );
+        }
         listFromDB[listFromDB.findIndex((obj) => obj && obj.id == item.id)] =
           null;
       }
@@ -230,6 +261,9 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           lot,
           SN
         );
+        if (item.refItem == "idSN") {
+          this.snComp = inseredComponent;
+        }
         const listofIdFromList = this.list.map((val) => val.id);
         if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
           listOfChildrenId.forEach((obj) => {

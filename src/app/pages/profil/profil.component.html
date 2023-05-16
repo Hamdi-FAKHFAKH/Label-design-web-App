@@ -1,0 +1,84 @@
+<div style="display: flex">
+  <div class="card">
+    <div class="card-header">
+      <div style="display: flex; align-items: start">
+        <img
+          src="../../../assets/images/nick.png"
+          alt=""
+          style="border-radius: 50%; margin-left: 20px"
+          width="150"
+        />
+        <div id="subProfil">
+          <div>Nom & Prénom</div>
+          <div>Role</div>
+          <div>Matricule</div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="newMotdePasse = true"
+          >
+            Change Mot de Passe
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <fa-icon icon="camera" size="1x" title="Edit"></fa-icon>
+      <div class="profil-item">
+        <div>Statut</div>
+        <div>Active</div>
+      </div>
+      <div class="profil-item">
+        <div>Nom de PC</div>
+        <div>Active</div>
+      </div>
+      <div class="profil-item">
+        <div>Atelier</div>
+        <div>Atelier de Protection Thermique</div>
+      </div>
+      <div class="profil-item">
+        <div>SuperUser</div>
+        <div>Hamdi FAKHFAKH</div>
+      </div>
+      <div class="profil-item" *ngIf="!newMotdePasse">
+        <div>Mot de Passe</div>
+        <div>***********</div>
+      </div>
+      <div class="profil-item" *ngIf="newMotdePasse">
+        <div>Ancien Mot de Passe</div>
+        <div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Ancien Mot de Passe"
+          />
+        </div>
+      </div>
+      <div class="profil-item" *ngIf="newMotdePasse">
+        <div>Nouveau Mot de Passe</div>
+        <div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nouveau Mot de Passe"
+          />
+        </div>
+      </div>
+      <div class="profil-item" *ngIf="newMotdePasse">
+        <div>Confirmation Nouveau Mot de Passe</div>
+        <div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Confirmation Nouveau Mot de Passe"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <ng2-smart-table [settings]="settings"></ng2-smart-table>
+    </div>
+  </div>
+</div>

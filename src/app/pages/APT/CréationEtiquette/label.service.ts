@@ -13,7 +13,7 @@ export class LabelService {
     refProdSimlaire: null,
     withGrid: false,
     withRule: false,
-    padding: 3,
+    padding: 0,
     showPaddingCadre: false,
   };
   labelInfo = new BehaviorSubject<infoLabel>(this.initLabelInfo);

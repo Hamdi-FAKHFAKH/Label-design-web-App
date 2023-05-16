@@ -59,6 +59,12 @@
         unitLong === 'mm' ? +$event.target.value : +$event.target.value * 10
       )
     "
+    (keyup.enter)="
+      change(
+        'longueur',
+        unitLong === 'mm' ? +$event.target.value : +$event.target.value * 10
+      )
+    "
   />
   <button
     type="button"
@@ -82,6 +88,12 @@
         unitLarg === 'mm' ? +$event.target.value : +$event.target.value * 10
       )
     "
+    (keyup.enter)="
+      change(
+        'largeur',
+        unitLarg === 'mm' ? +$event.target.value : +$event.target.value * 10
+      )
+    "
   />
 
   <button
@@ -99,7 +111,7 @@
     type="number"
     class="form-control"
     [ngModel]="padding"
-    min="{{ padding }}"
+    min="0"
     placeholder="Padding"
     (input)="
       change(
@@ -107,7 +119,14 @@
         unitPadding === 'mm' ? +$event.target.value : +$event.target.value * 10
       )
     "
+    (keyup.enter)="
+      change(
+        'padding',
+        unitPadding === 'mm' ? +$event.target.value : +$event.target.value * 10
+      )
+    "
   />
+
   <button
     type="button"
     class="btn btn-primary"
@@ -116,12 +135,6 @@
     {{ unitPadding || "mm" }}
   </button>
 </div>
-<span
-  *ngIf="+pad.value < minPadding"
-  style="color: red; background-color: white; margin-top: -5px"
->
-  la valeur de padding doit être supérieur ou égale a {{ minPadding }}</span
->
 <fieldset>
   <legend>Orientation</legend>
 </fieldset>

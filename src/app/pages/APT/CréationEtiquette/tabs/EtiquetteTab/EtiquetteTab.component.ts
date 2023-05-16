@@ -78,19 +78,17 @@ export class EtiquetteTabComponent implements OnInit {
       });
       this.padding = this.labelInfo.padding;
     } else if (elemName == "padding") {
-      if (+elemValue > this.minPadding) {
+      this.lableService.labelInfo.next({
+        ...this.labelInfo,
+        [elemName]: elemValue,
+        showPaddingCadre: true,
+      });
+      setTimeout(() => {
         this.lableService.labelInfo.next({
           ...this.labelInfo,
-          [elemName]: elemValue,
-          showPaddingCadre: true,
+          showPaddingCadre: false,
         });
-        setTimeout(() => {
-          this.lableService.labelInfo.next({
-            ...this.labelInfo,
-            showPaddingCadre: false,
-          });
-        }, 1600);
-      }
+      }, 1600);
     } else if (elemName == "refProd") {
       if (this.dragDropService.list1.length >= 1) {
         alert(
@@ -193,10 +191,10 @@ export class EtiquetteTabComponent implements OnInit {
     this.change("format", "rectangle");
     this.lableService.labelInfo.next({
       ...this.labelInfo,
-      padding: 3,
+      padding: 0,
     });
-    this.padding = 3;
-    this.minPadding = 3;
+    this.padding = 0;
+    this.minPadding = 0;
   }
   async DownloadLabelData(val) {
     if (val && val !== null) {
@@ -268,7 +266,8 @@ export class EtiquetteTabComponent implements OnInit {
       console.log(this.list);
       console.log("composents");
       console.log(composents);
-      if (this.dragDropService.dragDropLibre) {
+      if (!composents.some((val) => val.x == null || val.y == null)) {
+        this.dragDropService.dragDropLibre = true;
         this.dragDropService.dragPosition = {};
         composents.forEach((comp) => {
           this.dragDropService.list1.push(
@@ -287,8 +286,8 @@ export class EtiquetteTabComponent implements OnInit {
             y: +comp.y,
           };
         });
-      }
-      if (!this.dragDropService.dragDropLibre) {
+      } else {
+        this.dragDropService.dragDropLibre = false;
         const list: ComponetList[] = [];
         this.uploadData(produit, client, fournisseur, forme, lot, SN);
         this.fillList1(composents, this.list, list);

@@ -34,6 +34,7 @@ export class SidebarComponent implements OnInit {
   list1;
   list3 = [];
   list4 = [];
+  ListWithNewID = [];
 
   idEtiquette;
   constructor(
@@ -226,7 +227,9 @@ export class SidebarComponent implements OnInit {
         });
       console.log("***list1***");
       console.log(this.dragDropService.list1);
-
+      this.FillList1WithNewID(this.dragDropService.list1, this.ListWithNewID);
+      console.log("***list1 after fill***");
+      console.log(this.ListWithNewID);
       await this.createComponent(this.dragDropService.list1, this.idEtiquette);
     }
   }
@@ -397,6 +400,17 @@ export class SidebarComponent implements OnInit {
         : +$event.source.getFreeDragPosition().y
     );
     console.log($event.source);
+  }
+  FillList1WithNewID(list: ComponetList[], ListWithNewID: ComponetList[]) {
+    list.forEach((item, index) => {
+      const id = uuidv4();
+      ListWithNewID.push(Object.assign({}, { ...item, id: id, children: [] }));
+      this.dragDropService.dragPosition[id] =
+        this.dragDropService.dragPosition[item.id];
+      if (item.children) {
+        this.FillList1WithNewID(item.children, ListWithNewID[index].children);
+      }
+    });
   }
 }
 

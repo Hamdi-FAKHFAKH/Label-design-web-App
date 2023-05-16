@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 
 import { PagesComponent } from "./pages.component";
 import { NotFoundComponent } from "./miscellaneous/not-found/not-found.component";
+import { ProfilComponent } from "./profil/profil.component";
 
 const routes: Routes = [
   {
@@ -45,13 +46,17 @@ const routes: Routes = [
           ),
       },
       {
+        path: "profil",
+        component: ProfilComponent,
+      },
+      {
         path: "",
         redirectTo: "forms",
         pathMatch: "full",
       },
       {
         path: "**",
-        component: NotFoundComponent,
+        component: ProfilComponent,
       },
     ],
   },
