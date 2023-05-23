@@ -7,6 +7,7 @@ import { Observable, forkJoin } from "rxjs";
 import { GestionProduitService } from "../GestionProduit.service";
 import { SerialNumberData } from "../GestionProduit.data";
 import { v4 as uuidv4 } from "uuid";
+import Swal from "sweetalert2";
 @Component({
   templateUrl: "./window-form.component.html",
   styleUrls: ["window-form.component.scss"],
@@ -30,7 +31,9 @@ export class WindowFormComponent implements OnInit {
   SerialNumberData: SerialNumberData[];
   selectedSerialNumber: SerialNumberData;
   addNewSerialNumber: boolean;
+  formatLotValid: Boolean = false;
   format;
+  lotValue: string;
   constructor(
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -64,18 +67,55 @@ export class WindowFormComponent implements OnInit {
     let success = true;
     let idSN;
     let numLot: string;
-
-    if (form.value.numLot) {
-      numLot = form.value.numLot;
-    }
-    // créer un nouveau Format de lot
-    if (form.value.newformatLot && form.value.newNumLot) {
-      const res = await this.gestionProduitService.CreateLot(form.value);
-      if (res) {
-        numLot = form.value.newNumLot;
+    // vérifier si produit déja créer
+    const prod = await this.gestionProduitHttpService
+      .getAllProduits()
+      .toPromise();
+    for (const p in prod.produits) {
+      if (prod.produits[p]["ref"] == form.value.ref) {
+        Swal.fire({
+          icon: "info",
+          title: "Oops...",
+          text: "Produit déja existe!",
+        });
+        success = false;
+        return;
       }
     }
-    if (form.value.formatLot) {
+    if (!success) {
+      return;
+    }
+    // créer / vérifier l'existance du Lot
+    // créer un nouveau Format de lot
+    if (form.value.newformatLot) {
+      let res;
+      try {
+        res = (await this.gestionProduitService.CreateLot(form.value)).lot
+          .numLot;
+        numLot = res;
+      } catch (e) {
+        console.log(e);
+        if (e.error.erreur.errors[0].path == "PK__Lot__E5A90244EAD7D78F") {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Numéro de Lot déja Exist!",
+          });
+          return;
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Format de Lot déja Exist!",
+          });
+          return;
+        }
+      }
+    }
+    if (
+      form.value.formatLot &&
+      form.value.formatLot !== "Ajouter un Nouveau Format"
+    ) {
       numLot = form.value.formatLot;
     }
     // créer / vérifier l'existance d'un client
@@ -106,7 +146,6 @@ export class WindowFormComponent implements OnInit {
         `{NC : ${form.value.nbrCaractere}}` +
         `{Type : ${form.value.typeCompteur}}` +
         `{pas : ${form.value.pas}}`;
-      // console.log("ddddd{{nc:20}}sdds".split(/[\{\}]+/));
 
       idSN = await this.gestionProduitService.AddSerialNumber(
         form.value,
@@ -117,16 +156,7 @@ export class WindowFormComponent implements OnInit {
     if (!this.addNewSerialNumber && form.value.FormatSN) {
       idSN = this.selectedSerialNumber.idSN;
     }
-    // vérifier si produit déja créer
-    const prod = await this.gestionProduitHttpService
-      .getAllProduits()
-      .toPromise();
-    for (const p in prod.produits) {
-      if (prod.produits[p]["ref"] == form.value.ref) {
-        alert("Produit existe déja");
-        success = false;
-      }
-    }
+
     //add formes
     let formes = "";
     this.formes.map((val) => {
@@ -135,14 +165,20 @@ export class WindowFormComponent implements OnInit {
       }
     });
     // créer un produit
-    if (success && form.value.ref && form.value.nomProduit) {
+    if (success && form.value.ref) {
       success = await this.gestionProduitService.CreateProduit(
         form.value,
         numLot,
         idSN,
         formes
       );
-      success ? this.windowRef.close() : alert("Produit creation Failed");
+      !!success
+        ? this.windowRef.close()
+        : Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Échec de la création du produit",
+          });
     }
   }
   SelectSn(val) {
@@ -186,11 +222,21 @@ export class WindowFormComponent implements OnInit {
           this.gestionProduitService.getFormes();
         })
         .catch((e) => {
-          alert("Icon déja existe");
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Icon déja existe !",
+          });
         });
     };
     reader.onerror = function (error) {
       console.log("Error: ", error);
     };
   };
+  checkFormatLot(data: string) {
+    data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
+      ? (this.formatLotValid = true)
+      : (this.formatLotValid = false);
+    console.log(this.formatLotValid);
+  }
 }

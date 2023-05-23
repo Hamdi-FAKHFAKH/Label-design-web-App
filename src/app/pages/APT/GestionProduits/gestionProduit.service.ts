@@ -1,6 +1,10 @@
 import { Injectable, OnInit } from "@angular/core";
 import { GestionProduitHttpService } from "./GestionProduitHttp.service";
 import { v4 as uuidv4 } from "uuid";
+import {
+  GetLotResponseData,
+  GetOneLotResponseData,
+} from "./GestionProduit.data";
 @Injectable()
 export class GestionProduitService {
   formes: { id: string; name: string; path: string; clicked: boolean }[];
@@ -8,6 +12,7 @@ export class GestionProduitService {
     this.formes = [];
     this.getFormes();
   }
+  // import all formes in DB
   getFormes() {
     this.formes.length = 0;
     this.gestionProduitHttpService
@@ -24,6 +29,7 @@ export class GestionProduitService {
         });
       });
   }
+  // Create or update Client if it already exists
   async AddClient(data) {
     const client = await this.gestionProduitHttpService
       .getClient(data.codeClient)
@@ -55,7 +61,7 @@ export class GestionProduitService {
       return false;
     }
   }
-
+  // Create or update Fournisseur if it already exists
   async AddFournisseur(data) {
     const forn = await this.gestionProduitHttpService
       .getFournisseur(data.codeFournisseur)
@@ -87,18 +93,17 @@ export class GestionProduitService {
       return false;
     }
   }
-
+  //Create Lot
   async CreateLot(data) {
-    const res = await this.gestionProduitHttpService
+    const res: GetOneLotResponseData = await this.gestionProduitHttpService
       .createLot({
-        numLot: data.newNumLot,
         format: data.newformatLot,
         desLot: data.desLot || null,
         createur: null,
         modificateur: null,
       })
       .toPromise();
-    return !!res;
+    return res;
   }
   async UpdateLot(data, id) {
     const res = await this.gestionProduitHttpService
@@ -115,7 +120,7 @@ export class GestionProduitService {
       .toPromise();
     return !!res;
   }
-
+  //Create or update SN if it already exists
   async AddSerialNumber(data, format) {
     const idSN: string = uuidv4();
     const res = await this.gestionProduitHttpService

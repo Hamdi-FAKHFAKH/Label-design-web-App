@@ -3,7 +3,8 @@ import { NgForm } from "@angular/forms";
 import { NbWindowRef } from "@nebular/theme";
 import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 import { GestionProduitService } from "../GestionProduit.service";
-import { SerialNumberData } from "../GestionProduit.data";
+import { AllProduitData, SerialNumberData } from "../GestionProduit.data";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "ngx-update-produit",
@@ -11,7 +12,11 @@ import { SerialNumberData } from "../GestionProduit.data";
   styleUrls: ["./update-produit.component.scss"],
 })
 export class UpdateProduitComponent implements OnInit {
-  formes: { id: string; name: string; path: string; clicked: boolean }[];
+  formes: { id: string; name: string; path: string; clicked: boolean }[] = [];
+  lotValue: string;
+  //vérifier le Format de Lot
+  formatLotValid: boolean = false;
+  // ajoute forme clicked
   addForme(id, name, path, clicked, index) {
     if (clicked) {
       this.formes[index] = { id: id, name: name, path: path, clicked: true };
@@ -20,7 +25,7 @@ export class UpdateProduitComponent implements OnInit {
     }
     console.log(this.gestionProduitService.formes);
   }
-  windowdata;
+  windowdata: AllProduitData;
   produits: String[] = [];
   lotData: string[] = [];
   refProd: string;
@@ -30,21 +35,41 @@ export class UpdateProduitComponent implements OnInit {
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService
   ) {}
-
-  ngOnInit(): void {
-    this.formes = this.gestionProduitService.formes;
-    this.gestionProduitService.getFormes();
+  async getFormes() {
+    const val = await this.gestionProduitHttpService.getForms().toPromise();
+    val.forms.forEach((obj) => {
+      this.formes.push({
+        id: obj.id,
+        name: obj.name,
+        path: obj.path,
+        clicked: false,
+      });
+    });
+  }
+  async ngOnInit() {
+    await this.getFormes();
     this.gestionProduitHttpService.getSDTPRA().subscribe((res) => {
       this.produits = res.SDTPRA;
-      // console.log(this.produits[0]);
     });
     this.gestionProduitHttpService.getLots().subscribe((res) => {
       for (const i in res.lots) {
         this.lotData.push(res.lots[i]);
       }
-      console.log(this.lotData);
     });
     this.refProd = this.windowdata.ref;
+    console.log("****selected forms");
+    console.log(this.windowdata.formes.split(";"));
+    console.log("****all forms****");
+    console.log(this.formes);
+
+    this.windowdata.formes.split(";").forEach((forme, index) => {
+      if (forme) {
+        const selectedForme = this.formes.find((obj) => obj.id == forme);
+        console.log(selectedForme);
+        selectedForme ? (selectedForme.clicked = true) : null;
+      }
+    });
+    this.lotValue = this.windowdata.numLot;
   }
   close() {
     this.windowRef.close();
@@ -53,25 +78,38 @@ export class UpdateProduitComponent implements OnInit {
     let success = true;
     let idSN;
     let numLot: string;
-
-    if (form.value.numLot) {
-      numLot = form.value.numLot;
-    }
+    // créer / vérifier l'existance du Lot
     // créer un nouveau Format de lot
-    if (form.value.newformatLot && form.value.newNumLot) {
-      const res = await this.gestionProduitService.CreateLot(form.value);
-      if (res) {
-        numLot = form.value.newNumLot;
+    if (form.value.newformatLot) {
+      let res;
+      try {
+        res = (await this.gestionProduitService.CreateLot(form.value)).lot
+          .numLot;
+        numLot = res;
+      } catch (e) {
+        console.log(e);
+        if (e.error.erreur.errors[0].path == "PK__Lot__E5A90244EAD7D78F") {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Numéro de Lot déja Exist!",
+          });
+          return;
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Format de Lot déja Exist!",
+          });
+          return;
+        }
       }
     }
-    if (form.value.formatLot) {
+    if (
+      form.value.formatLot &&
+      form.value.formatLot !== "Ajouter un Nouveau Format"
+    ) {
       numLot = form.value.formatLot;
-    }
-    if ((form.value.numLot || form.value.formatLot) && form.value.desLot) {
-      this.gestionProduitService.UpdateLot(
-        { desLot: form.value.desLot },
-        form.value.numLot || form.value.formatLot
-      );
     }
     // créer / vérifier l'existance d'un client
     if (form.value.codeClient) {
@@ -93,7 +131,7 @@ export class UpdateProduitComponent implements OnInit {
     });
 
     // update un produit
-    if (success && this.windowdata.ref && form.value.nomProduit) {
+    if (success && this.windowdata.ref) {
       const idEtiquette = await (
         await this.gestionProduitHttpService
           .getOneProduit(this.windowdata.ref)
@@ -112,5 +150,11 @@ export class UpdateProduitComponent implements OnInit {
       );
       success ? this.windowRef.close() : alert("Produit creation Failed");
     }
+  }
+  checkFormatLot(data: string) {
+    data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
+      ? (this.formatLotValid = true)
+      : (this.formatLotValid = false);
+    console.log(this.formatLotValid);
   }
 }

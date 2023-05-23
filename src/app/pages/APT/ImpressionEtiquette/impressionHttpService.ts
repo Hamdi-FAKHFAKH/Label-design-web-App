@@ -1,8 +1,15 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import {
+  FileDeleted,
+  FileExist,
+  GetOFResultData,
+  GetOneOFResultData,
+  PrintData,
+} from "./impressionServiceData";
 
 @Injectable()
-export class ImpressionService {
+export class ImpressionHttpService {
   constructor(private http: HttpClient) {}
   GetRefProduitByOF(ofnum) {
     return this.http.get<GetOneOFResultData>(
@@ -32,32 +39,4 @@ export class ImpressionService {
       { body: obj }
     );
   }
-}
-export interface GetOneOFResultData {
-  Status: string;
-  of: OFHttpData;
-}
-export interface GetOFResultData {
-  Status: string;
-  of: OFHttpData[];
-}
-export interface OFHttpData {
-  ofnum: string;
-  proref: string;
-  liecod: string;
-  createdAt: string;
-  updatedAt: string;
-}
-export interface PrintData {
-  copies: number;
-  filePath: string;
-  printerName: string;
-}
-export interface FileExist {
-  exist: boolean;
-  message: string;
-}
-export interface FileDeleted {
-  deleted: boolean;
-  message: string;
 }

@@ -22,6 +22,7 @@ import {
   CreateFormeResultData,
   GetFormeResultData,
   GetOneLotResponseData,
+  GetAllProduitDataResponseData,
 } from "./GestionProduit.data";
 
 @Injectable()
@@ -29,7 +30,7 @@ export class GestionProduitHttpService {
   constructor(private http: HttpClient) {}
   /**************************************************** Produit ***************************************************** */
   getAllProduits() {
-    return this.http.get<GetProduitResponseData>(
+    return this.http.get<GetAllProduitDataResponseData>(
       "http://localhost:3080/api/v1/Produits/allData"
     );
   }
@@ -70,7 +71,7 @@ export class GestionProduitHttpService {
     );
   }
   createLot(obj: LotData) {
-    return this.http.post<GetLotResponseData>(
+    return this.http.post<GetOneLotResponseData>(
       "http://localhost:3080/api/v1/lot",
       obj
     );

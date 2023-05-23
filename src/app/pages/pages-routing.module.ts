@@ -11,6 +11,10 @@ const routes: Routes = [
     component: PagesComponent,
     children: [
       {
+        path: "profil",
+        component: ProfilComponent,
+      },
+      {
         path: "apt",
         loadChildren: () => import("./APT/apt.module").then((m) => m.AptModule),
       },
@@ -45,10 +49,7 @@ const routes: Routes = [
             (m) => m.MiscellaneousModule
           ),
       },
-      {
-        path: "profil",
-        component: ProfilComponent,
-      },
+
       {
         path: "",
         redirectTo: "forms",
@@ -56,7 +57,7 @@ const routes: Routes = [
       },
       {
         path: "**",
-        component: ProfilComponent,
+        component: NotFoundComponent,
       },
     ],
   },

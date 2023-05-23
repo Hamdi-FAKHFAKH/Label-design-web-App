@@ -37,6 +37,7 @@ import {
 import { NgxBarcodeModule } from "ngx-barcode";
 import { ContainerStyleFormComponent } from "./container-style-form/container-style-form.component";
 import { FormeStyleFormComponent } from "./forme-style-form/forme-style-form.component";
+import { PropertyTabComponent } from './tabs/property-tab/property-tab.component';
 
 @NgModule({
   imports: [
@@ -73,6 +74,7 @@ import { FormeStyleFormComponent } from "./forme-style-form/forme-style-form.com
     DataMatrixStyleFormComponent,
     ContainerStyleFormComponent,
     FormeStyleFormComponent,
+    PropertyTabComponent,
   ],
   exports: [],
   providers: [

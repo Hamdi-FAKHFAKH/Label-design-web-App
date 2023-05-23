@@ -40,7 +40,5 @@ export class FormeStyleFormComponent implements OnInit {
       y: y != null ? +yround : this.dragDropService.dragPosition[this.itemId].y,
     };
     console.log(Math.round(+y / 0.26));
-
-    console.log(this.dragDropService.dragPosition[this.itemId]);
   }
 }

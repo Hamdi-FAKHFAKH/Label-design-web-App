@@ -1,0 +1,30 @@
+<div
+  *ngIf="
+    dragDropService.items[dragDropService.selectedItem] &&
+    dragDropService.items[dragDropService.selectedItem].type === 'QRcode'
+  "
+>
+  <ngx-data-matrix-style-form
+    [itemId]="dragDropService.selectedItem"
+  ></ngx-data-matrix-style-form>
+</div>
+<div
+  *ngIf="
+    dragDropService.items[dragDropService.selectedItem] &&
+    dragDropService.items[dragDropService.selectedItem].type === 'forme'
+  "
+>
+  <ngx-forme-style-form
+    [itemId]="dragDropService.selectedItem"
+  ></ngx-forme-style-form>
+</div>
+<div
+  *ngIf="
+    dragDropService.items[dragDropService.selectedItem] &&
+    dragDropService.items[dragDropService.selectedItem].type === 'text'
+  "
+>
+  <ngx-field-style-form
+    [itemId]="dragDropService.selectedItem"
+  ></ngx-field-style-form>
+</div>

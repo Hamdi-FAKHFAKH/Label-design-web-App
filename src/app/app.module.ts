@@ -37,7 +37,6 @@ import {
   FontAwesomeModule,
   FaIconLibrary,
 } from "@fortawesome/angular-fontawesome";
-import { ShareService } from "./pages/APT/CréationEtiquette/share.service";
 import { NbDateFnsDateModule } from "@nebular/date-fns";
 import { NbMomentDateModule } from "@nebular/moment";
 
@@ -83,7 +82,7 @@ import { NbMomentDateModule } from "@nebular/moment";
     AuthService,
     GestionProduitHttpService,
     GestionProduitService,
-    ShareService,
+
     {
       provide: HTTP_INTERCEPTORS,
       useClass: authInterceptorService,

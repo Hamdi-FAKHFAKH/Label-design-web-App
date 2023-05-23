@@ -18,3 +18,28 @@
 :host /deep/ ng2-smart-table thead > tr > th a.sort.asc::after {
   border-bottom-color: #f3f6ff;
 }
+:host
+  /deep/
+  ng2-smart-table
+  thead
+  > tr
+  > th.ng2-smart-actions.ng-star-inserted {
+  position: sticky;
+  right: -15px;
+  background-color: #3374b5;
+}
+:host
+  /deep/
+  ng2-smart-table
+  > table
+  > tbody
+  > tr
+  > td.ng2-smart-actions.ng-star-inserted {
+  position: sticky;
+  right: -15px;
+  background-color: #edf1f7;
+}
+:host /deep/ ng2-smart-table {
+  overflow-x: auto;
+  position: relative;
+}

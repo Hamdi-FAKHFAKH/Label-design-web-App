@@ -16,11 +16,7 @@ interface authData {
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private cookieService: CookieService
-  ) {}
+  constructor(private http: HttpClient, private router: Router) {}
   // observateur sur le user
   user = new BehaviorSubject<user>(null);
   TokenExpirationTimer;

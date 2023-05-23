@@ -1,4 +1,4 @@
-import { moveItemInArray } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import { DOCUMENT } from "@angular/common";
 import { Inject, Injectable } from "@angular/core";
 import { v4 as uuidv4 } from "uuid";
@@ -30,6 +30,23 @@ export class DragDropService {
   dragDropLibre: boolean = true;
   // position of draggable elements
   dragPosition = {};
+  //to activate property Tab
+  propertyTabActive = false;
+  // id of the selected item in the label
+  selectedItem: string;
+  //default Text Style
+  defaultTextStyle = {
+    "font-weight": "normal",
+    bold: false,
+    italic: false,
+    "font-style": "normal",
+    "text-decoration": "none",
+    "font-family": "Times New Roman",
+    "font-size": "12pt",
+    color: "#000000",
+    "background-color": "transparent",
+    underline: false,
+  };
   //fill dropTargetIds list and nodeLookup2 object
   prepareDragDrop(nodes: ComponetList[]) {
     nodes.forEach((node) => {
@@ -169,9 +186,11 @@ export class DragDropService {
                             italic: false,
                             "font-style": "normal",
                             "text-decoration": "none",
+                            "font-family": "Times New Roman",
+                            "font-size": "12pt",
+                            color: "#000000",
+                            "background-color": "transparent",
                             underline: false,
-                            height: "fit-content",
-                            width: "fit-content",
                           },
                           children: [],
                         });
@@ -213,16 +232,7 @@ export class DragDropService {
                           refItem: item,
                           title: ComponentTitle.numLot,
                           data: resProduit.produit.numLot,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            underline: false,
-                            width: "fit-content",
-                            height: "fit-content",
-                          },
+                          style: this.defaultTextStyle,
                         },
                         {
                           id: uuidv4(),
@@ -230,16 +240,7 @@ export class DragDropService {
                           title: ComponentTitle.formatLot,
                           refItem: "format",
                           data: lot.lot.format,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            underline: false,
-                            width: "fit-content",
-                            height: "fit-content",
-                          },
+                          style: this.defaultTextStyle,
                         }
                       );
                       this.prepareDragDrop(this.list2);
@@ -259,16 +260,7 @@ export class DragDropService {
                           refItem: item,
                           title: ComponentTitle.codeClient,
                           data: resProduit.produit.codeClient,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            underline: false,
-                            width: "fit-content",
-                            height: "fit-content",
-                          },
+                          style: this.defaultTextStyle,
                         },
                         {
                           id: uuidv4(),
@@ -276,16 +268,7 @@ export class DragDropService {
                           title: ComponentTitle.desClient,
                           refItem: "desClient",
                           data: client.body.client.desClient,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            underline: false,
-                            width: "fit-content",
-                            height: "fit-content",
-                          },
+                          style: this.defaultTextStyle,
                         }
                       );
                       this.prepareDragDrop(this.list2);
@@ -305,16 +288,7 @@ export class DragDropService {
                           refItem: item,
                           title: ComponentTitle.codeFournisseur,
                           data: resProduit.produit.codeFournisseur,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            underline: false,
-                            width: "fit-content",
-                            height: "fit-content",
-                          },
+                          style: this.defaultTextStyle,
                         },
                         {
                           id: uuidv4(),
@@ -322,16 +296,7 @@ export class DragDropService {
                           title: ComponentTitle.desFournisseur,
                           refItem: "desClient",
                           data: fournisseur.body.fournisseur.desFournisseur,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            underline: false,
-                            height: "fit-content",
-                            width: "fit-content",
-                          },
+                          style: this.defaultTextStyle,
                         }
                       );
                       this.prepareDragDrop(this.list2);
@@ -352,9 +317,13 @@ export class DragDropService {
                       italic: false,
                       "font-style": "normal",
                       "text-decoration": "none",
+                      "font-family": "Times New Roman",
+                      "font-size": "12pt",
+                      color: "#000000",
                       underline: false,
                       height: item == "withDataMatrix" ? "110" : "fit-content",
                       width: item == "withDataMatrix" ? "110" : "fit-content",
+                      "background-color": "#FF000000",
                     },
                     dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
                   });
@@ -466,6 +435,7 @@ export class DragDropService {
     if (!e) {
       return;
     }
+
     let container = e.classList.contains("container1")
       ? e
       : e.closest(".container1");
@@ -504,13 +474,15 @@ export class DragDropService {
     }
   }
 
-  drop(event) {
+  drop(event: CdkDragDrop<string[]>) {
     if (!this.dropActionTodo) return;
     const draggedItemId = event.item.data; //draggebel
     const parentItemId = event.previousContainer.id; //dragebel previous parent
     const targetListId: string = "label"; //parent of drag area
     //get object of the dragebel item
     const draggedItem = this.nodeLookup2[draggedItemId];
+    console.log(event.dropPoint);
+
     if (
       this.dropActionTodo.action == "insideLeft" &&
       draggedItem &&
@@ -566,7 +538,7 @@ export class DragDropService {
           event.currentIndex
         );
       } else {
-        const id = uuidv4();
+        // const id = uuidv4();
         if (draggedItem.type === "container-2") {
           this.list1.splice(
             event.currentIndex,
@@ -589,7 +561,7 @@ export class DragDropService {
                     style: null,
                   },
                 ],
-                id: id,
+                id: uuidv4(),
               }
             )
           );
@@ -621,7 +593,7 @@ export class DragDropService {
                     style: null,
                   },
                 ],
-                id: id,
+                id: uuidv4(),
               }
             )
           );
@@ -640,11 +612,12 @@ export class DragDropService {
                     children: [],
                   },
                 ],
-                id: id,
+                id: uuidv4(),
               }
             )
           );
         } else {
+          this.list2.splice(event.previousIndex, 1);
           this.list1.splice(
             event.currentIndex,
             0,
@@ -653,22 +626,20 @@ export class DragDropService {
               {
                 ...draggedItem,
                 children: [],
-                id: id,
               }
             )
           );
         }
-        this.items[id] = this.list1[event.currentIndex];
-        this.dragPosition[id] = { x: 0, y: 0 };
-        console.log("dragPosition");
-        console.log(this.dragPosition);
+        this.items[draggedItemId] = this.list1[event.currentIndex];
+        this.dragPosition[draggedItemId] = {
+          x: 0,
+          y: 0,
+        };
+        if (!this.selectedItem) {
+          this.selectedItem = this.list1[0].id;
+        }
       }
-      console.log("list1");
-      console.log(this.list1);
-      console.log("list2");
-      console.log(this.list2);
     }
-
     this.getAllItems(this.list1);
   }
   // fill items object with all elements in list1

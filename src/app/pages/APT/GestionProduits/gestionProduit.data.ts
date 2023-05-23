@@ -3,6 +3,48 @@ export interface GetProduitResponseData {
   status: string;
   produits: ProduitData[];
 }
+
+export interface AllProduitData {
+  codeClient: string;
+  desClient: string;
+  desFournisseur: string;
+  format: string;
+  desLot: string;
+  ref: string;
+  nomProduit: string;
+  ref1: string;
+  ref2: string;
+  numLot: string;
+  codeFournisseur: string;
+  idEtiquette: string;
+  idSN: string;
+  formes: string;
+  Createur: null;
+  Modificateur: null;
+  withDataMatrix: boolean;
+  datamatrixData: string;
+  withSN: boolean;
+  withOF: boolean;
+  text1: string;
+  text2: string;
+  text3: string;
+  text4: string;
+  text5: string;
+  createdAt: string;
+  updatedAt: string;
+  ProtypCod: string;
+  prodes1: string;
+  prodes2: string;
+  suffix: string;
+  prefix: string;
+  nbrCaractere: number;
+  typeCompteur: string;
+  pas: number;
+}
+export interface GetAllProduitDataResponseData {
+  status: string;
+  produits: AllProduitData[];
+}
 export interface updateProduitResponseData {
   Status: string;
   numberOfAffectedRows: number;
@@ -57,7 +99,7 @@ export interface GetLotResponseData {
   lots: string[];
 }
 export interface LotData {
-  numLot: string;
+  numLot?: string;
   format: string;
   desLot: string;
   createur: String;

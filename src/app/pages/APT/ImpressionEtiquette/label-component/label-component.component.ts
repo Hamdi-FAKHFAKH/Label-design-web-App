@@ -20,6 +20,7 @@ import {
   SerialNumberData,
 } from "../../GestionProduits/GestionProduit.data";
 import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "ngx-label-component",
@@ -33,11 +34,24 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   @Output() withSN = new EventEmitter<boolean>();
   @Output() sn = new EventEmitter<SerialNumberData>();
   @Output() withDataMatrix = new EventEmitter<Boolean>();
-  list1;
-  labelStyle;
-  labelInfo;
-  list;
-  SN;
+  list1: ComponetList[];
+  labelStyle: {
+    "background-color"?: string;
+    width?: string;
+    height?: string;
+    padding?: string;
+    "border-radius"?: string;
+  };
+  labelInfo: {
+    color: string;
+    format: string;
+    refProdSimlaire: string;
+    longueur: number;
+    largeur: number;
+    padding: number;
+  };
+  list: ComponetList[];
+  SN: SerialNumberData;
   dragDropLibre: boolean = true;
   snComp: ComponetList;
   constructor(
@@ -50,7 +64,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       this.changeSn();
     });
   }
-
+  // return style de container en mettant son bordure none
   rowStyle(item: ComponetList) {
     return {
       ...item.style,
@@ -67,108 +81,128 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           console.log(err);
         });
   }
+  // charger les élements de l'étiquette en fonction de référence Produit a partir de la BD
   async loadEtiquette(refProd: string) {
-    const { produit } = await this.gestionProduitHttpService
-      .getOneProduit(refProd)
-      .toPromise();
-    this.withDataMatrix.emit(produit.withDataMatrix);
-    const { etiquette } = await this.labelHttpService
-      .GetOneEtiquette(produit.idEtiquette)
-      .toPromise();
-    console.log(etiquette);
-    this.labelInfo = {
-      color: etiquette.couleur,
-      format: etiquette.format,
-      refProdSimlaire: etiquette.id1,
-      longueur: etiquette.longeur,
-      largeur: etiquette.largeur,
-      padding: etiquette.padding,
-    };
-    if (this.labelInfo) {
-      this.labelStyle = {
-        "background-color": this.labelInfo.color,
-        width: this.labelInfo.largeur + "mm",
-        height: this.labelInfo.longueur + "mm",
-        padding: this.labelInfo.padding + "mm",
-      };
-      if (this.labelInfo.format == "cercle") {
-        this.labelStyle = {
-          ...this.labelStyle,
-          "border-radius": this.labelInfo.largeur + "mm",
-        };
-      }
-    }
-    // download all components of label from DB
-    const { composents } = await this.labelHttpService
-      .GetAllComponentsByEtiquette(produit.idEtiquette)
-      .toPromise();
-    //get Client
-    const client = produit.codeClient
-      ? (
-          await this.gestionProduitHttpService
-            .getClient(produit.codeClient)
-            .toPromise()
-        ).body.client
-      : null;
-    //get Fournisseur
-    const fournisseur = produit.codeFournisseur
-      ? (
-          await this.gestionProduitHttpService
-            .getFournisseur(produit.codeFournisseur)
-            .toPromise()
-        ).body.fournisseur
-      : null;
-    //get Lot
-    const lot = produit.numLot
-      ? (
-          await this.gestionProduitHttpService
-            .getOneLot(produit.numLot)
-            .toPromise()
-        ).lot
-      : null;
     this.list1 = [];
-    //get Forme
-    const forme = await Promise.all(
-      produit.formes.split(";").map((val) => {
-        if (val) {
-          return this.gestionProduitHttpService.getOneForm(val).toPromise();
-        }
-      })
-    );
-    //get SN
-    const SN = produit.idSN
-      ? await this.gestionProduitHttpService
-          .getOneSerialNumber(produit.idSN)
-          .toPromise()
-      : null;
-
-    if (SN) {
-      this.SN = SN.serialNumber;
-      this.withSN.emit(true);
-      this.sn.emit(this.SN);
-    } else {
-      this.withSN.emit(false);
+    this.labelStyle = {};
+    let produit;
+    try {
+      produit = (
+        await this.gestionProduitHttpService.getOneProduit(refProd).toPromise()
+      ).produit;
+      this.withDataMatrix.emit(produit.withDataMatrix);
+    } catch (e) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Produit n'existe Pas!",
+        footer:
+          '<a [routerLink]="["/pages/apt/gestionProduits"]" >Créer un produit pour cet OF</a>',
+      });
+      return;
     }
+    let etiquette;
+    try {
+      etiquette = (
+        await this.labelHttpService
+          .GetOneEtiquette(produit.idEtiquette)
+          .toPromise()
+      ).etiquette;
+    } catch (e) {
+      console.log(e);
+    }
+    console.log(etiquette);
+    if (!etiquette) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Aucune Etiquette crée pour ce produit",
+        footer:
+          '<a href="/pages/apt/CreationEtiquette" >Créer une Etiquette pour ce Produit</a>',
+      });
+    }
+    if (etiquette) {
+      this.labelInfo = {
+        color: etiquette.couleur,
+        format: etiquette.format,
+        refProdSimlaire: etiquette.id1,
+        longueur: etiquette.longeur,
+        largeur: etiquette.largeur,
+        padding: etiquette.padding,
+      };
+      if (this.labelInfo) {
+        this.labelStyle = {
+          "background-color": this.labelInfo.color,
+          width: this.labelInfo.largeur + "mm",
+          height: this.labelInfo.longueur + "mm",
+          padding: this.labelInfo.padding + "mm",
+        };
+        if (this.labelInfo.format == "cercle") {
+          this.labelStyle = {
+            ...this.labelStyle,
+            "border-radius": this.labelInfo.largeur + "mm",
+          };
+        }
+      }
+      // download all components of label from DB
+      const { composents } = await this.labelHttpService
+        .GetAllComponentsByEtiquette(produit.idEtiquette)
+        .toPromise();
+      //get Client
+      const client = produit.codeClient
+        ? (
+            await this.gestionProduitHttpService
+              .getClient(produit.codeClient)
+              .toPromise()
+          ).body.client
+        : null;
+      //get Fournisseur
+      const fournisseur = produit.codeFournisseur
+        ? (
+            await this.gestionProduitHttpService
+              .getFournisseur(produit.codeFournisseur)
+              .toPromise()
+          ).body.fournisseur
+        : null;
+      //get Lot
+      const lot = produit.numLot
+        ? (
+            await this.gestionProduitHttpService
+              .getOneLot(produit.numLot)
+              .toPromise()
+          ).lot
+        : null;
 
-    // fill list1
-    if (!composents.some((val) => val.x == null || val.y == null)) {
-      this.dragDropLibre = true;
-      this.dragDropService.dragPosition = {};
-      composents.forEach((comp) => {
-        if (comp.refItem == "idSN") {
-          this.snComp = this.ComponentToInsert(
-            comp,
-            produit,
-            client,
-            fournisseur,
-            forme,
-            lot,
-            SN
-          );
-          this.list1.push(this.snComp);
-        } else {
-          this.list1.push(
-            this.ComponentToInsert(
+      //get Forme
+      const forme = await Promise.all(
+        produit.formes.split(";").map((val) => {
+          if (val) {
+            return this.gestionProduitHttpService.getOneForm(val).toPromise();
+          }
+        })
+      );
+      //get SN
+      const SN = produit.idSN
+        ? await this.gestionProduitHttpService
+            .getOneSerialNumber(produit.idSN)
+            .toPromise()
+        : null;
+
+      if (SN) {
+        this.SN = SN.serialNumber;
+        this.withSN.emit(true);
+        this.sn.emit(this.SN);
+      } else {
+        this.withSN.emit(false);
+      }
+
+      // fill list1
+      if (!composents.some((val) => val.x == null || val.y == null)) {
+        this.dragDropLibre = true;
+        this.dragDropService.dragPosition = {};
+        composents.forEach((comp) => {
+          if (comp.refItem == "idSN") {
+            this.snComp = this.ComponentToInsert(
               comp,
               produit,
               client,
@@ -176,53 +210,71 @@ export class LabelComponentComponent implements OnChanges, OnInit {
               forme,
               lot,
               SN
-            )
-          );
-        }
-        this.dragDropService.dragPosition[comp.id] = {
-          x: +comp.x,
-          y: +comp.y,
-        };
-      });
-      console.log(this.dragDropService.dragPosition);
-    } else {
-      this.dragDropLibre = false;
-      this.list = [];
-      const list: ComponetList[] = [];
-      this.uploadData(
-        Array.from(composents),
-        produit,
-        client,
-        fournisseur,
-        forme,
-        lot,
-        SN
-      );
-      this.fillList1(composents, this.list, list);
-      this.list1 = list;
+            );
+            this.list1.push(this.snComp);
+          } else {
+            this.list1.push(
+              this.ComponentToInsert(
+                comp,
+                produit,
+                client,
+                fournisseur,
+                forme,
+                lot,
+                SN
+              )
+            );
+          }
+          this.dragDropService.dragPosition[comp.id] = {
+            x: +comp.x,
+            y: +comp.y,
+          };
+        });
+        console.log(this.dragDropService.dragPosition);
+      } else {
+        this.dragDropLibre = false;
+        this.list = [];
+        const list: ComponetList[] = [];
+        this.uploadData(
+          Array.from(composents),
+          produit,
+          client,
+          fournisseur,
+          forme,
+          lot,
+          SN
+        );
+        this.orderElementsInList1(composents, this.list, list);
+        this.snComp = this.findSN(list);
+        console.log(this.snComp);
+        this.list1 = list;
+      }
+      this.list1Event.emit(this.list1);
     }
-
-    console.log("dragPosition From db");
-    console.log(this.dragDropService.dragPosition);
-    // this.uploadData(
-    //   Array.from(composents),
-    //   produit,
-    //   client,
-    //   fournisseur,
-    //   forme,
-    //   lot
-    // );
-    // const list = [];
-    // this.fillList1(composents, this.list, list);
-    // this.list1 = [...list];
-    this.list1Event.emit(this.list1);
   }
-
+  // rechercher l'element Sérial Number dans un list
+  findSN(data: ComponetList[]) {
+    const res = data.find((val) => val.refItem == "idSN" && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children.length > 0) {
+          return this.findSN(val.children);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res || resarray.find((val) => val && val.refItem == "idSN" && val.data)
+    );
+  }
+  // parcourir les element a partir de BD et les insérer dans list ( utiliser dans le drag & drop avec container)
   uploadData(listFromDB, produit, client, fournisseur, form, lot, SN) {
     listFromDB.map((item) => {
       if (item && item.children == "") {
-        if (item.refItem == "idSN") {
-          this.snComp = this.ComponentToInsert(
+        this.list.push(
+          this.ComponentToInsert(
             item,
             produit,
             client,
@@ -230,21 +282,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
             form,
             lot,
             SN
-          );
-          this.list.push(this.snComp);
-        } else {
-          this.list.push(
-            this.ComponentToInsert(
-              item,
-              produit,
-              client,
-              fournisseur,
-              form,
-              lot,
-              SN
-            )
-          );
-        }
+          )
+        );
         listFromDB[listFromDB.findIndex((obj) => obj && obj.id == item.id)] =
           null;
       }
@@ -261,9 +300,6 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           lot,
           SN
         );
-        if (item.refItem == "idSN") {
-          this.snComp = inseredComponent;
-        }
         const listofIdFromList = this.list.map((val) => val.id);
         if (listOfChildrenId.every((elem) => listofIdFromList.includes(elem))) {
           listOfChildrenId.forEach((obj) => {
@@ -288,7 +324,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       this.uploadData(listFromDB, produit, client, fournisseur, form, lot, SN);
     }
   }
-  fillList1(
+  // order item in list1
+  orderElementsInList1(
     listFromDB: ComposentHttpData[],
     listIn: ComponetList[],
     listOut: ComponetList[]
@@ -309,7 +346,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
             children: [],
           };
           if (val.children && val.children.length > 0) {
-            this.fillList1(
+            this.orderElementsInList1(
               listFromDB,
               val.children,
               listOut[+itemFromDB.ordre].children
@@ -319,6 +356,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       });
     });
   }
+  //return item to insert in list 1 (list1 contient list des element insérer dans l'étiquette)
   ComponentToInsert(
     obj: ComposentHttpData,
     produit,
@@ -382,6 +420,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       },
     };
   }
+  // changer le Numéro de Série dans l'étiquette
   changeSn = () => {
     const suff = parseInt(this.SN.suffix) + +this.SN.pas;
     this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");

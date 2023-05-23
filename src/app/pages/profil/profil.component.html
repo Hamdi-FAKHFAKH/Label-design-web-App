@@ -2,8 +2,15 @@
   <div class="card">
     <div class="card-header">
       <div style="display: flex; align-items: start">
+        <input
+          #formeInput
+          type="file"
+          ref="{hiddenFileInput}"
+          style="display: 'none'"
+          (change)="getBase641($event)"
+        />
         <img
-          src="../../../assets/images/nick.png"
+          [src]="imgdata || '../../../assets/images/nick.png'"
           alt=""
           style="border-radius: 50%; margin-left: 20px"
           width="150"
@@ -23,7 +30,12 @@
       </div>
     </div>
     <div class="card-body">
-      <fa-icon icon="camera" size="1x" title="Edit"></fa-icon>
+      <fa-icon
+        icon="camera"
+        size="1x"
+        title="Edit"
+        (click)="formeInput.click()"
+      ></fa-icon>
       <div class="profil-item">
         <div>Statut</div>
         <div>Active</div>

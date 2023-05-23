@@ -13,7 +13,11 @@
 <fieldset style="margin-top: -7px">
   <legend>Config</legend>
 </fieldset>
-<select class="form-control" (change)="change('refProd', $event.target.value)">
+<select
+  class="form-control"
+  (change)="change('refProd', $event.target.value)"
+  [(ngModel)]="defaultRefProd"
+>
   <option selected [value]="null">-- Référence Produit --</option>
   <option *ngFor="let item of listProd" value="{{ item.ref }}">
     {{ item.ref }}

@@ -1,12 +1,12 @@
 import { Component, OnInit, Output, EventEmitter, Input } from "@angular/core";
-import { ImpressionService } from "../impressionService";
+import { ImpressionHttpService } from "../impressionHttpService";
 import { ComponetList } from "../../CréationEtiquette/ComposentData";
 import { format } from "date-fns";
 import { LabelService } from "../../CréationEtiquette/label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { SerialNumberData } from "../../GestionProduits/GestionProduit.data";
 import { LocalDataSource } from "ng2-smart-table";
-
+import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 class RegexFormatLot {
   public static readonly "date" =
     /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
@@ -25,12 +25,15 @@ export class ImpressionEtiquetteComponent implements OnInit {
   printerList: string[];
   formatLot: string;
   lot: ComponetList;
+  idEtiquette: string;
   lotField;
   nbrCopie;
   formatLotValid: boolean;
   nbrCopieValid: boolean;
   withSN: boolean;
+  etiquetteData: ComponetList[];
   changeSn = new EventEmitter();
+  numOF: string;
   settings = {
     actions: false,
     hideSubHeader: true,
@@ -81,9 +84,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
     nbrEtiquette: number;
   };
   constructor(
-    private impressionService: ImpressionService,
+    private impressionService: ImpressionHttpService,
     private labelService: LabelService,
-    private gestionProduitHttpService: GestionProduitHttpService
+    private gestionProduitHttpService: GestionProduitHttpService,
+    private detailImpressionHttpService: DetailImpressionHttpService
   ) {}
   async ngOnInit() {
     this.formatLotValid = false;
@@ -102,7 +106,15 @@ export class ImpressionEtiquetteComponent implements OnInit {
     const of = (
       await this.impressionService.GetRefProduitByOF(ofnum).toPromise()
     ).of;
+    this.numOF = ofnum;
     this.refProd = of.proref;
+    try {
+      this.idEtiquette = await (
+        await this.gestionProduitHttpService
+          .getOneProduit(this.refProd)
+          .toPromise()
+      ).produit.idEtiquette;
+    } catch (e) {}
     this.impressionDetail = {
       ...this.impressionDetail,
       OF: of.ofnum,
@@ -110,17 +122,15 @@ export class ImpressionEtiquetteComponent implements OnInit {
     };
   }
   async loadList1Data(data: ComponetList[]) {
-    console.log(data);
-
+    this.formatLotValid = false;
+    this.nbrCopieValid = false;
     this.lot = this.findDateFormat(data);
-    const idsn = this.findSN(data);
-    const produit = (
-      await this.gestionProduitHttpService
-        .getOneProduit(this.refProd)
-        .toPromise()
-    ).produit;
-
-    if (this.lot) this.formatLot = this.lot.data;
+    if (this.lot) {
+      this.formatLot = this.lot.data;
+    } else {
+      this.formatLot = null;
+      this.formatLotValid = true;
+    }
   }
   withSNFunction(data) {
     this.withSN = data;
@@ -149,7 +159,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
     if (!res) {
       resarray = data.map((val) => {
         if (val.children.length > 0) {
-          return this.findDateFormat(val.children);
+          return this.findSN(val.children);
         } else {
           return null;
         }
@@ -276,7 +286,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
             path: "C:/Users/hamdi/Downloads/label.pdf",
           })
           .toPromise();
-        console.log(res.deleted);
+        await this.createPrintedLabel(nbrcopie);
       }
     } else if (this.refProd && this.withSN) {
       for (let i = 0; i < +nbrcopie; i++) {
@@ -310,18 +320,40 @@ export class ImpressionEtiquetteComponent implements OnInit {
               })
               .toPromise()
           ).status;
-        }
-        if (fileexist && printStatus == 200) {
-          this.changeSn.emit();
-          let res = await this.impressionService
-            .DeleteFile({
-              path: "C:/Users/hamdi/Downloads/label.pdf",
-            })
-            .toPromise();
-          console.log(res.deleted);
+          if (fileexist && printStatus == 200) {
+            this.changeSn.emit();
+            let res = await this.impressionService
+              .DeleteFile({
+                path: "C:/Users/hamdi/Downloads/label.pdf",
+              })
+              .toPromise();
+            await this.createPrintedLabel(1);
+          }
         }
       }
     }
+  }
+  async createPrintedLabel(nbrCopie) {
+    let d = new Date();
+    let ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(d);
+    let mo = new Intl.DateTimeFormat("en", { month: "numeric" }).format(d);
+    let da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
+    await this.detailImpressionHttpService
+      .CreateEtiquetteImprimee({
+        idEtiquette: this.idEtiquette,
+        action: "impression",
+        dateImp: `${da}/${mo}/${ye}`,
+        MotifReimpression: "",
+        nbrCopie: nbrCopie,
+        formatLot: this.impressionDetail.lot,
+        numOF: this.numOF,
+        refProd: this.refProd,
+        serialNumber: this.sn ? this.sn.prefix + this.sn.suffix : "-",
+        state: "success",
+        userMatricule: "ali",
+        withDataMatrix: this.impressionDetail.codeQR ? true : false,
+      })
+      .toPromise();
   }
 }
 

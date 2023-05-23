@@ -10,6 +10,7 @@ import {
   NbTreeGridModule,
   NbButtonModule,
   NbDatepickerModule,
+  NbLayoutModule,
 } from "@nebular/theme";
 import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.component";
 import { WindowFormComponent } from "./GestionProduits/create-produit/window-form.component";
@@ -17,7 +18,7 @@ import { CommonModule } from "@angular/common";
 import { UpdateProduitComponent } from "./GestionProduits/update-produit/update-produit.component";
 import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
 import { LabelComponentComponent } from "./ImpressionEtiquette/label-component/label-component.component";
-import { ImpressionService } from "./ImpressionEtiquette/impressionService";
+import { ImpressionHttpService } from "./ImpressionEtiquette/impressionHttpService";
 import { LabeltHttpService } from "./CréationEtiquette/labelHTTP.service";
 import { QRCodeModule } from "angularx-qrcode";
 import { NgxBarcodeModule } from "ngx-barcode";
@@ -26,9 +27,13 @@ import { NbMomentDateModule } from "@nebular/moment";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { DragDropService } from "./CréationEtiquette/drag-drop.service";
 import { LabelService } from "./CréationEtiquette/label.service";
+import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-of.component";
+import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
+import { DetailImpressionHttpService } from "./DetailImpression/detailImpressionHttp.service";
 
 @NgModule({
   imports: [
+    NbLayoutModule,
     DragDropModule,
     FormsModule,
     NbButtonModule,
@@ -61,13 +66,16 @@ import { LabelService } from "./CréationEtiquette/label.service";
     UpdateProduitComponent,
     ImpressionEtiquetteComponent,
     LabelComponentComponent,
+    HistoriqueOFComponent,
+    DetailImpressionComponent,
   ],
   exports: [],
   providers: [
-    ImpressionService,
+    ImpressionHttpService,
     LabeltHttpService,
     DragDropService,
     LabelService,
+    DetailImpressionHttpService,
   ],
 })
 export class AptModule {}

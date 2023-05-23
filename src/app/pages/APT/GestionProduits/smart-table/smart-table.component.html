@@ -1,53 +1,57 @@
-<div style="margin: 36px">
-  <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a routerLink="/pages/apt/gestionProduits"
-          >S500 - Atelier Protection Thermique</a
-        >
-      </li>
-      <li
-        aria-current="page"
-        routerLinkActive="breadcrumb-item active"
-        routerLink="/pages/apt/gestionProduits"
-      >
-        GestionProduits
-      </li>
-    </ol>
-  </nav>
-  <br />
-  <input
-    class="form-control me-2 ps-4"
-    type="search"
-    placeholder="&#xF002;  Search"
-    style="font-family: Arial, FontAwesome; border-radius: 6px"
-    aria-label="Search"
-    #search
-    (input)="onSearch(search.value)"
-  />
-  <br />
-  <button
-    type="button"
-    class="btn btn-success"
-    style="float: right; font-family: Arial, FontAwesome"
-    (click)="openWindowForm()"
-  >
-    &#xf055; Créer un Nouveau Produit
-  </button>
-  <br /><br /><br />
-  <div class="card">
-    <div class="card-body">
-      <div class="col-md-12" style="overflow-x: scroll">
-        <div class="smart-table-container" style="width: 3400px">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="source"
-            (delete)="onDeleteConfirm($event)"
-            (edit)="openUpdateProduitWindow($event)"
+<nb-layout>
+  <nb-layout-column>
+    <div>
+      <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a routerLink="/pages/apt/gestionProduits"
+              >S500 - Atelier Protection Thermique</a
+            >
+          </li>
+          <li
+            aria-current="page"
+            routerLinkActive="breadcrumb-item active"
+            routerLink="/pages/apt/gestionProduits"
           >
-          </ng2-smart-table>
+            GestionProduits
+          </li>
+        </ol>
+      </nav>
+      <br />
+      <input
+        class="form-control me-2 ps-4"
+        type="search"
+        placeholder="&#xF002;  Recherche par référence produit ou par Nom Produit ou par Référence1 ou par Référence2 "
+        style="font-family: Arial, FontAwesome; border-radius: 6px"
+        aria-label="Search"
+        #search
+        (input)="onSearch(search.value)"
+      />
+      <br />
+      <button
+        type="button"
+        class="btn btn-success"
+        style="float: right; font-family: Arial, FontAwesome"
+        (click)="openWindowForm()"
+      >
+        &#xf055; Créer un Nouveau Produit
+      </button>
+      <br /><br /><br />
+      <div class="card">
+        <div class="card-body">
+          <div class="col-md-12" style="overflow-x: scroll; position: relative">
+            <div class="smart-table-container" style="width: 3400px">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="source"
+                (delete)="onDeleteConfirm($event)"
+                (edit)="openUpdateProduitWindow($event)"
+              >
+              </ng2-smart-table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </nb-layout-column>
+</nb-layout>

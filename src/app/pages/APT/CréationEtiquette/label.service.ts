@@ -24,7 +24,7 @@ export class LabelService {
     var options = {
       filename: "label.pdf",
       compression: "FAST",
-      scale: 10,
+      scale: 3,
     };
     domToPdf(element, options, function (pdf) {
       console.log("done");

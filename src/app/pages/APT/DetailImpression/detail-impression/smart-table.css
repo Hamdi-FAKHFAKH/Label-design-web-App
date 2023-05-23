@@ -1,0 +1,77 @@
+.window-form {
+  width: 600px;
+}
+:host /deep/ ng2-smart-table thead > tr > th {
+  background-color: #3374b5 !important;
+  border-color: #3374b5;
+  color: white !important;
+  font-weight: 900 !important;
+}
+
+/* ng2-smart-table table tr.ng2-smart-titles th */
+:host /deep/ ng2-smart-table thead > tr > th a {
+  color: white !important;
+}
+:host /deep/ ng2-smart-table thead > tr > th a.sort.desc::after {
+  border-bottom-color: #f3f6ff;
+}
+:host /deep/ ng2-smart-table thead > tr > th a.sort.asc::after {
+  border-bottom-color: #f3f6ff;
+}
+:host
+  /deep/
+  ng2-smart-table
+  thead
+  > tr
+  > th.ng2-smart-actions.ng-star-inserted {
+  position: sticky;
+  right: -15px;
+  background-color: #3374b5;
+}
+:host
+  /deep/
+  ng2-smart-table
+  > table
+  > tbody
+  > tr
+  > td.ng2-smart-actions.ng-star-inserted {
+  position: sticky;
+  right: -15px;
+  background-color: #edf1f7;
+}
+:host
+  /deep/
+  ng2-smart-table
+  > table
+  > tbody
+  > tr
+  > td.ng2-smart-actions.ng-star-inserted
+  > .ng2-smart-title {
+  text-align: center;
+}
+:host /deep/ ng2-smart-table {
+  overflow-x: auto;
+  position: relative;
+}
+
+:host
+  /deep/
+  ng2-smart-table
+  .ng2-smart-actions
+  .ng2-smart-action-add-cancel:hover,
+:host
+  /deep/
+  ng2-smart-table
+  .ng2-smart-actions
+  .ng2-smart-action-delete-delete:hover,
+:host
+  /deep/
+  ng2-smart-table
+  .ng2-smart-actions
+  .ng2-smart-action-edit-cancel:hover {
+  color: #3366ff !important;
+}
+/* :host /deep/ ng2-smart-table .ng2-smart-actions a.ng2-smart-action {
+  width: fit-content;
+  margin: 0px 10px;
+} */

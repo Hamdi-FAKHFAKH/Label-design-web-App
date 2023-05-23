@@ -7,6 +7,7 @@ import {
   OnInit,
   QueryList,
   SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewChildren,
 } from "@angular/core";
@@ -17,7 +18,10 @@ import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitH
 import { CdkDragEnd, CdkDropList } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
 import { ComponetList } from "../ComposentData";
-
+import Swal from "sweetalert2";
+import domtoimage from "dom-to-image";
+import { NbSidebarService, NbWindowService } from "@nebular/theme";
+import { te } from "date-fns/locale";
 @Component({
   selector: "ngx-sidebar",
   templateUrl: "./sidebar.component.html",
@@ -26,6 +30,7 @@ import { ComponetList } from "../ComposentData";
 export class SidebarComponent implements OnInit {
   @ViewChildren("dimension") elReference: QueryList<ElementRef>;
   @ViewChild(CdkDropList) dropList?: CdkDropList;
+  @ViewChild("template") templateRef: TemplateRef<any>;
   containerNotVide;
   container2NotVide;
   container3NotVide;
@@ -35,13 +40,15 @@ export class SidebarComponent implements OnInit {
   list3 = [];
   list4 = [];
   ListWithNewID = [];
-
+  imgSrc;
   idEtiquette;
   constructor(
     private labelService: LabelService,
     private lablHttpService: LabeltHttpService,
     private gestionProduitHttpService: GestionProduitHttpService,
-    public dragDropService: DragDropService
+    public dragDropService: DragDropService,
+    private windowService: NbWindowService,
+    private sidebarService: NbSidebarService
   ) {}
 
   entred(e) {
@@ -174,26 +181,65 @@ export class SidebarComponent implements OnInit {
       }
     });
     if (!this.labelInfo.refProd) {
-      alert("selectionner la référence Produit");
+      Swal.fire("Selectionner la référence Produit", "", "info");
     } else if (refProdWithEtiquette.includes(this.labelInfo.refProd)) {
-      alert(
-        "vous voulez écraser les données de l'etiquette de ref produit" +
+      Swal.fire({
+        title:
+          "vous voulez écraser les données de l'etiquette avec la référence produit " +
           this.labelInfo.refProd +
-          "?"
-      );
-      const res = await this.lablHttpService
-        .UpdateEtiquette(this.idEtiquette, {
-          couleur: this.labelInfo.color,
-          format: this.labelInfo.format,
-          id: this.idEtiquette,
-          createur: null,
-          id1: this.labelInfo.id,
-          largeur: this.labelInfo.largeur,
-          longeur: this.labelInfo.longueur,
-          padding: this.labelInfo.padding,
-          modificateur: null,
-        })
-        .toPromise();
+          " ?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Oui",
+        confirmButtonColor: "#007BFF",
+        denyButtonText: `Non`,
+      }).then(async (result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          const res = await this.lablHttpService
+            .UpdateEtiquette(this.idEtiquette, {
+              couleur: this.labelInfo.color,
+              format: this.labelInfo.format,
+              id: this.idEtiquette,
+              createur: null,
+              id1: this.labelInfo.id,
+              largeur: this.labelInfo.largeur,
+              longeur: this.labelInfo.longueur,
+              padding: this.labelInfo.padding,
+              modificateur: null,
+            })
+            .toPromise();
+          if (this.labelInfo.refProd) {
+            //remove all components of this label
+            await this.lablHttpService
+              .deleteComponentsByEtiquette(this.idEtiquette)
+              .toPromise()
+              .catch((err) => {
+                console.log(err.error.Status);
+              });
+            console.log("***list1***");
+            console.log(this.dragDropService.list1);
+            this.FillList1WithNewID(
+              this.dragDropService.list1,
+              this.ListWithNewID
+            );
+            console.log("***list1 after fill***");
+            console.log(this.ListWithNewID);
+            await this.createComponent(
+              this.dragDropService.list1,
+              this.idEtiquette
+            );
+          }
+          Swal.fire({
+            icon: "success",
+            title: "L'étiquette a été enregistrée",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } else if (result.isDenied) {
+          Swal.fire("Les modifications ne sont pas enregistrées", "", "info");
+        }
+      });
     } else {
       const id: string = uuidv4();
       const res = await this.lablHttpService
@@ -216,21 +262,32 @@ export class SidebarComponent implements OnInit {
         )
         .toPromise();
       this.idEtiquette = id;
-    }
-    if (this.labelInfo.refProd) {
-      //remove all components of this label
-      await this.lablHttpService
-        .deleteComponentsByEtiquette(this.idEtiquette)
-        .toPromise()
-        .catch((err) => {
-          console.log(err.error.Status);
-        });
-      console.log("***list1***");
-      console.log(this.dragDropService.list1);
-      this.FillList1WithNewID(this.dragDropService.list1, this.ListWithNewID);
-      console.log("***list1 after fill***");
-      console.log(this.ListWithNewID);
-      await this.createComponent(this.dragDropService.list1, this.idEtiquette);
+      if (this.labelInfo.refProd) {
+        //remove all components of this label
+        await this.lablHttpService
+          .deleteComponentsByEtiquette(this.idEtiquette)
+          .toPromise()
+          .catch((err) => {
+            console.log(err.error.Status);
+          });
+        console.log("***list1***");
+        console.log(this.dragDropService.list1);
+        this.FillList1WithNewID(this.dragDropService.list1, this.ListWithNewID);
+        console.log("***list1 after fill***");
+        console.log(this.ListWithNewID);
+        try {
+          await this.createComponent(
+            this.dragDropService.list1,
+            this.idEtiquette
+          );
+          Swal.fire({
+            icon: "success",
+            title: "L'étiquette a été enregistrée",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        } catch (e) {}
+      }
     }
   }
 
@@ -387,7 +444,11 @@ export class SidebarComponent implements OnInit {
     );
   }
   dragEnd($event: CdkDragEnd, itemId: string) {
-    console.log(itemId);
+    console.log(+$event.source.getFreeDragPosition().x);
+    console.log(
+      $event.dropPoint.x -
+        document.getElementById("label").getBoundingClientRect().left
+    );
 
     this.dragDropService.dragPosition[itemId].x = Math.round(
       +$event.source.getFreeDragPosition().x < 0
@@ -399,7 +460,7 @@ export class SidebarComponent implements OnInit {
         ? 0
         : +$event.source.getFreeDragPosition().y
     );
-    console.log($event.source);
+    //console.log($event.source);
   }
   FillList1WithNewID(list: ComponetList[], ListWithNewID: ComponetList[]) {
     list.forEach((item, index) => {
@@ -411,6 +472,37 @@ export class SidebarComponent implements OnInit {
         this.FillList1WithNewID(item.children, ListWithNewID[index].children);
       }
     });
+  }
+  openLabelView() {
+    var node = document.getElementById("container");
+    domtoimage.toSvg(node).then(
+      (data) => {
+        this.imgSrc = data;
+        console.log(data);
+      },
+      {
+        style: { width: "400px", height: "200px !important", display: "block" },
+      }
+    );
+    const window = this.windowService.open(this.templateRef, {
+      title: `Nouveau Produit`,
+      windowClass: "container",
+      closeOnBackdropClick: false,
+      buttons: { minimize: true, fullScreen: false, maximize: false },
+    });
+  }
+  setTabPropertyActive(itemId) {
+    console.log(itemId);
+    // this.sidebarService.toggle(false, "creationEtiquette");
+    this.dragDropService.propertyTabActive = true;
+    this.dragDropService.selectedItem = itemId;
+  }
+  textStyle(item: ComponetList) {
+    const style = {};
+    Object.keys(item.style).forEach((key) => {
+      if (key != "transform") style[key] = item.style[key];
+    });
+    return style;
   }
 }
 

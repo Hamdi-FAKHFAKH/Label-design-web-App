@@ -27,9 +27,7 @@
               />
             </div>
             <div class="row-md-3 mt-2">
-              <label for="prodName" class="form-label"
-                >Nom Produit <span style="color: red">*</span></label
-              >
+              <label for="prodName" class="form-label">Nom Produit</label>
               <input
                 [ngModel]="windowdata.nomProduit"
                 class="form-control"
@@ -38,7 +36,6 @@
                 #nomProduit="ngModel"
                 placeholder="Nom Produit"
                 name="nomProduit"
-                required
               />
             </div>
             <div class="row-md-3 mt-2">
@@ -151,82 +148,98 @@
         <div class="card-header">INFO Lot</div>
         <div class="card-body">
           <div class="col gx-1">
-            <div class="row-md-3">
+            <div class="row-md-3 mt-2">
               <label for="desFor" class="form-label">N° Lot/Format</label>
               <label for="F_lot"></label>
-              <select #lot class="form-control" name="" id="F_lot">
-                <optgroup label="Sélectionner N°/Format de lot existant">
-                  <option value="Numéro de Lot" selected>Numéro de Lot</option>
-                  <option value="Format de Lot">Format de Date</option>
-                </optgroup>
-                <optgroup label="Ajouter un Nouveau">
-                  <option value="Ajouter un Nouveau Format">
-                    Ajouter un Nouveau Format
-                  </option>
-                </optgroup>
-              </select>
-            </div>
-            <div class="row-md-3 mt-2">
-              <label
-                for="exampleDataList"
-                class="form-label"
-                *ngIf="lot.value !== 'Ajouter un Nouveau Format'"
-              >
-                {{ lot.value }}
-                <span style="color: red">*</span>
-              </label>
               <select
-                id="datalist"
-                [ngModel]="windowdata.numLot"
-                #lotvalue="ngModel"
-                name="formatLot"
-                *ngIf="lot.value === 'Format de Lot'"
+                #lot
                 class="form-control"
-                required
+                name="formatLot"
+                id="F_lot"
+                [ngModel]="windowdata.numLot"
+                (change)="lotValue = lot.value"
               >
+                <option value="Ajouter un Nouveau Format">
+                  Ajouter un Nouveau Format
+                </option>
                 <option *ngFor="let item of lotData" value="{{ item.numLot }}">
                   {{ item.format }}
                 </option>
               </select>
-              <select
-                [ngModel]="windowdata.numLot"
-                name="numLot"
-                id="datalist"
-                *ngIf="lot.value === 'Numéro de Lot'"
-                class="form-control"
-                required
-              >
-                <option *ngFor="let item of lotData" value="{{ item.numLot }}">
-                  {{ item.numLot }}
-                </option>
-              </select>
-              <div *ngIf="lot.value === 'Ajouter un Nouveau Format'">
-                <div class="row-md-3 mt-2 mt-2">
-                  <label for="desLot" class="form-label mt-2"
-                    >Numéro de Lot <span style="color: red">*</span></label
+            </div>
+            <div
+              class="row-md-3 mt-2"
+              *ngIf="lotValue === 'Ajouter un Nouveau Format'"
+            >
+              <div>
+                <div class="row-md-3 mt-2">
+                  <div
+                    style="
+                      display: flex;
+                      margin: 0px -8px;
+                      justify-content: space-between;
+                      margin-bottom: 12px;
+                      margin-top: 15px;
+                    "
                   >
-                  <input
-                    ngModel
-                    #desLot="ngModel"
-                    class="form-control"
-                    type="text"
-                    placeholder="Numéro de Lot"
-                    name="newNumLot"
-                    required
-                  />
-                </div>
-                <div class="row-md-3 mt-2 mt-2">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        #dateFormat
+                        name="flexRadioDefault"
+                        id="flexRadioDefault1"
+                        checked
+                      />
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        Format Date
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input
+                        #textFormat
+                        class="form-check-input"
+                        type="radio"
+                        name="flexRadioDefault"
+                        id="flexRadioDefault2"
+                        (click)="formatLotValid = true"
+                      />
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        Format Text
+                      </label>
+                    </div>
+                  </div>
                   <label for="desLot"
                     >Format de Lot <span style="color: red">*</span></label
                   >
                   <input
                     ngModel
-                    #desLot="ngModel"
+                    #newformatLot="ngModel"
                     class="form-control"
                     type="text"
                     placeholder="Format de Lot"
                     name="newformatLot"
                     required
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    [ngClass]="{
+                      'is-valid':
+                        (formatLotValid || textFormat.checked) &&
+                        newformatLot.touched &&
+                        newformatLot.valid,
+                      'is-invalid':
+                        (!newformatLot.valid ||
+                          (!formatLotValid && !textFormat.checked)) &&
+                        newformatLot.touched
+                    }"
+                    [title]="
+                      dateFormat.checked
+                        ? 'Pour spécifier le format de Lot il faut utiliser les caractére spéciale suivant:\ndd : Jour\nMM: Mois\nyyyy : Année'
+                        : ''
+                    "
+                    (input)="
+                      dateFormat.checked && checkFormatLot($event.target.value)
+                    "
                   />
                 </div>
               </div>
@@ -400,7 +413,10 @@
         type="submit"
         class="btn btn-success"
         style="margin-right: 15px"
-        [disabled]="!f.valid"
+        [disabled]="
+          !f.valid ||
+          (!formatLotValid && lotValue === 'Ajouter un Nouveau Format')
+        "
       >
         Enregistrer Modification
       </button>

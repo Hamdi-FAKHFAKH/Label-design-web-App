@@ -5,7 +5,6 @@ import {
   OnInit,
   ViewChild,
 } from "@angular/core";
-import { ShareService } from "../../share.service";
 import {
   CdkDrag,
   CdkDragDrop,
@@ -52,25 +51,36 @@ export class DesignTabComponent implements OnInit {
     const index = this.dragDropService.list1.findIndex((obj) => {
       return obj.id == id;
     });
-    index != -1
-      ? this.dragDropService.list1.splice(index, 1)
-      : this.dragDropService.list1.forEach((obj, index) => {
-          obj.children.forEach((obj1, index1) => {
-            if (obj1.id == id) {
-              this.dragDropService.list1[index].children.splice(index1, 1);
-              return;
-            }
-            obj1.children &&
-              obj1.children.forEach((obj2, index2) => {
-                if (obj2.id == id) {
-                  this.dragDropService.list1[index].children[
-                    index1
-                  ].children.splice(index2, 1);
-                  console.log(`${obj.id}- ${obj1.id} - ${obj2.id}`);
-                }
-              });
-          });
+    if (index != -1) {
+      this.dragDropService.list2.push(this.dragDropService.list1[index]);
+      this.dragDropService.list1.splice(index, 1);
+    } else {
+      this.dragDropService.list1.forEach((obj, index) => {
+        obj.children.forEach((obj1, index1) => {
+          if (obj1.id == id) {
+            this.dragDropService.list2.push(
+              this.dragDropService.list1[index].children[index1]
+            );
+            this.dragDropService.list1[index].children.splice(index1, 1);
+            return;
+          }
+          obj1.children &&
+            obj1.children.forEach((obj2, index2) => {
+              if (obj2.id == id) {
+                this.dragDropService.list2.push(
+                  this.dragDropService.list1[index].children[index1].children[
+                    index2
+                  ]
+                );
+                this.dragDropService.list1[index].children[
+                  index1
+                ].children.splice(index2, 1);
+                console.log(`${obj.id}- ${obj1.id} - ${obj2.id}`);
+              }
+            });
         });
+      });
+    }
   }
   findIdToDelete(searchedid: string, list: ComponetList[], parentId) {
     list.forEach((obj) => {

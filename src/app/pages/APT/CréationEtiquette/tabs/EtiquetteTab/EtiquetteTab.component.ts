@@ -10,10 +10,12 @@ import {
   FournisseurData,
   GetFormeResultData,
   GetOneSerialNumberResultData,
+  GetProduitResponseData,
   LotData,
   ProduitData,
 } from "../../../GestionProduits/GestionProduit.data";
 import { ComponetList } from "../../ComposentData";
+import Swal from "sweetalert2";
 @Component({
   selector: "ngx-etiquette-tab",
   templateUrl: "./EtiquetteTab.component.html",
@@ -24,17 +26,19 @@ export class EtiquetteTabComponent implements OnInit {
   longueur;
   padding;
   color;
+  defaultRefProd: string = null;
+  lastRefProd: string;
   unitLong: string;
   unitLarg: string;
   unitPadding: string;
   labelInfo;
   listProd;
-  refProdWithEtiquette;
-  minPadding;
+  refProdWithEtiquette: ProduitData[];
+  minPadding: number;
   componentsExtractedFromDB = [];
   listOfComponentFromDB: ComponetList[];
-  productToBeCreated;
-  produitwithEtiquette;
+  productToBeCreated: ProduitData;
+  produitwithEtiquette: GetProduitResponseData;
   constructor(
     private lableService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -62,6 +66,9 @@ export class EtiquetteTabComponent implements OnInit {
     this.produitwithEtiquette = await this.labelHttpService
       .getAllProduitWithEtiquette()
       .toPromise();
+    this.produitwithEtiquette.produits.forEach((val) => {
+      val.idEtiquette = null;
+    });
     console.log("product to creted");
   }
 
@@ -91,33 +98,73 @@ export class EtiquetteTabComponent implements OnInit {
       }, 1600);
     } else if (elemName == "refProd") {
       if (this.dragDropService.list1.length >= 1) {
-        alert(
-          "êtes-vous sûr de changer la référence ? tous les champs sur l'étiquette seront perdus"
-        );
-        this.dragDropService.list1.length = 0;
-      }
-      this.lableService.labelInfo.next({
-        ...this.labelInfo,
-        refProd: elemValue,
-        id: `TE-${elemValue}`,
-      });
-      this.gestionProduitHttpService
-        .getOneProduit(this.lableService.labelInfo.getValue().refProd)
-        .toPromise()
-        .then((val) => {
-          this.productToBeCreated = val.produit;
-          console.log(this.productToBeCreated);
-          console.log(this.produitwithEtiquette.produits);
-          console.log(!!this.productToBeCreated["withSN"]);
-
-          this.refProdWithEtiquette = this.produitwithEtiquette.produits.filter(
-            (obj) =>
-              Object.keys(obj).every(
-                (key) => !!this.productToBeCreated[key] === !!obj[key]
-              )
-          );
-          console.log(this.refProdWithEtiquette);
+        Swal.fire({
+          title:
+            "êtes-vous sûr de changer la référence ? tous les champs sur l'étiquette seront perdus",
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: "Oui",
+          confirmButtonColor: "#007BFF",
+          denyButtonText: `Non`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            this.refProdWithEtiquette = [];
+            this.dragDropService.list1.length = 0;
+            this.lastRefProd = elemValue;
+            this.lableService.labelInfo.next({
+              id: null,
+              refProd: elemValue,
+              color: "#ffffff",
+              format: "rectangle",
+              largeur: 150,
+              longueur: 50,
+              refProdSimlaire: null,
+              withGrid: false,
+              withRule: false,
+              padding: 0,
+              showPaddingCadre: false,
+            });
+            this.gestionProduitHttpService
+              .getOneProduit(this.lableService.labelInfo.getValue().refProd)
+              .toPromise()
+              .then((val) => {
+                val.produit.idEtiquette = null;
+                this.productToBeCreated = val.produit;
+                this.refProdWithEtiquette =
+                  this.produitwithEtiquette.produits.filter((obj) =>
+                    Object.keys(obj).every(
+                      (key) => !!this.productToBeCreated[key] === !!obj[key]
+                    )
+                  );
+                console.log(this.refProdWithEtiquette);
+              });
+          } else if (result.isDenied || result.isDismissed) {
+            this.defaultRefProd = this.lastRefProd;
+          }
         });
+      } else {
+        this.lastRefProd = elemValue;
+        this.lableService.labelInfo.next({
+          ...this.labelInfo,
+          refProd: elemValue,
+          id: `TE-${elemValue}`,
+        });
+        this.gestionProduitHttpService
+          .getOneProduit(this.lableService.labelInfo.getValue().refProd)
+          .toPromise()
+          .then((val) => {
+            val.produit.idEtiquette = null;
+            this.productToBeCreated = val.produit;
+            this.refProdWithEtiquette =
+              this.produitwithEtiquette.produits.filter((obj) =>
+                Object.keys(obj).every(
+                  (key) => !!this.productToBeCreated[key] === !!obj[key]
+                )
+              );
+            console.log(this.refProdWithEtiquette);
+          });
+      }
     } else {
       this.lableService.labelInfo.next({
         ...this.labelInfo,

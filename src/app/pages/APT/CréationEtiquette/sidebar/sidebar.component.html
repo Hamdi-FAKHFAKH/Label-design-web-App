@@ -1,13 +1,7 @@
-<nb-layout>
-  <nb-sidebar
-    right
-    tag="creationEtiquette"
-    containerFixed
-    style="margin-right: -10px"
-  >
+<nb-layout [withScroll]="false" center windowMode>
+  <nb-sidebar right tag="creationEtiquette" style="margin-right: -10px">
     <div><ngx-tabs style="width: 350px"></ngx-tabs></div>
   </nb-sidebar>
-
   <nb-layout-column>
     <div
       style="
@@ -206,7 +200,7 @@
       <button type="button" class="btn btn-primary" (click)="saveToPdf()">
         <nb-icon icon="save-outline" pack="eva"></nb-icon>
       </button>
-      <button type="button" class="btn btn-primary">
+      <button type="button" class="btn btn-primary" (click)="openLabelView()">
         <fa-icon [icon]="['fas', 'eye']"></fa-icon>
       </button>
     </div>
@@ -222,11 +216,12 @@
     [cdkDragFreeDragPosition]="dragDropService.dragPosition[item.id]"
     *ngIf="item.type === 'text'"
     [attr.data-id]="item.id"
-    [ngStyle]="item.style"
+    [ngStyle]="textStyle(item)"
     style="cursor: move"
     class="draggedText"
+    (dblclick)="setTabPropertyActive(item.id)"
   >
-    {{ item.data }}
+    <div [ngStyle]="{ transform: item.style.transform }">{{ item.data }}</div>
   </div>
   <img
     cdkDrag
@@ -242,6 +237,7 @@
     height="20"
     width="20"
     class="draggedText"
+    (dblclick)="setTabPropertyActive(item.id)"
   />
   <div
     cdkDrag
@@ -253,6 +249,7 @@
     [ngStyle]="item.style"
     style="width: fit-content !important; display: block"
     class="draggedText"
+    (dblclick)="setTabPropertyActive(item.id)"
   >
     <div
       *ngIf="item.dataMatrixFormat === 'qrcode'"
@@ -314,6 +311,8 @@
     *ngIf="item.type === 'text'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
+    (dblclick)="setTabPropertyActive(item.id)"
+    style="cursor: move"
   >
     {{ item.data }}
   </div>
@@ -325,11 +324,15 @@
     alt=""
     height="20"
     width="20"
+    style="cursor: move"
+    (dblclick)="setTabPropertyActive(item.id)"
   />
   <div
+    (dblclick)="setTabPropertyActive(item.id)"
     *ngIf="item.type === 'QRcode'"
     [attr.data-id]="item.id"
     [ngStyle]="item.style"
+    style="cursor: move"
   >
     <div
       *ngIf="item.dataMatrixFormat === 'qrcode'"
@@ -340,6 +343,8 @@
         marginBottom: item.style['margin-bottom'] + 'mm',
         margin: item.style['margin'] + 'mm'
       }"
+      (dblclick)="setTabPropertyActive(item.id)"
+      style="cursor: move"
     >
       <qrcode
         [qrdata]="item.data"
@@ -368,4 +373,8 @@
     ></ngx-barcode>
   </div>
   <div *ngIf="item.type === 'container-1'" [attr.data-id]="item.id"></div>
+</ng-template>
+<!--  Label View -->
+<ng-template #template style="width: fit-content; height: fit-content">
+  <img [src]="imgSrc" alt="" style="border: 1px solid" />
 </ng-template>

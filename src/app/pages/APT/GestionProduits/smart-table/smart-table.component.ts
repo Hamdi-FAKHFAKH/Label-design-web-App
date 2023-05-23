@@ -8,10 +8,11 @@ import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 import { exhaustMap } from "rxjs/operators";
 import { GestionProduitService } from "../GestionProduit.service";
 import { UpdateProduitComponent } from "../update-produit/update-produit.component";
+import Swal from "sweetalert2";
 @Component({
   selector: "ngx-smart-table",
   templateUrl: "./smart-table.component.html",
-  styleUrls: ["./smart-table.css"],
+  styleUrls: ["./smart-table.css", "./smart-table.component.scss"],
 })
 export class SmartTableComponent {
   settings = {
@@ -62,8 +63,8 @@ export class SmartTableComponent {
         type: "string",
         filter: false,
       },
-      numLot: {
-        title: "N° Lot/Format ",
+      format: {
+        title: "Format Lot",
         type: "string",
         filter: false,
       },
@@ -139,13 +140,22 @@ export class SmartTableComponent {
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
-    private service: SmartTableData,
     private windowService: NbWindowService,
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService
   ) {
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
-      this.source.load(res.produits);
+      const tableData = [];
+      res.produits.forEach((val) => {
+        this.gestionProduitHttpService
+          .getOneLot(val.numLot)
+          .toPromise()
+          .then((Lot) => {
+            tableData.push({ ...val, FormatLot: Lot.lot.format });
+            this.source.load(tableData);
+            console.log(tableData);
+          });
+      });
     });
   }
   async onEdit(event) {
@@ -166,22 +176,54 @@ export class SmartTableComponent {
       // );
       success && event.confirm.resolve();
     } else {
-      alert("produit updated Failed");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Echec de Mise a jour le produit!",
+      });
       event.confirm.reject();
     }
   }
 
   async onDeleteConfirm(event) {
-    console.log(event.data);
-
-    if (window.confirm("Etes-vous sûr que vous voulez supprimer ce Produit?")) {
-      (await this.gestionProduitService.deleteProduit(event.data.ref)) &&
-        this.source.refresh();
-    } else {
-      alert("produit deleted Failed");
-    }
-    this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
-      this.source.load(res.produits);
+    Swal.fire({
+      title: "Es-tu sûr?",
+      text: "Vous ne pourrez pas revenir en arrière !!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, supprimez-le !",
+      cancelButtonText: "Annuler",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await this.gestionProduitService.deleteProduit(event.data.ref);
+          Swal.fire({
+            title: "Supprimer!",
+            text: "Produit supprimé!",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          }).then(() => {
+            this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
+              this.source.load(res.produits);
+            });
+            this.source.refresh();
+          });
+        } catch (e) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Echec de la suppression du produit",
+          });
+        }
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Echec de la suppression du produit",
+        });
+      }
     });
   }
   openWindowForm() {
@@ -213,7 +255,6 @@ export class SmartTableComponent {
   }
   onSearch(query: string = "") {
     if (query == "") {
-      console.log("refech");
       this.source.reset(false);
     } else {
       this.source.setFilter(

@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { LabelService } from "../label.service";
+import { DragDropService } from "../drag-drop.service";
 
 @Component({
   selector: "ngx-tabs",
@@ -8,10 +9,28 @@ import { LabelService } from "../label.service";
 })
 export class TabsComponent implements OnInit {
   canDesign;
-  constructor(private labelService: LabelService) {}
+  designTabActive = false;
+  labelTabActive = false;
+  constructor(
+    private labelService: LabelService,
+    public dragDropService: DragDropService
+  ) {}
   ngOnInit(): void {
     this.labelService.labelInfo.subscribe((val) => {
       val.refProd ? (this.canDesign = true) : (this.canDesign = false);
     });
+  }
+  tabChange(e) {
+    if (e.tabId == "label" || e.tabId == "design") {
+      this.dragDropService.propertyTabActive = false;
+    }
+    if (e.tabId == "label") {
+      this.labelTabActive = true;
+      this.designTabActive = false;
+    }
+    if (e.tabId == "design") {
+      this.designTabActive = true;
+      this.labelTabActive = false;
+    }
   }
 }

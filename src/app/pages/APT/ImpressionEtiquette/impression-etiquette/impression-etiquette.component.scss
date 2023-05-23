@@ -6,8 +6,8 @@
   justify-content: center;
 }
 #label {
-  width: 670px;
-  height: 360px;
+  min-width: 670px;
+  min-height: 360px;
   background-color: #f0eeeda8;
   border-radius: 15px;
   margin-top: 32px;
@@ -17,4 +17,12 @@
 }
 ol {
   background-color: transparent;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+  align-content: flex-start;
+  align-items: center;
 }

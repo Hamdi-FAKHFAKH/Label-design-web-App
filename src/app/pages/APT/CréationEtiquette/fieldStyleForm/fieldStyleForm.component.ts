@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { DragDropService } from "../drag-drop.service";
 import { ComponentStyle, ComponetList } from "../ComposentData";
@@ -9,11 +15,11 @@ import { ProduitData } from "../../GestionProduits/GestionProduit.data";
   templateUrl: "./fieldStyleForm.component.html",
   styleUrls: ["./fieldStyleForm.component.scss"],
 })
-export class FieldStyleFormComponent implements OnInit {
+export class FieldStyleFormComponent implements OnInit, OnChanges {
   @Input() itemId;
-  items = {};
   math = Math;
   produit: ProduitData;
+  list1;
   componentstyle: ComponentStyle = {};
   paddingClicked;
   paddingValue;
@@ -30,10 +36,14 @@ export class FieldStyleFormComponent implements OnInit {
     "Courier",
     "monospace",
   ];
+  defaultSelectedStyle;
+  stylesDuplicated = {};
   constructor(public dragDropService: DragDropService) {}
   ngOnInit(): void {
-    this.getAllItems(this.dragDropService.list1);
+    // this.getAllItems(this.dragDropService.list1);
     this.produit = this.dragDropService.produit;
+  }
+  ngOnChanges(changes: SimpleChanges): void {
     this.paddingClicked = this.dragDropService.items[this.itemId].style[
       "padding-right"
     ]
@@ -57,85 +67,74 @@ export class FieldStyleFormComponent implements OnInit {
       ? "margin-bottom"
       : "margin";
 
-    this.componentstyle = {
-      "font-weight": "normal",
-      bold: false,
-      italic: false,
-      "font-style": "normal",
-      "text-decoration": "none",
-      "font-family": "Times New Roman",
-      "font-size": "12pt",
-      color: "#000000",
-      "background-color": "#ffffff",
-      underline: false,
-    };
-
     Object.keys(this.componentstyle).forEach((key) => {
-      if (!this.items[this.itemId].style[key])
-        this.items[this.itemId].style[key] = this.componentstyle[key];
+      if (!this.dragDropService.items[this.itemId].style[key])
+        this.dragDropService.items[this.itemId].style[key] =
+          this.componentstyle[key];
     });
-    const transformvalue: string = this.dragDropService.items[this.itemId].style
-      ? this.dragDropService.items[this.itemId].style.transform
-      : null;
-    if (transformvalue) {
-      this.defaultrotation = transformvalue.substring(
-        transformvalue.indexOf("(") + 1,
-        transformvalue.indexOf(")")
-      );
-    }
-  }
-  getAllItems(list: ComponetList[]) {
-    list.forEach((item) => {
-      this.items[item.id] = item;
-      if (item.children) {
-        this.getAllItems(item.children);
-      }
-    });
+
+    // const transformvalue: string = this.dragDropService.items[this.itemId].style
+    //   ? this.dragDropService.items[this.itemId].style.transform
+    //   : null;
+    // if (transformvalue) {
+    //   this.defaultrotation = transformvalue.substring(
+    //     transformvalue.indexOf("(") + 1,
+    //     transformvalue.indexOf(")")
+    //   );
+    // }
+    this.list1 = this.dragDropService.list1.slice();
+    this.list1.splice(
+      this.dragDropService.list1.findIndex((obj) => obj.id == this.itemId),
+      1
+    );
+    this.defaultSelectedStyle = this.stylesDuplicated[this.itemId] || null;
   }
   changeStyle(itemName: string, itemValue: string | number | boolean) {
+    console.log();
+
     if (itemName == "bold") {
       this.componentstyle.bold == true
-        ? (this.componentstyle = {
-            ...this.componentstyle,
+        ? (this.dragDropService.items[this.itemId].style = {
+            ...this.dragDropService.items[this.itemId].style,
             "font-weight": "bold",
           })
-        : (this.componentstyle = {
-            ...this.componentstyle,
+        : (this.dragDropService.items[this.itemId].style = {
+            ...this.dragDropService.items[this.itemId].style,
             "font-weight": "normal",
           });
     }
     if (itemName == "italic") {
       this.componentstyle.italic == true
-        ? (this.componentstyle = {
-            ...this.componentstyle,
+        ? (this.dragDropService.items[this.itemId].style = {
+            ...this.dragDropService.items[this.itemId].style,
             "font-style": "italic",
           })
-        : (this.componentstyle = {
-            ...this.componentstyle,
+        : (this.dragDropService.items[this.itemId].style = {
+            ...this.dragDropService.items[this.itemId].style,
             "font-style": "normal",
           });
     }
     if (itemName == "underline") {
       this.componentstyle.underline == true
-        ? (this.componentstyle = {
-            ...this.componentstyle,
+        ? (this.dragDropService.items[this.itemId].style = {
+            ...this.dragDropService.items[this.itemId].style,
             "text-decoration": "underline",
           })
-        : (this.componentstyle = {
-            ...this.componentstyle,
+        : (this.dragDropService.items[this.itemId].style = {
+            ...this.dragDropService.items[this.itemId].style,
             "text-decoration": "none",
           });
     }
-    this.componentstyle = {
-      ...this.componentstyle,
+    this.dragDropService.items[this.itemId].style = {
+      ...this.dragDropService.items[this.itemId].style,
       [itemName]: itemValue,
     };
 
-    //this.items[this.itemId].style = this.componentstyle;
-    Object.assign(this.items[this.itemId].style, this.componentstyle);
+    //this.dragDropService.items[this.itemId].style = this.componentstyle;
+    // Object.assign(this.dragDropService.items[this.itemId].style, this.componentstyle);
     console.log("***style***");
 
-    console.log(this.items[this.itemId].style);
+    console.log(this.dragDropService.items[this.itemId].style);
   }
   changePosition(x, y) {
     const xround = Math.round(+x / 0.26);
@@ -147,5 +146,13 @@ export class FieldStyleFormComponent implements OnInit {
     console.log(Math.round(+y / 0.26));
 
     console.log(this.dragDropService.dragPosition[this.itemId]);
+  }
+  duplicateStyle(data: string) {
+    data &&
+      Object.assign(
+        this.dragDropService.items[this.itemId].style,
+        this.dragDropService.items[data].style
+      );
+    this.stylesDuplicated[this.itemId] = data;
   }
 }

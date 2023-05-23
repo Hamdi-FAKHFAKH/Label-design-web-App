@@ -37,14 +37,14 @@ export const MENU_ITEMS: NbMenuItem[] = [
             icon: "printer-outline",
           },
           {
-            title: "Historique OF",
-            link: "/pages/layout/infinite-list",
-            icon: "clock",
+            title: "Détails Impression",
+            link: "/pages/apt/DetailImpression",
+            icon: "info",
           },
           {
-            title: "Détails Impression",
-            link: "/pages/layout/accordion",
-            icon: "info",
+            title: "Historique OF",
+            link: "/pages/apt/HistoriqueOF",
+            icon: "clock",
           },
           // {
           //   title: "Tabs",

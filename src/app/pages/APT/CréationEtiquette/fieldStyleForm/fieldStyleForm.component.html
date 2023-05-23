@@ -1,6 +1,37 @@
 <div class="col px-1">
+  <h3
+    style="
+      width: fit-content;
+      margin: auto;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      color: #3374b5;
+      font-weight: 800;
+      font-size: 1.2em;
+    "
+  >
+    {{ dragDropService.items[itemId].title }}
+  </h3>
   <fieldset>
     <legend>Style</legend>
+  </fieldset>
+  <div class="form-group">
+    <label for="">Styles de champs</label>
+    <select
+      class="form-control"
+      name=""
+      id=""
+      (change)="duplicateStyle($event.target.value)"
+      [(ngModel)]="defaultSelectedStyle"
+    >
+      <option value="null" selected>--Select Style--</option>
+      <option *ngFor="let item of list1" [value]="item.id">
+        {{ item.title }}
+      </option>
+    </select>
+  </div>
+  <fieldset>
+    <legend>Style Personnalisé</legend>
   </fieldset>
   <div class="row">
     <div class="col px-1" style="padding-right: 0px; padding-left: 0px">
@@ -132,7 +163,7 @@
         [ngModel]="
           (dragDropService.items[itemId].style &&
             dragDropService.items[itemId].style['background-color']) ||
-          '#ffffff'
+          'transparent'
         "
       />
     </div>
@@ -153,34 +184,85 @@
     </div>
   </div>
   <fieldset *ngIf="dragDropService.dragDropLibre">
-    <legend>Position</legend>
+    <legend>Position & Taille</legend>
   </fieldset>
-  <div class="row" *ngIf="dragDropService.dragDropLibre">
-    <div class="col px-1">
-      <label for="x" class="label">X</label>
-      <div class="input-group mb-3">
-        <input
-          name="x"
-          type="number"
-          class="form-control"
-          (input)="changePosition(+$event.target.value, null)"
-          [ngModel]="math.round(+dragDropService.dragPosition[itemId].x * 0.26)"
-        />
-        <span class="input-group-text" id="basic-addon2">mm</span>
-      </div>
+  <div class="row">
+    <div
+      class="col"
+      *ngIf="dragDropService.dragDropLibre"
+      style="padding-left: 0px; padding-right: 7px"
+    >
+      <label for="x" class="label">X(mm)</label>
+
+      <input
+        name="x"
+        type="number"
+        class="form-control"
+        (input)="changePosition(+$event.target.value, null)"
+        [ngModel]="math.round(+dragDropService.dragPosition[itemId].x * 0.26)"
+      />
     </div>
-    <div class="col px-1">
-      <label for="y" class="label">Y</label>
-      <div class="input-group mb-3">
-        <input
-          name="y"
-          type="number"
-          class="form-control"
-          (input)="changePosition(null, +$event.target.value)"
-          [ngModel]="math.round(+dragDropService.dragPosition[itemId].y * 0.26)"
-        />
-        <span class="input-group-text" id="basic-addon2">mm</span>
-      </div>
+    <div
+      class="col"
+      *ngIf="dragDropService.dragDropLibre"
+      style="padding-left: 0px; padding-right: 18px"
+    >
+      <label for="y" class="label">Y(mm)</label>
+      <input
+        name="y"
+        type="number"
+        class="form-control"
+        (input)="changePosition(null, +$event.target.value)"
+        [ngModel]="math.round(+dragDropService.dragPosition[itemId].y * 0.26)"
+      />
+    </div>
+    <div class="col" style="padding-left: 0px; padding-right: 7px">
+      <label for="longueur" class="label">Hauteur(mm)</label>
+      <input
+        (input)="
+          changeStyle(
+            'height',
+            $event.target.value === '0'
+              ? 'fit-content'
+              : $event.target.value + 'mm'
+          )
+        "
+        type="number"
+        min="0"
+        name="longueur"
+        id="longueur"
+        class="form-control"
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style.height &&
+          dragDropService.items[itemId].style.height !== 'fit-content' &&
+          +dragDropService.items[itemId].style.height.replace('mm', '')
+        "
+      />
+    </div>
+    <div class="col" style="padding-left: 0px; padding-right: 0px">
+      <label for="largeur" class="label">largeur(mm)</label>
+      <input
+        type="number"
+        min="0"
+        name="largeur"
+        id="largeur"
+        class="form-control"
+        (input)="
+          changeStyle(
+            'width',
+            $event.target.value === '0'
+              ? 'fit-content'
+              : $event.target.value + 'mm'
+          )
+        "
+        [ngModel]="
+          dragDropService.items[itemId].style &&
+          dragDropService.items[itemId].style.width &&
+          dragDropService.items[itemId].style.width !== 'fit-content' &&
+          +dragDropService.items[itemId].style.width.replace('mm', '')
+        "
+      />
     </div>
   </div>
   <fieldset>
@@ -403,59 +485,7 @@
       />
     </div>
   </div>
-  <fieldset>
-    <legend>Taille</legend>
-  </fieldset>
-  <div class="row">
-    <div class="col px-1">
-      <label for="longueur" class="label">Hauteur</label>
-      <input
-        (input)="
-          changeStyle(
-            'height',
-            $event.target.value === '0'
-              ? 'fit-content'
-              : $event.target.value + 'mm'
-          )
-        "
-        type="number"
-        min="0"
-        name="longueur"
-        id="longueur"
-        class="form-control"
-        [ngModel]="
-          dragDropService.items[itemId].style &&
-          dragDropService.items[itemId].style.height &&
-          dragDropService.items[itemId].style.height !== 'fit-content' &&
-          +dragDropService.items[itemId].style.height.replace('mm', '')
-        "
-      />
-    </div>
-    <div class="col px-1">
-      <label for="largeur" class="label">largeur</label>
-      <input
-        type="number"
-        min="0"
-        name="largeur"
-        id="largeur"
-        class="form-control"
-        (input)="
-          changeStyle(
-            'width',
-            $event.target.value === '0'
-              ? 'fit-content'
-              : $event.target.value + 'mm'
-          )
-        "
-        [ngModel]="
-          dragDropService.items[itemId].style &&
-          dragDropService.items[itemId].style.width &&
-          dragDropService.items[itemId].style.width !== 'fit-content' &&
-          +dragDropService.items[itemId].style.width.replace('mm', '')
-        "
-      />
-    </div>
-  </div>
+
   <fieldset>
     <legend>Data</legend>
   </fieldset>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LabelComponentComponent } from './label-component.component';
+import { PropertyTabComponent } from './property-tab.component';
 
-describe('LabelComponentComponent', () => {
-  let component: LabelComponentComponent;
-  let fixture: ComponentFixture<LabelComponentComponent>;
+describe('PropertyTabComponent', () => {
+  let component: PropertyTabComponent;
+  let fixture: ComponentFixture<PropertyTabComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LabelComponentComponent ]
+      declarations: [ PropertyTabComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(LabelComponentComponent);
+    fixture = TestBed.createComponent(PropertyTabComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -105,14 +105,6 @@ export class DataMatrixStyleFormComponent implements OnInit {
     if (tag == "|)>") {
       this.xmlForm = "|)>" + this.xmlForm;
     }
-    // !tagexiste && val && tag
-    //   ? this.listItem.push({ [tag]: val })
-    //   : this.listItem.map((objval, index) => {
-    //       if (Object.keys(objval)[0] == tag) {
-    //         this.listItem[index] = { [tag]: val };
-    //         return;
-    //       }
-    //     });
     let listItem;
     if (tag !== "|)>") {
       listItem = [{ [tag]: val }];
