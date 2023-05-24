@@ -1,0 +1,9 @@
+:host
+  /deep/
+  nb-layout.with-scroll
+  .scrollable-container:has(#creationEtiquette) {
+  overflow: hidden !important;
+}
+:host /deep/ #creationEtiquette > div {
+  overflow: hidden !important;
+}

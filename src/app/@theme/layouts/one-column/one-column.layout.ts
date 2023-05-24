@@ -7,7 +7,7 @@ import {
 } from "@nebular/theme";
 @Component({
   selector: "ngx-one-column-layout",
-  styleUrls: ["./one-column.layout.scss"],
+  styleUrls: ["./one-column.layout.scss", "./one-column-layout.css"],
   template: `
     <nb-layout windowMode>
       <nb-layout-header fixed>

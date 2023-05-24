@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
+import { LabeltHttpService } from "./labelHTTP.service";
+import { ImpressionHttpService } from "../ImpressionEtiquette/impressionHttpService";
 var domToPdf = require("dom-to-pdf");
 @Injectable()
 export class LabelService {
@@ -18,19 +20,41 @@ export class LabelService {
   };
   labelInfo = new BehaviorSubject<infoLabel>(this.initLabelInfo);
   canDesign = false;
-
-  convertToPdf() {
+  pdfData;
+  constructor(private ImpressionHttpService: ImpressionHttpService) {}
+  async convertToPdf() {
     var element = document.getElementById("test");
     var options = {
       filename: "label.pdf",
       compression: "FAST",
       scale: 3,
     };
-    domToPdf(element, options, function (pdf) {
-      console.log("done");
+
+    domToPdf(element, options, (pdf) => {
+      console.log("jsPDF");
+      this.pdfData = pdf.output("datauristring");
+      this.sendPdfFileToServer();
     });
   }
+  sendPdfFileToServer() {
+    const pdfData = this.pdfData; // base64-encoded PDF data
+    const blob = new Blob([pdfData], { type: "application/pdf" });
+    const file = new File([blob], "label.pdf", { type: "application/pdf" });
+    const formData = new FormData();
+    formData.append("pdfFile", file, "label.pdf");
+    this.ImpressionHttpService.sendPdfFileToServer(formData)
+      .toPromise()
+      .then((val) => {
+        console.log("success");
+        console.log(val);
+      })
+      .catch((e) => {
+        console.log("error");
+        console.log(e);
+      });
+  }
 }
+
 interface infoLabel {
   id: string;
   refProd: string;

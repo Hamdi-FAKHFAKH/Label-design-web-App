@@ -1,8 +1,8 @@
-<nb-layout [withScroll]="false" center windowMode>
+<nb-layout [withScroll]="false" id="creationEtiquette">
   <nb-sidebar right tag="creationEtiquette" style="margin-right: -10px">
     <div><ngx-tabs style="width: 350px"></ngx-tabs></div>
   </nb-sidebar>
-  <nb-layout-column>
+  <nb-layout-column left start>
     <div
       style="
         display: flex;
@@ -220,6 +220,7 @@
     style="cursor: move"
     class="draggedText"
     (dblclick)="setTabPropertyActive(item.id)"
+    (click)="setItemId(item.id)"
   >
     <div [ngStyle]="{ transform: item.style.transform }">{{ item.data }}</div>
   </div>

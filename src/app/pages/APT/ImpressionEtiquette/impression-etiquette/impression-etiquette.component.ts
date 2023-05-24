@@ -34,6 +34,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   etiquetteData: ComponetList[];
   changeSn = new EventEmitter();
   numOF: string;
+  listofImpressionDetail;
   settings = {
     actions: false,
     hideSubHeader: true,
@@ -84,7 +85,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
     nbrEtiquette: number;
   };
   constructor(
-    private impressionService: ImpressionHttpService,
+    private impressionHttpService: ImpressionHttpService,
     private labelService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
     private detailImpressionHttpService: DetailImpressionHttpService
@@ -92,10 +93,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
   async ngOnInit() {
     this.formatLotValid = false;
     this.nbrCopieValid = false;
-    this.OfList = (await this.impressionService.GetAllOF().toPromise()).of.map(
-      (res) => res.ofnum
-    );
-    this.printerList = await this.impressionService
+    this.OfList = (
+      await this.impressionHttpService.GetAllOF().toPromise()
+    ).of.map((res) => res.ofnum);
+    this.printerList = await this.impressionHttpService
       .GetPrinterList()
       .toPromise();
   }
@@ -103,23 +104,25 @@ export class ImpressionEtiquetteComponent implements OnInit {
     this.source.load([]);
     this.lotField = "";
     this.nbrCopie = "";
-    const of = (
-      await this.impressionService.GetRefProduitByOF(ofnum).toPromise()
-    ).of;
-    this.numOF = ofnum;
-    this.refProd = of.proref;
-    try {
-      this.idEtiquette = await (
-        await this.gestionProduitHttpService
-          .getOneProduit(this.refProd)
-          .toPromise()
-      ).produit.idEtiquette;
-    } catch (e) {}
-    this.impressionDetail = {
-      ...this.impressionDetail,
-      OF: of.ofnum,
-      refProduit: of.proref,
-    };
+    if (ofnum) {
+      const of = (
+        await this.impressionHttpService.GetRefProduitByOF(ofnum).toPromise()
+      ).of;
+      this.numOF = ofnum;
+      this.refProd = of.proref;
+      try {
+        this.idEtiquette = await (
+          await this.gestionProduitHttpService
+            .getOneProduit(this.refProd)
+            .toPromise()
+        ).produit.idEtiquette;
+      } catch (e) {}
+      this.impressionDetail = {
+        ...this.impressionDetail,
+        OF: of.ofnum,
+        refProduit: of.proref,
+      };
+    }
   }
   async loadList1Data(data: ComponetList[]) {
     this.formatLotValid = false;
@@ -180,6 +183,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
       ...this.impressionDetail,
       lot: this.lot.data,
     };
+    this.fillTable();
   }
   changeLot(data: string) {
     if (data.match(RegexFormatLot[this.formatLot]) && data) {
@@ -189,6 +193,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
         ...this.impressionDetail,
         lot: this.lot.data,
       };
+      this.fillTable();
     } else {
       this.formatLotValid = false;
     }
@@ -199,35 +204,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
 
     if (data.match(/^[1-9]{1}([0-9]){0,2}$/gm)) {
       this.nbrCopieValid = true;
-
-      let listofImpressionDetail: {
-        OF: string;
-        refProduit?: string;
-        lot: string;
-        sn: string;
-        codeQR: string;
-        nbrEtiquette: number;
-      }[] = [];
-      if (this.sn && this.withSN) {
-        let suffix = this.sn && this.sn.suffix;
-        for (let i = 0; i < +data; i++) {
-          listofImpressionDetail.push({
-            ...this.impressionDetail,
-            sn: this.sn.prefix + suffix,
-            nbrEtiquette: 1,
-          });
-          const suff = parseInt(suffix) + +this.sn.pas;
-          suffix = suff.toString().padStart(+this.sn.nbrCaractere, "0");
-        }
-        listofImpressionDetail && this.source.load(listofImpressionDetail);
-      } else {
-        listofImpressionDetail.push({
-          ...this.impressionDetail,
-          nbrEtiquette: +data,
-          sn: "   -   ",
-        });
-        listofImpressionDetail && this.source.load(listofImpressionDetail);
-      }
+      this.nbrCopie = +data;
+      this.fillTable();
     } else {
       this.nbrCopieValid = false;
     }
@@ -253,7 +231,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
         await timeout(2000);
         try {
           fileexist = (
-            await this.impressionService
+            await this.impressionHttpService
               .CheckFileExistence({
                 path: "C:/Users/hamdi/Downloads/label.pdf",
               })
@@ -271,7 +249,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
       console.log(nbrcopie);
       if (fileexist) {
         printStatus = (
-          await this.impressionService
+          await this.impressionHttpService
             .PrintLabel({
               copies: +nbrcopie,
               filePath: "C:/Users/hamdi/Downloads/label.pdf",
@@ -281,12 +259,11 @@ export class ImpressionEtiquetteComponent implements OnInit {
         ).status;
       }
       if (fileexist && printStatus == 200) {
-        let res = await this.impressionService
+        let res = await this.impressionHttpService
           .DeleteFile({
             path: "C:/Users/hamdi/Downloads/label.pdf",
           })
           .toPromise();
-        await this.createPrintedLabel(nbrcopie);
       }
     } else if (this.refProd && this.withSN) {
       for (let i = 0; i < +nbrcopie; i++) {
@@ -297,7 +274,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
           await timeout(2000);
           try {
             fileexist = (
-              await this.impressionService
+              await this.impressionHttpService
                 .CheckFileExistence({
                   path: "C:/Users/hamdi/Downloads/label.pdf",
                 })
@@ -312,7 +289,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
         let printStatus;
         if (fileexist) {
           printStatus = (
-            await this.impressionService
+            await this.impressionHttpService
               .PrintLabel({
                 copies: 1,
                 filePath: "C:/Users/hamdi/Downloads/label.pdf",
@@ -322,7 +299,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
           ).status;
           if (fileexist && printStatus == 200) {
             this.changeSn.emit();
-            let res = await this.impressionService
+            let res = await this.impressionHttpService
               .DeleteFile({
                 path: "C:/Users/hamdi/Downloads/label.pdf",
               })
@@ -354,6 +331,31 @@ export class ImpressionEtiquetteComponent implements OnInit {
         withDataMatrix: this.impressionDetail.codeQR ? true : false,
       })
       .toPromise();
+  }
+  fillTable() {
+    this.listofImpressionDetail = [];
+    if (this.sn && this.withSN) {
+      let suffix = this.sn && this.sn.suffix;
+      for (let i = 0; i < +this.nbrCopie; i++) {
+        this.listofImpressionDetail.push({
+          ...this.impressionDetail,
+          sn: this.sn.prefix + suffix,
+          nbrEtiquette: 1,
+        });
+        const suff = parseInt(suffix) + +this.sn.pas;
+        suffix = suff.toString().padStart(+this.sn.nbrCaractere, "0");
+      }
+      this.listofImpressionDetail &&
+        this.source.load(this.listofImpressionDetail);
+    } else {
+      this.listofImpressionDetail.push({
+        ...this.impressionDetail,
+        nbrEtiquette: +this.nbrCopie,
+        sn: "   -   ",
+      });
+      this.listofImpressionDetail &&
+        this.source.load(this.listofImpressionDetail);
+    }
   }
 }
 

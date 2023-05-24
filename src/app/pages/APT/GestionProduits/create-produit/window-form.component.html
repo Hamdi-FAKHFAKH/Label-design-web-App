@@ -455,12 +455,13 @@
                   "
                   name="prefix"
                   #prefix="ngModel"
-                  [type]="typeCompteur.value === 'AN' ? 'text' : 'number'"
+                  [type]="
+                    addNewSerialNumber && typeCompteur.value === 'N'
+                      ? 'number'
+                      : 'text'
+                  "
                   class="form-control"
                   placeholder="Préfix"
-                  aria-label="Préfix"
-                  aria-describedby="Préfix"
-                  val
                   [disabled]="!addNewSerialNumber"
                   [ngClass]="{
                     'is-valid':
@@ -472,9 +473,6 @@
                       typeCompteur.value === 'N' &&
                       !checkValueByRegex(prefix.value, 'prefix')
                   }"
-                  value="{{
-                    selectedSerialNumber && selectedSerialNumber.prefix
-                  }}"
                 />
               </div>
               <div class="input-group mb-3">
@@ -491,9 +489,6 @@
                   aria-label="Suffix"
                   aria-describedby="Suffix"
                   [disabled]="!addNewSerialNumber"
-                  value="{{
-                    selectedSerialNumber && selectedSerialNumber.suffix
-                  }}"
                 />
               </div>
             </div>

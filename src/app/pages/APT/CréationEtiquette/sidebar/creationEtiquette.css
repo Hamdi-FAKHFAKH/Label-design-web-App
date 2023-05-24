@@ -1,0 +1,3 @@
+:host /deep/ #creationEtiquette.with-scroll .scrollable-container {
+  overflow: hidden !important;
+}

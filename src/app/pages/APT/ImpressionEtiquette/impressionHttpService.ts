@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
   FileDeleted,
@@ -37,6 +37,16 @@ export class ImpressionHttpService {
     return this.http.delete<FileDeleted>(
       `http://localhost:3080/api/v1/LabelFile/`,
       { body: obj }
+    );
+  }
+
+  sendPdfFileToServer(formData) {
+    const headers = new HttpHeaders();
+    headers.append("content-Type", "application/pdf");
+    return this.http.post(
+      "http://localhost:3080/api/v1/savePdfFile/",
+      formData,
+      { headers }
     );
   }
 }

@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -42,6 +43,7 @@ export class SidebarComponent implements OnInit {
   ListWithNewID = [];
   imgSrc;
   idEtiquette;
+  itemId;
   constructor(
     private labelService: LabelService,
     private lablHttpService: LabeltHttpService,
@@ -503,6 +505,36 @@ export class SidebarComponent implements OnInit {
       if (key != "transform") style[key] = item.style[key];
     });
     return style;
+  }
+  setItemId(data) {
+    console.log(data);
+    this.itemId = data;
+  }
+  @HostListener("document:keydown", ["$event"])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.code === "ArrowUp") {
+      this.dragDropService.dragPosition[this.itemId] = {
+        x: +this.dragDropService.dragPosition[this.itemId].x,
+        y: this.dragDropService.dragPosition[this.itemId].y - 1,
+      };
+    } else if (event.code === "ArrowDown") {
+      this.dragDropService.dragPosition[this.itemId] = {
+        x: +this.dragDropService.dragPosition[this.itemId].x,
+        y: this.dragDropService.dragPosition[this.itemId].y + 1,
+      };
+    } else if (event.code === "ArrowLeft") {
+      this.dragDropService.dragPosition[this.itemId] = {
+        x: +this.dragDropService.dragPosition[this.itemId].x - 1,
+        y: this.dragDropService.dragPosition[this.itemId].y,
+      };
+    } else if (event.code === "ArrowRight") {
+      this.dragDropService.dragPosition[this.itemId] = {
+        x: +this.dragDropService.dragPosition[this.itemId].x + 1,
+        y: this.dragDropService.dragPosition[this.itemId].y,
+      };
+
+      // Do something here
+    }
   }
 }
 

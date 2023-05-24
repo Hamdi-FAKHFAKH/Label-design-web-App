@@ -180,18 +180,7 @@ export class DragDropService {
                           data:
                             serialNumber.serialNumber.prefix +
                             serialNumber.serialNumber.suffix,
-                          style: {
-                            "font-weight": "normal",
-                            bold: false,
-                            italic: false,
-                            "font-style": "normal",
-                            "text-decoration": "none",
-                            "font-family": "Times New Roman",
-                            "font-size": "12pt",
-                            color: "#000000",
-                            "background-color": "transparent",
-                            underline: false,
-                          },
+                          style: Object.assign({}, this.defaultTextStyle),
                           children: [],
                         });
                         this.prepareDragDrop(this.list2);
@@ -232,7 +221,7 @@ export class DragDropService {
                           refItem: item,
                           title: ComponentTitle.numLot,
                           data: resProduit.produit.numLot,
-                          style: this.defaultTextStyle,
+                          style: Object.assign({}, this.defaultTextStyle),
                         },
                         {
                           id: uuidv4(),
@@ -240,7 +229,7 @@ export class DragDropService {
                           title: ComponentTitle.formatLot,
                           refItem: "format",
                           data: lot.lot.format,
-                          style: this.defaultTextStyle,
+                          style: Object.assign({}, this.defaultTextStyle),
                         }
                       );
                       this.prepareDragDrop(this.list2);
@@ -260,7 +249,7 @@ export class DragDropService {
                           refItem: item,
                           title: ComponentTitle.codeClient,
                           data: resProduit.produit.codeClient,
-                          style: this.defaultTextStyle,
+                          style: Object.assign({}, this.defaultTextStyle),
                         },
                         {
                           id: uuidv4(),
@@ -268,7 +257,7 @@ export class DragDropService {
                           title: ComponentTitle.desClient,
                           refItem: "desClient",
                           data: client.body.client.desClient,
-                          style: this.defaultTextStyle,
+                          style: Object.assign({}, this.defaultTextStyle),
                         }
                       );
                       this.prepareDragDrop(this.list2);
@@ -288,7 +277,7 @@ export class DragDropService {
                           refItem: item,
                           title: ComponentTitle.codeFournisseur,
                           data: resProduit.produit.codeFournisseur,
-                          style: this.defaultTextStyle,
+                          style: Object.assign({}, this.defaultTextStyle),
                         },
                         {
                           id: uuidv4(),
@@ -296,7 +285,7 @@ export class DragDropService {
                           title: ComponentTitle.desFournisseur,
                           refItem: "desClient",
                           data: fournisseur.body.fournisseur.desFournisseur,
-                          style: this.defaultTextStyle,
+                          style: Object.assign({}, this.defaultTextStyle),
                         }
                       );
                       this.prepareDragDrop(this.list2);
