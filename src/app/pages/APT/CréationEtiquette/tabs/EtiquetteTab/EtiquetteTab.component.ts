@@ -332,6 +332,20 @@ export class EtiquetteTabComponent implements OnInit {
             x: +comp.x,
             y: +comp.y,
           };
+          this.dragDropService.nodeLookup2[comp.id] =
+            this.dragDropService.list2.find(
+              (val) => val.refItem == comp.refItem
+            );
+
+          console.log("*** comp ID ***");
+          console.log(comp.id);
+
+          this.dragDropService.list2.splice(
+            this.dragDropService.list2.findIndex(
+              (val) => val.refItem == comp.refItem
+            ),
+            1
+          );
         });
       } else {
         this.dragDropService.dragDropLibre = false;
@@ -376,6 +390,8 @@ export class EtiquetteTabComponent implements OnInit {
           ? lot.format
           : (obj.refItem && obj.refItem.includes("formes") ? form : null)
           ? form[+obj.refItem.split("-")[1]].form.path
+          : obj.refItem == "of"
+          ? "num OF"
           : this.productToBeCreated[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,

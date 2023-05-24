@@ -52,7 +52,19 @@ export class DesignTabComponent implements OnInit {
       return obj.id == id;
     });
     if (index != -1) {
+      this.dragDropService.list1[index].style = Object.assign(
+        {},
+        this.dragDropService.defaultTextStyle
+      );
       this.dragDropService.list2.push(this.dragDropService.list1[index]);
+      if (this.dragDropService.dragDropLibre) {
+        this.dragDropService.dragPosition[
+          this.dragDropService.list1[index].id
+        ] = this.dragDropService.list1[index];
+      }
+      console.log("***drag postion after delete");
+      console.log(this.dragDropService.dragPosition);
+
       this.dragDropService.list1.splice(index, 1);
     } else {
       this.dragDropService.list1.forEach((obj, index) => {

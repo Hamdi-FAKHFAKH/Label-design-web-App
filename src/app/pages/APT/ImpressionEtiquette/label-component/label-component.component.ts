@@ -29,6 +29,7 @@ import Swal from "sweetalert2";
 })
 export class LabelComponentComponent implements OnChanges, OnInit {
   @Input() refProd;
+  @Input() OF;
   @Input() changeSN;
   @Output() list1Event = new EventEmitter<ComponetList[]>();
   @Output() withSN = new EventEmitter<boolean>();
@@ -379,6 +380,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           ? lot.format
           : (obj.refItem && obj.refItem.includes("formes") ? form : null)
           ? form[+obj.refItem.split("-")[1]].form.path
+          : obj.refItem == "of" && this.OF
+          ? this.OF
           : produit[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,

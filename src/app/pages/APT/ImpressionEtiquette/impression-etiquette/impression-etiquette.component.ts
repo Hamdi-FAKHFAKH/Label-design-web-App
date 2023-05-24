@@ -21,6 +21,7 @@ class RegexFormatLot {
 export class ImpressionEtiquetteComponent implements OnInit {
   sn: SerialNumberData;
   refProd: string;
+  OF: string;
   OfList: string[];
   printerList: string[];
   formatLot: string;
@@ -110,6 +111,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
       ).of;
       this.numOF = ofnum;
       this.refProd = of.proref;
+      this.OF = of.ofnum;
+
       try {
         this.idEtiquette = await (
           await this.gestionProduitHttpService
@@ -173,7 +176,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
     );
   }
   filterFn = (date: Date) =>
-    this.formatLot == "dd/MM"
+    this.formatLot.includes("dd") && this.formatLot.includes("MM")
       ? date.getFullYear() === new Date().getFullYear()
       : this.formatLot == "MM/yyyy" && date.getDate() == 1;
   changeDate(e: Date) {

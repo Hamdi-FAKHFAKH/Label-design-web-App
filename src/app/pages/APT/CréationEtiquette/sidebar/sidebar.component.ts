@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { CdkDragEnd, CdkDropList } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
-import { ComponetList } from "../ComposentData";
+import { ComponentTitle, ComponetList } from "../ComposentData";
 import Swal from "sweetalert2";
 import domtoimage from "dom-to-image";
 import { NbSidebarService, NbWindowService } from "@nebular/theme";
@@ -171,17 +171,21 @@ export class SidebarComponent implements OnInit {
     }
   }
   async saveToPdf() {
-    const { produits } = await this.lablHttpService
-      .getAllProduitWithEtiquette()
-      .toPromise();
+    const produitsWithEtiquette = (
+      await this.lablHttpService.getAllProduitWithEtiquette().toPromise()
+    ).produits;
     const refProdWithEtiquette = [];
-
-    produits.map((val) => {
+    produitsWithEtiquette.map((val) => {
       refProdWithEtiquette.push(val.ref);
       if (val.ref === this.labelInfo.refProd) {
         this.idEtiquette = val.idEtiquette;
       }
     });
+    const produit = (
+      await this.gestionProduitHttpService
+        .getOneProduit(this.labelInfo.refProd)
+        .toPromise()
+    ).produit;
     if (!this.labelInfo.refProd) {
       Swal.fire("Selectionner la référence Produit", "", "info");
     } else if (refProdWithEtiquette.includes(this.labelInfo.refProd)) {
@@ -196,8 +200,44 @@ export class SidebarComponent implements OnInit {
         confirmButtonColor: "#007BFF",
         denyButtonText: `Non`,
       }).then(async (result) => {
-        /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
+          if (
+            produit.withDataMatrix &&
+            !this.dragDropService.list1.some((val) => val.type == "QRcode")
+          ) {
+            Swal.fire(
+              "DataMatrix introuvable?",
+              "Veuillez inclure un DataMatrix sur l'étiquette",
+              "info"
+            );
+            return;
+          }
+          if (
+            produit.withSN &&
+            !this.dragDropService.list1.some(
+              (val) => val.title == ComponentTitle.SN
+            )
+          ) {
+            Swal.fire(
+              "Numéro de Série introuvable?",
+              "Veuillez inclure le Numéro de Série sur l'étiquette",
+              "info"
+            );
+            return;
+          }
+          if (
+            produit.withOF &&
+            !this.dragDropService.list1.some(
+              (val) => val.title == ComponentTitle.OF
+            )
+          ) {
+            Swal.fire(
+              "Ordre de Fabrication(OF) introuvable?",
+              "Veuillez inclure l'Ordre de Fabrication(OF) sur l'étiquette",
+              "info"
+            );
+            return;
+          }
           const res = await this.lablHttpService
             .UpdateEtiquette(this.idEtiquette, {
               couleur: this.labelInfo.color,
@@ -510,6 +550,44 @@ export class SidebarComponent implements OnInit {
     console.log(data);
     this.itemId = data;
   }
+  remove(id: string) {
+    console.log(id + "deleted");
+    console.log(this.dragDropService.list1);
+
+    const index = this.dragDropService.list1.findIndex((obj) => {
+      return obj.id == id;
+    });
+    if (index != -1) {
+      this.dragDropService.list2.push(this.dragDropService.list1[index]);
+      this.dragDropService.list1.splice(index, 1);
+    } else {
+      this.dragDropService.list1.forEach((obj, index) => {
+        obj.children.forEach((obj1, index1) => {
+          if (obj1.id == id) {
+            this.dragDropService.list2.push(
+              this.dragDropService.list1[index].children[index1]
+            );
+            this.dragDropService.list1[index].children.splice(index1, 1);
+            return;
+          }
+          obj1.children &&
+            obj1.children.forEach((obj2, index2) => {
+              if (obj2.id == id) {
+                this.dragDropService.list2.push(
+                  this.dragDropService.list1[index].children[index1].children[
+                    index2
+                  ]
+                );
+                this.dragDropService.list1[index].children[
+                  index1
+                ].children.splice(index2, 1);
+                console.log(`${obj.id}- ${obj1.id} - ${obj2.id}`);
+              }
+            });
+        });
+      });
+    }
+  }
   @HostListener("document:keydown", ["$event"])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code === "ArrowUp") {
@@ -532,8 +610,8 @@ export class SidebarComponent implements OnInit {
         x: +this.dragDropService.dragPosition[this.itemId].x + 1,
         y: this.dragDropService.dragPosition[this.itemId].y,
       };
-
-      // Do something here
+    } else if (event.code === "Delete") {
+      this.remove(this.itemId);
     }
   }
 }

@@ -62,4 +62,5 @@ export enum ComponentTitle {
   text4 = "Text4",
   text5 = "Text5",
   forms = "Icon",
+  OF = "Ordre de Fabrication (OF)",
 }

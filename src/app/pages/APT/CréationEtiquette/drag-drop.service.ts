@@ -160,7 +160,6 @@ export class DragDropService {
                 item !== "updatedAt" &&
                 item !== "idEtiquette" &&
                 item !== "withSN" &&
-                item !== "withOF" &&
                 item !== "Createur" &&
                 item !== "Modificateur" &&
                 item !== "datamatrixData" &&
@@ -185,6 +184,15 @@ export class DragDropService {
                         });
                         this.prepareDragDrop(this.list2);
                       });
+                } else if (item == "withOF" && resProduit.produit.withOF) {
+                  this.list2.push({
+                    id: uuidv4(),
+                    type: "text",
+                    refItem: "of",
+                    title: ComponentTitle.OF,
+                    data: "OF Number",
+                    style: Object.assign({}, this.defaultTextStyle),
+                  });
                 } else if (item === "formes" && resProduit.produit.formes) {
                   resProduit.produit.formes.split(";").forEach((val, index) => {
                     if (val) {
@@ -614,6 +622,7 @@ export class DragDropService {
               {},
               {
                 ...draggedItem,
+                id: draggedItemId,
                 children: [],
               }
             )
@@ -627,6 +636,8 @@ export class DragDropService {
         if (!this.selectedItem) {
           this.selectedItem = this.list1[0].id;
         }
+        console.log(this.list1);
+        console.log(this.dragPosition);
       }
     }
     this.getAllItems(this.list1);
