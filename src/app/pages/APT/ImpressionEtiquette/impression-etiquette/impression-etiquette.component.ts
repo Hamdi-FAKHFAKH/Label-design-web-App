@@ -7,6 +7,8 @@ import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitH
 import { SerialNumberData } from "../../GestionProduits/GestionProduit.data";
 import { LocalDataSource } from "ng2-smart-table";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
+import { user } from "../../../../auth/user";
+import { AuthService } from "../../../../auth/authService.service";
 class RegexFormatLot {
   public static readonly "date" =
     /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
@@ -89,7 +91,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
     private impressionHttpService: ImpressionHttpService,
     private labelService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
-    private detailImpressionHttpService: DetailImpressionHttpService
+    private detailImpressionHttpService: DetailImpressionHttpService,
+    private authService: AuthService
   ) {}
   async ngOnInit() {
     this.formatLotValid = false;
@@ -227,111 +230,163 @@ export class ImpressionEtiquetteComponent implements OnInit {
       return new Promise((resolve) => setTimeout(resolve, ms));
     };
     if (this.refProd && !this.withSN) {
-      this.labelService.convertToPdf();
-      let i = 0;
+      await this.labelService.convertToPdf();
       let fileexist;
-      while (i < 3) {
-        await timeout(2000);
-        try {
-          fileexist = (
-            await this.impressionHttpService
-              .CheckFileExistence({
-                path: "C:/Users/hamdi/Downloads/label.pdf",
-              })
-              .toPromise()
-          ).exist;
-        } catch (error) {
-          console.log("File Not Found");
-        }
-        fileexist ? (i = 3) : i++;
+      try {
+        fileexist = (
+          await this.impressionHttpService
+            .CheckFileExistence({
+              path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
+            })
+            .toPromise()
+        ).exist;
+      } catch (error) {
+        console.log("File Not Found");
       }
-
       let printStatus;
-      console.log(fileexist);
-      console.log(printerName);
-      console.log(nbrcopie);
       if (fileexist) {
+        const resde = await this.impressionHttpService
+          .DeleteFile({
+            path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
+          })
+          .toPromise();
+        console.log("**delete**");
+        console.log(resde);
+        const res = await this.labelService.sendPdfFileToServer(this.refProd);
+        console.log("**send PDF**");
+        console.log(res);
         printStatus = (
           await this.impressionHttpService
             .PrintLabel({
-              copies: +nbrcopie,
-              filePath: "C:/Users/hamdi/Downloads/label.pdf",
+              copies: nbrcopie,
+              filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
+              printerName: printerName,
+            })
+            .toPromise()
+        ).status;
+        console.log("**print label**");
+      } else {
+        fileexist = await this.labelService.sendPdfFileToServer(this.refProd);
+        console.log("file exist");
+        console.log(fileexist);
+        printStatus = (
+          await this.impressionHttpService
+            .PrintLabel({
+              copies: nbrcopie,
+              filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
               printerName: printerName,
             })
             .toPromise()
         ).status;
       }
       if (fileexist && printStatus == 200) {
-        let res = await this.impressionHttpService
-          .DeleteFile({
-            path: "C:/Users/hamdi/Downloads/label.pdf",
-          })
-          .toPromise();
+        const printedLabel = (
+          await this.detailImpressionHttpService
+            .GetALLEtiquettesImprimees()
+            .toPromise()
+        ).etiquettesImprimees.find((val) => val.refProd == this.refProd);
+        await this.createPrintedLabel(
+          printedLabel ? +printedLabel.nbrCopie + nbrcopie : nbrcopie,
+          `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`
+        );
+        this.changeSn.emit();
       }
     } else if (this.refProd && this.withSN) {
       for (let i = 0; i < +nbrcopie; i++) {
-        this.labelService.convertToPdf();
-        let j = 0;
+        await this.labelService.convertToPdf();
         let fileexist;
-        while (j < 3) {
-          await timeout(2000);
-          try {
-            fileexist = (
-              await this.impressionHttpService
-                .CheckFileExistence({
-                  path: "C:/Users/hamdi/Downloads/label.pdf",
-                })
-                .toPromise()
-            ).exist;
-          } catch (error) {
-            console.log("File Not Found");
-          }
-          fileexist ? (j = 3) : j++;
+        try {
+          fileexist = (
+            await this.impressionHttpService
+              .CheckFileExistence({
+                path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
+                  this.refProd
+                }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`,
+              })
+              .toPromise()
+          ).exist;
+        } catch (error) {
+          console.log("File Not Found");
         }
-
         let printStatus;
         if (fileexist) {
+          const resde = await this.impressionHttpService
+            .DeleteFile({
+              path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
+            })
+            .toPromise();
+          console.log("**delete**");
+          console.log(resde);
+
+          const res = await this.labelService.sendPdfFileToServer(
+            `${this.refProd}-${this.sn ? this.sn.prefix + this.sn.suffix : ""}`
+          );
+          console.log("**send PDF**");
+          console.log(res);
+
           printStatus = (
             await this.impressionHttpService
               .PrintLabel({
                 copies: 1,
-                filePath: "C:/Users/hamdi/Downloads/label.pdf",
+                filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
+                  this.refProd
+                }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`,
                 printerName: printerName,
               })
               .toPromise()
           ).status;
-          if (fileexist && printStatus == 200) {
-            this.changeSn.emit();
-            let res = await this.impressionHttpService
-              .DeleteFile({
-                path: "C:/Users/hamdi/Downloads/label.pdf",
+          console.log("**print label**");
+        } else {
+          fileexist = await this.labelService.sendPdfFileToServer(
+            `${this.refProd}-${this.sn ? this.sn.prefix + this.sn.suffix : ""}`
+          );
+          console.log("file exist");
+          console.log(fileexist);
+          printStatus = (
+            await this.impressionHttpService
+              .PrintLabel({
+                copies: 1,
+                filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
+                  this.refProd
+                }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`,
+                printerName: printerName,
               })
-              .toPromise();
-            await this.createPrintedLabel(1);
-          }
+              .toPromise()
+          ).status;
+        }
+        if (fileexist && printStatus == 200) {
+          await this.createPrintedLabel(
+            1,
+            `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
+              this.refProd
+            }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`
+          );
+          this.changeSn.emit();
+          await timeout(1000);
         }
       }
     }
   }
-  async createPrintedLabel(nbrCopie) {
+  async createPrintedLabel(nbrCopie, filePath) {
     let d = new Date();
     let ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(d);
-    let mo = new Intl.DateTimeFormat("en", { month: "numeric" }).format(d);
+    let mo = new Intl.DateTimeFormat("en", { month: "2-digit" }).format(d);
     let da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
     await this.detailImpressionHttpService
       .CreateEtiquetteImprimee({
         idEtiquette: this.idEtiquette,
         action: "impression",
-        dateImp: `${da}/${mo}/${ye}`,
-        MotifReimpression: "",
+        date: new Date(),
         nbrCopie: nbrCopie,
+        motifReimpression: null,
         formatLot: this.impressionDetail.lot,
         numOF: this.numOF,
         refProd: this.refProd,
         serialNumber: this.sn ? this.sn.prefix + this.sn.suffix : "-",
         state: "success",
-        userMatricule: "ali",
+        userMatricule: this.authService.user.getValue().matricule,
         withDataMatrix: this.impressionDetail.codeQR ? true : false,
+        filePath: filePath,
       })
       .toPromise();
   }

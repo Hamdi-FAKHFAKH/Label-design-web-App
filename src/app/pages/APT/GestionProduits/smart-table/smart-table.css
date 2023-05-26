@@ -6,6 +6,10 @@
   border-color: #3374b5;
   color: white !important;
   font-weight: 900 !important;
+  padding-left: 10px;
+  padding-right: 12px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
 }
 
 /* ng2-smart-table table tr.ng2-smart-titles th */
@@ -36,7 +40,7 @@
   > tr
   > td.ng2-smart-actions.ng-star-inserted {
   position: sticky;
-  right: -15px;
+  right: -18px;
   background-color: #edf1f7;
 }
 :host /deep/ ng2-smart-table {

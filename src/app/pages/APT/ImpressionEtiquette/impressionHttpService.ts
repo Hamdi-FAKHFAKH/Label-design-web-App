@@ -41,12 +41,6 @@ export class ImpressionHttpService {
   }
 
   sendPdfFileToServer(formData) {
-    const headers = new HttpHeaders();
-    headers.append("content-Type", "application/pdf");
-    return this.http.post(
-      "http://localhost:3080/api/v1/savePdfFile/",
-      formData,
-      { headers }
-    );
+    return this.http.post("http://localhost:3080/api/v1/savePdfFile", formData);
   }
 }

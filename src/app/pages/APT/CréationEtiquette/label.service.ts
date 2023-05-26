@@ -29,29 +29,14 @@ export class LabelService {
       compression: "FAST",
       scale: 3,
     };
-
-    domToPdf(element, options, (pdf) => {
-      console.log("jsPDF");
-      this.pdfData = pdf.output("datauristring");
-      this.sendPdfFileToServer();
-    });
+    const pdf = await domToPdf(element, options);
+    this.pdfData = pdf.output("datauristring");
   }
-  sendPdfFileToServer() {
-    const pdfData = this.pdfData; // base64-encoded PDF data
-    const blob = new Blob([pdfData], { type: "application/pdf" });
-    const file = new File([blob], "label.pdf", { type: "application/pdf" });
-    const formData = new FormData();
-    formData.append("pdfFile", file, "label.pdf");
-    this.ImpressionHttpService.sendPdfFileToServer(formData)
-      .toPromise()
-      .then((val) => {
-        console.log("success");
-        console.log(val);
-      })
-      .catch((e) => {
-        console.log("error");
-        console.log(e);
-      });
+  sendPdfFileToServer(refProd) {
+    return this.ImpressionHttpService.sendPdfFileToServer({
+      data: this.pdfData,
+      fileName: `label-${refProd}.pdf`,
+    }).toPromise();
   }
 }
 

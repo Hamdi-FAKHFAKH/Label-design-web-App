@@ -27,7 +27,7 @@ import { NbMomentDateModule } from "@nebular/moment";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { DragDropService } from "./CréationEtiquette/drag-drop.service";
 import { LabelService } from "./CréationEtiquette/label.service";
-import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-of.component";
+import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
 import { DetailImpressionHttpService } from "./DetailImpression/detailImpressionHttp.service";
 

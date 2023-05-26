@@ -4,6 +4,8 @@ import {
   EtiquetteImprimeeData,
   EtiquetteImprimeeResultData,
   GetEtiquetteImprimeeResultData,
+  GetPrintDetailResultData,
+  UpdateEtiquetteImprimeeResultData,
 } from "./detailImpressionHttp.data";
 
 @Injectable()
@@ -15,9 +17,20 @@ export class DetailImpressionHttpService {
       obj
     );
   }
+  UpdateEtiquetteImprimee(obj: EtiquetteImprimeeData, id: string) {
+    return this.http.put<UpdateEtiquetteImprimeeResultData>(
+      `http://localhost:3080/api/v1/etiquetteImprimee/${id}`,
+      obj
+    );
+  }
   GetALLEtiquettesImprimees() {
     return this.http.get<GetEtiquetteImprimeeResultData>(
       "http://localhost:3080/api/v1/etiquetteImprimee"
+    );
+  }
+  GetPrintDetail() {
+    return this.http.get<GetPrintDetailResultData>(
+      "http://localhost:3080/api/v1/etiquetteImprimee/printDetail"
     );
   }
 }

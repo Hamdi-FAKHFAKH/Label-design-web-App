@@ -3,7 +3,7 @@ import { Routes, RouterModule } from "@angular/router";
 import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.component";
 import { AptComponent } from "./apt.component";
 import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
-import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-of.component";
+import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
 
 const routes: Routes = [

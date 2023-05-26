@@ -21,6 +21,8 @@ import {
 } from "../../GestionProduits/GestionProduit.data";
 import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
 import Swal from "sweetalert2";
+import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
+import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
 
 @Component({
   selector: "ngx-label-component",
@@ -58,7 +60,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   constructor(
     private gestionProduitHttpService: GestionProduitHttpService,
     private labelHttpService: LabeltHttpService,
-    public dragDropService: DragDropService
+    public dragDropService: DragDropService,
+    private detailImpressionHttpService: DetailImpressionHttpService
   ) {}
   ngOnInit(): void {
     this.changeSN.subscribe(() => {
@@ -191,7 +194,25 @@ export class LabelComponentComponent implements OnChanges, OnInit {
 
       if (SN) {
         this.SN = SN.serialNumber;
+        //Find Last SN
+        const lastSerialNumber: string = (
+          await this.detailImpressionHttpService
+            .GetALLEtiquettesImprimees()
+            .toPromise()
+        ).etiquettesImprimees
+          .filter((val) => val.refProd == refProd)
+          .map((obj) => obj.serialNumber.split(this.SN.prefix)[1])
+          .sort()
+          .pop();
+        if (lastSerialNumber) {
+          this.SN.suffix = lastSerialNumber;
+          //increment the SN by one step
+          const suff = parseInt(this.SN.suffix) + +this.SN.pas;
+          this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");
+          //send true to the print component to indicate that the label has an SN
+        }
         this.withSN.emit(true);
+        // send
         this.sn.emit(this.SN);
       } else {
         this.withSN.emit(false);

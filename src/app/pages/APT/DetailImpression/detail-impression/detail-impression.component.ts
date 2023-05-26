@@ -1,8 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { LocalDataSource } from "ng2-smart-table";
 import { DetailImpressionHttpService } from "../detailImpressionHttp.service";
-import { EtiquetteImprimeeData } from "../detailImpressionHttp.data";
+import {
+  EtiquetteImprimeeData,
+  PrintDetailData,
+} from "../detailImpressionHttp.data";
 import { AuthService } from "../../../../auth/authService.service";
+import Swal from "sweetalert2";
+import { ImpressionHttpService } from "../../ImpressionEtiquette/impressionHttpService";
 
 @Component({
   selector: "ngx-detail-impression",
@@ -12,9 +17,10 @@ import { AuthService } from "../../../../auth/authService.service";
 export class DetailImpressionComponent implements OnInit {
   constructor(
     private detailImpressionHttp: DetailImpressionHttpService,
-    private authService: AuthService
+    private authService: AuthService,
+    private impressionHttpService: ImpressionHttpService
   ) {}
-  etiquettes: EtiquetteImprimeeData[];
+  printDetail: PrintDetailData[];
   settings = {
     hideSubHeader: true,
     pager: { display: true },
@@ -57,22 +63,22 @@ export class DetailImpressionComponent implements OnInit {
         type: "string",
         filter: false,
       },
-      dateImp: {
+      dateImpr: {
         title: "Date d'impression",
         type: "string",
         filter: false,
       },
-      dateReImp: {
+      dateReimpr: {
         title: "Dérniere date de réimpression",
         type: "string",
         filter: false,
       },
-      userMatricule: {
+      imprUserMatricule: {
         title: "Utilisateur d'impression",
         type: "string",
         filter: false,
       },
-      userMatriculeReImp: {
+      reImprUserMatricule: {
         title: "Utilisateur de réimpression",
         type: "string",
         filter: false,
@@ -93,20 +99,123 @@ export class DetailImpressionComponent implements OnInit {
   source: LocalDataSource = new LocalDataSource();
 
   async ngOnInit() {
-    this.etiquettes = (
-      await this.detailImpressionHttp.GetALLEtiquettesImprimees().toPromise()
-    ).etiquettesImprimees;
-    this.source.load(
-      this.etiquettes.map((val) => {
-        return {
-          ...val,
-          userMatricule: this.authService.user.getValue().matricule,
-        };
-      })
-    );
+    this.printDetail = (
+      await this.detailImpressionHttp.GetPrintDetail().toPromise()
+    ).printDetail;
+    this.source.load(this.getSmartTableData(this.printDetail));
   }
   search(data) {}
-  print(data) {}
+  async print(data) {
+    const printerList: string[] = await this.impressionHttpService
+      .GetPrinterList()
+      .toPromise();
+    const printedLabelData: EtiquetteImprimeeData = data.data;
+    if (printedLabelData.serialNumber !== "-") {
+      Swal.fire({
+        title: "Réimpression ",
+        html:
+          "<label style='margin:10px 0px'>Motif de réimpression</label>" +
+          '<input id="motif" class="form-control"/>' +
+          "<label style='margin:10px 0px'>Imprimante</label>" +
+          `<select id="imprimante" class="form-control">
+        <option>
+        ${printerList.join("</option><option>")}
+        </option>
+        </select>`,
+        inputAttributes: {
+          autocapitalize: "off",
+        },
+        showCancelButton: true,
+        confirmButtonText: "Imprimer",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          return this.impressionHttpService
+            .PrintLabel({
+              copies: 1,
+              filePath: printedLabelData.filePath,
+              printerName: (<HTMLInputElement>(
+                document.getElementById("imprimante")
+              )).value,
+            })
+            .toPromise()
+            .then(() => {
+              this.detailImpressionHttp
+                .CreateEtiquetteImprimee({
+                  filePath: printedLabelData.filePath,
+                  idEtiquette: printedLabelData.idEtiquette,
+                  formatLot: printedLabelData.formatLot,
+                  numOF: printedLabelData.numOF,
+                  refProd: printedLabelData.refProd,
+                  serialNumber: printedLabelData.serialNumber,
+                  withDataMatrix: printedLabelData.withDataMatrix,
+                  state: printedLabelData.state,
+                  action: "Réimpression",
+                  date: new Date(),
+                  userMatricule: this.authService.user.getValue().matricule,
+                  nbrCopie: 1,
+                  motifReimpression: (<HTMLInputElement>(
+                    document.getElementById("motif")
+                  )).value,
+                })
+                .toPromise()
+                .then((response) => {
+                  if (!response.etiquetteImprimee) {
+                    console.log(response.etiquetteImprimee);
+                    throw new Error(response.Status);
+                  }
+                  return response.etiquetteImprimee;
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+              Swal.showValidationMessage(`Request failed: ${error}`);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.detailImpressionHttp
+            .GetPrintDetail()
+            .toPromise()
+            .then((val) => {
+              this.source.load(this.getSmartTableData(val.printDetail));
+            });
+        }
+      });
+    }
+  }
+  getSmartTableData(val: PrintDetailData[]) {
+    let dateImp;
+    let dateReImp;
+    return val.map((val) => {
+      dateImp = new Date(val.dateImpr);
+      dateReImp = new Date(val.dateReimpr);
+      return {
+        ...val,
+        dateImpr: `${new Intl.DateTimeFormat("en", {
+          day: "2-digit",
+        }).format(dateImp)}/${new Intl.DateTimeFormat("en", {
+          month: "2-digit",
+        }).format(dateImp)}/${new Intl.DateTimeFormat("en", {
+          year: "numeric",
+        }).format(dateImp)}`,
+        dateReimpr:
+          +val.nbrCopie > 1
+            ? `${new Intl.DateTimeFormat("en", {
+                day: "2-digit",
+              }).format(dateReImp)}/${new Intl.DateTimeFormat("en", {
+                month: "2-digit",
+              }).format(dateReImp)}/${new Intl.DateTimeFormat("en", {
+                year: "numeric",
+              }).format(dateReImp)}`
+            : "-",
+        action:
+          +val.nbrCopie > 1 && val.serialNumber !== "-"
+            ? "Réimpression"
+            : "Impression",
+      };
+    });
+  }
   onSearch(query: string = "") {
     if (query == "") {
       this.source.reset(false);
