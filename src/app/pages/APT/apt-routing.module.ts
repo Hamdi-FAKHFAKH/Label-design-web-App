@@ -35,6 +35,11 @@ const routes: Routes = [
         path: "DetailImpression",
         component: DetailImpressionComponent,
       },
+      {
+        path: "",
+        redirectTo: "gestionProduits",
+        pathMatch: "full",
+      },
     ],
   },
 ];

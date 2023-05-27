@@ -141,6 +141,7 @@ export class DetailImpressionComponent implements OnInit {
             .then(() => {
               this.detailImpressionHttp
                 .CreateEtiquetteImprimee({
+                  dataMatrixData: printedLabelData.dataMatrixData,
                   filePath: printedLabelData.filePath,
                   idEtiquette: printedLabelData.idEtiquette,
                   formatLot: printedLabelData.formatLot,

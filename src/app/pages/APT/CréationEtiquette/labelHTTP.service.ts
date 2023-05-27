@@ -4,6 +4,7 @@ import { GetProduitResponseData } from "../GestionProduits/GestionProduit.data";
 import {
   ComposentHttpData,
   EtiquetteData,
+  GetAllTagsResultData,
   GetComposentResultData,
   GetEtiquetteResponseData,
   GetOneComposentResultData,
@@ -46,6 +47,11 @@ export class LabeltHttpService {
   GetOneComponent(id: string) {
     return this.http.get<GetOneComposentResultData>(
       `http://localhost:3080/api/v1/composent/${id}`
+    );
+  }
+  GetAllTag() {
+    return this.http.get<GetAllTagsResultData>(
+      `http://localhost:3080/api/v1/tag`
     );
   }
 }

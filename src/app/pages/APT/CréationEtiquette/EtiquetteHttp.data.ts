@@ -67,3 +67,11 @@ export interface GetOneComposentResultData {
   Status: string;
   composent: ComposentHttpData;
 }
+export interface GetAllTagsResultData {
+  Status: string;
+  tags: TagData[];
+}
+export interface TagData {
+  id?: number;
+  tag: string;
+}

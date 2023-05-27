@@ -4,6 +4,7 @@ import { ComponetList } from "../ComposentData";
 import { LabelService } from "../label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { toXML } from "jstoxml";
+import { LabeltHttpService } from "../labelHTTP.service";
 @Component({
   selector: "ngx-data-matrix-style-form",
   templateUrl: "./data-matrix-style-form.component.html",
@@ -18,7 +19,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
   items = {};
   fixString = "";
   produit;
-  tagList = ["RS", "GS", "EOT", "|)>", ""];
+  tagList = [];
   valueList = [];
   codage = ["ASCI"];
   barcodeObjs = [
@@ -32,6 +33,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
   constructor(
     public dragDropService: DragDropService,
     private labelService: LabelService,
+    private labelHttpService: LabeltHttpService,
     private gestionProduitHttpService: GestionProduitHttpService
   ) {}
   getAllItems(list: ComponetList[]) {
@@ -43,10 +45,13 @@ export class DataMatrixStyleFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.xmlForm = this.dragDropService.items[this.itemId].data;
     this.marginCliked = "margin";
     this.getAllItems(this.dragDropService.list1);
+    this.tagList = (
+      await this.labelHttpService.GetAllTag().toPromise()
+    ).tags.map((val) => val.tag);
     this.labelService.labelInfo.subscribe((val) => {
       val.refProd !== null &&
         this.gestionProduitHttpService
@@ -62,6 +67,9 @@ export class DataMatrixStyleFormComponent implements OnInit {
                 this.valueList.push(resProduit.produit[item]);
             });
           });
+      this.valueList.push("<<SN>>");
+      this.valueList.push("<<OF>>");
+      this.valueList.push("<<FormatLot>>");
     });
   }
 
@@ -111,6 +119,18 @@ export class DataMatrixStyleFormComponent implements OnInit {
     }
     const config = {
       indent: "    ",
+      attributeReplacements: {
+        "<": "<",
+        ">": ">",
+        "&": "&",
+        '"': "'",
+      },
+      contentReplacements: {
+        "<": "<",
+        ">": ">",
+        "&": "&",
+        '"': "'",
+      },
     };
     const res = toXML(listItem, config);
     this.xmlForm = this.xmlForm + res;

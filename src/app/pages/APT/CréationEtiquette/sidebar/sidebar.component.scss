@@ -73,3 +73,20 @@ svg {
 // #container1 > div > div:nth-child(1) {
 //   border-right: 0px;
 // }
+@keyframes linearGradientMove {
+  100% {
+    background-position: 4px 0, -4px 100%, 0 -4px, 100% 4px;
+  }
+}
+.outline {
+  padding: 4px 3px;
+  // border: 1px solid transparent;
+  outline: 1px solid transparent;
+  background: linear-gradient(90deg, #333 50%, transparent 0) repeat-x,
+    linear-gradient(90deg, #333 50%, transparent 0) repeat-x,
+    linear-gradient(0deg, #333 50%, transparent 0) repeat-y,
+    linear-gradient(0deg, #333 50%, transparent 0) repeat-y;
+  background-size: 4px 1px, 4px 1px, 1px 4px, 1px 4px;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  animation: linearGradientMove 0.3s infinite linear;
+}

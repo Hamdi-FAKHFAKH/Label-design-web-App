@@ -47,6 +47,8 @@ export class DragDropService {
     "background-color": "transparent",
     underline: false,
   };
+  // boxClass list
+  boxClassList = {};
   //fill dropTargetIds list and nodeLookup2 object
   prepareDragDrop(nodes: ComponetList[]) {
     nodes.forEach((node) => {
@@ -646,6 +648,7 @@ export class DragDropService {
   getAllItems(list: ComponetList[]) {
     list.forEach((item) => {
       this.items[item.id] = item;
+      this.boxClassList[item.id] = false;
       if (item.children) {
         this.getAllItems(item.children);
       }

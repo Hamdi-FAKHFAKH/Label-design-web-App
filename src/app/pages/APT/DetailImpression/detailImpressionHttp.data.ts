@@ -13,6 +13,7 @@ export interface EtiquetteImprimeeData {
   motifReimpression: string;
   formatLot: string;
   filePath: string;
+  dataMatrixData: string;
 }
 export interface GetEtiquetteImprimeeResultData {
   Status: string;

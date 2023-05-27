@@ -26,7 +26,7 @@ import { te } from "date-fns/locale";
 @Component({
   selector: "ngx-sidebar",
   templateUrl: "./sidebar.component.html",
-  styleUrls: ["./sidebar.component.scss"],
+  styleUrls: ["./sidebar.component.scss", "./borderStyle.css"],
 })
 export class SidebarComponent implements OnInit {
   @ViewChildren("dimension") elReference: QueryList<ElementRef>;
@@ -44,6 +44,7 @@ export class SidebarComponent implements OnInit {
   imgSrc;
   idEtiquette;
   itemId;
+  selectedItemClass = {};
   constructor(
     private labelService: LabelService,
     private lablHttpService: LabeltHttpService,
@@ -549,6 +550,13 @@ export class SidebarComponent implements OnInit {
   setItemId(data) {
     console.log(data);
     this.itemId = data;
+    Object.keys(this.dragDropService.items).forEach(
+      (key) => (this.dragDropService.items[key].style.border = "none")
+    );
+
+    // this.dragDropService.boxClassList[this.itemId] = true;
+    // console.log(this.dragDropService.boxClassList);
+    // console.log(this.dragDropService.boxClassList[this.itemId]);
   }
   remove(id: string) {
     console.log(id + "deleted");

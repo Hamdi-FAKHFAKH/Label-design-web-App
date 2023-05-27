@@ -23,6 +23,7 @@ import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
 import Swal from "sweetalert2";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "ngx-label-component",
@@ -37,6 +38,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   @Output() withSN = new EventEmitter<boolean>();
   @Output() sn = new EventEmitter<SerialNumberData>();
   @Output() withDataMatrix = new EventEmitter<Boolean>();
+  produit;
+  formatLot;
   list1: ComponetList[];
   labelStyle: {
     "background-color"?: string;
@@ -57,11 +60,13 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   SN: SerialNumberData;
   dragDropLibre: boolean = true;
   snComp: ComponetList;
+  dataMatrixComp: ComponetList;
   constructor(
     private gestionProduitHttpService: GestionProduitHttpService,
     private labelHttpService: LabeltHttpService,
     public dragDropService: DragDropService,
-    private detailImpressionHttpService: DetailImpressionHttpService
+    private detailImpressionHttpService: DetailImpressionHttpService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.changeSN.subscribe(() => {
@@ -89,19 +94,26 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   async loadEtiquette(refProd: string) {
     this.list1 = [];
     this.labelStyle = {};
-    let produit;
+
     try {
-      produit = (
+      this.produit = (
         await this.gestionProduitHttpService.getOneProduit(refProd).toPromise()
       ).produit;
-      this.withDataMatrix.emit(produit.withDataMatrix);
+      this.withDataMatrix.emit(this.produit.withDataMatrix);
     } catch (e) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "Produit n'existe Pas!",
-        footer:
-          '<a [routerLink]="["/pages/apt/gestionProduits"]" >Créer un produit pour cet OF</a>',
+        showConfirmButton: true,
+        confirmButtonColor: "#3374B5",
+        confirmButtonText: "Créer un produit pour cet OF",
+        showCancelButton: true,
+        cancelButtonText: "Fermer",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(["/pages/apt/gestionProduits"]);
+        }
       });
       return;
     }
@@ -109,7 +121,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     try {
       etiquette = (
         await this.labelHttpService
-          .GetOneEtiquette(produit.idEtiquette)
+          .GetOneEtiquette(this.produit.idEtiquette)
           .toPromise()
       ).etiquette;
     } catch (e) {
@@ -121,8 +133,15 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         icon: "error",
         title: "Oops...",
         text: "Aucune Etiquette crée pour ce produit",
-        footer:
-          '<a href="/pages/apt/CreationEtiquette" >Créer une Etiquette pour ce Produit</a>',
+        showConfirmButton: true,
+        confirmButtonColor: "#3374B5",
+        confirmButtonText: "Créer une Etiquette pour ce Produit",
+        showCancelButton: true,
+        cancelButtonText: "Fermer",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(["/pages/apt/CreationEtiquette"]);
+        }
       });
     }
     if (etiquette) {
@@ -150,45 +169,45 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       }
       // download all components of label from DB
       const { composents } = await this.labelHttpService
-        .GetAllComponentsByEtiquette(produit.idEtiquette)
+        .GetAllComponentsByEtiquette(this.produit.idEtiquette)
         .toPromise();
       //get Client
-      const client = produit.codeClient
+      const client = this.produit.codeClient
         ? (
             await this.gestionProduitHttpService
-              .getClient(produit.codeClient)
+              .getClient(this.produit.codeClient)
               .toPromise()
           ).body.client
         : null;
       //get Fournisseur
-      const fournisseur = produit.codeFournisseur
+      const fournisseur = this.produit.codeFournisseur
         ? (
             await this.gestionProduitHttpService
-              .getFournisseur(produit.codeFournisseur)
+              .getFournisseur(this.produit.codeFournisseur)
               .toPromise()
           ).body.fournisseur
         : null;
       //get Lot
-      const lot = produit.numLot
+      const lot = this.produit.numLot
         ? (
             await this.gestionProduitHttpService
-              .getOneLot(produit.numLot)
+              .getOneLot(this.produit.numLot)
               .toPromise()
           ).lot
         : null;
-
+      this.formatLot = lot.format;
       //get Forme
       const forme = await Promise.all(
-        produit.formes.split(";").map((val) => {
+        this.produit.formes.split(";").map((val) => {
           if (val) {
             return this.gestionProduitHttpService.getOneForm(val).toPromise();
           }
         })
       );
       //get SN
-      const SN = produit.idSN
+      const SN = this.produit.idSN
         ? await this.gestionProduitHttpService
-            .getOneSerialNumber(produit.idSN)
+            .getOneSerialNumber(this.produit.idSN)
             .toPromise()
         : null;
 
@@ -226,7 +245,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           if (comp.refItem == "idSN") {
             this.snComp = this.ComponentToInsert(
               comp,
-              produit,
+              this.produit,
               client,
               fournisseur,
               forme,
@@ -234,11 +253,22 @@ export class LabelComponentComponent implements OnChanges, OnInit {
               SN
             );
             this.list1.push(this.snComp);
+          } else if (comp.refItem == "datamatrixData") {
+            this.dataMatrixComp = this.ComponentToInsert(
+              comp,
+              this.produit,
+              client,
+              fournisseur,
+              forme,
+              lot,
+              SN
+            );
+            this.list1.push(this.dataMatrixComp);
           } else {
             this.list1.push(
               this.ComponentToInsert(
                 comp,
-                produit,
+                this.produit,
                 client,
                 fournisseur,
                 forme,
@@ -252,14 +282,13 @@ export class LabelComponentComponent implements OnChanges, OnInit {
             y: +comp.y,
           };
         });
-        console.log(this.dragDropService.dragPosition);
       } else {
         this.dragDropLibre = false;
         this.list = [];
         const list: ComponetList[] = [];
         this.uploadData(
           Array.from(composents),
-          produit,
+          this.produit,
           client,
           fournisseur,
           forme,
@@ -268,6 +297,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         );
         this.orderElementsInList1(composents, this.list, list);
         this.snComp = this.findSN(list);
+        this.dataMatrixComp = this.findDataMatrix(list);
         console.log(this.snComp);
         this.list1 = list;
       }
@@ -290,6 +320,26 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     return (
       res || resarray.find((val) => val && val.refItem == "idSN" && val.data)
     );
+  }
+  findDataMatrix(data: ComponetList[]) {
+    const res = data.find((val) => val.refItem == "datamatrixData" && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children.length > 0) {
+          return this.findDataMatrix(val.children);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res ||
+      resarray.find((val) => val && val.refItem == "dataMatrixData" && val.data)
+    );
+  }
+  navigate() {
+    console.log("hellp");
   }
   // parcourir les element a partir de BD et les insérer dans list ( utiliser dans le drag & drop avec container)
   uploadData(listFromDB, produit, client, fournisseur, form, lot, SN) {
@@ -403,6 +453,14 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           ? form[+obj.refItem.split("-")[1]].form.path
           : obj.refItem == "of" && this.OF
           ? this.OF
+          : obj.refItem == "datamatrixData"
+          ? produit[obj.refItem]
+              .replace(
+                "<<SN>>",
+                SN.serialNumber.prefix + SN.serialNumber.suffix
+              )
+              .replace("<<OF>>", this.OF)
+              .replace("<<FormatLot>>", lot.format)
           : produit[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,
@@ -446,9 +504,18 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   }
   // changer le Numéro de Série dans l'étiquette
   changeSn = () => {
+    console.log(this.produit.datamatrixData);
+
+    const lastSn = this.SN.prefix + this.SN.suffix;
     const suff = parseInt(this.SN.suffix) + +this.SN.pas;
     this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");
     this.snComp.data = this.SN.prefix + this.SN.suffix;
-    console.log(this.snComp);
+    if (this.dataMatrixComp) {
+      this.dataMatrixComp.data = this.produit.datamatrixData.replace(
+        "<<SN>>",
+        this.snComp.data
+      );
+    }
+    console.log(this.dataMatrixComp);
   };
 }

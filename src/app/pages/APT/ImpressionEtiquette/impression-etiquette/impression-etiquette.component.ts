@@ -4,7 +4,10 @@ import { ComponetList } from "../../CréationEtiquette/ComposentData";
 import { format } from "date-fns";
 import { LabelService } from "../../CréationEtiquette/label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
-import { SerialNumberData } from "../../GestionProduits/GestionProduit.data";
+import {
+  ProduitData,
+  SerialNumberData,
+} from "../../GestionProduits/GestionProduit.data";
 import { LocalDataSource } from "ng2-smart-table";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 import { user } from "../../../../auth/user";
@@ -29,6 +32,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   formatLot: string;
   lot: ComponetList;
   idEtiquette: string;
+  produit: ProduitData;
   lotField;
   nbrCopie;
   formatLotValid: boolean;
@@ -117,11 +121,12 @@ export class ImpressionEtiquetteComponent implements OnInit {
       this.OF = of.ofnum;
 
       try {
-        this.idEtiquette = await (
+        this.produit = (
           await this.gestionProduitHttpService
             .getOneProduit(this.refProd)
             .toPromise()
-        ).produit.idEtiquette;
+        ).produit;
+        this.idEtiquette = this.produit.idEtiquette;
       } catch (e) {}
       this.impressionDetail = {
         ...this.impressionDetail,
@@ -215,9 +220,6 @@ export class ImpressionEtiquetteComponent implements OnInit {
     } else {
       this.nbrCopieValid = false;
     }
-  }
-  changeSNFunction() {
-    this.changeSn.emit();
   }
   getSN(sn: SerialNumberData) {
     this.sn = sn;
@@ -374,6 +376,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
     let da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
     await this.detailImpressionHttpService
       .CreateEtiquetteImprimee({
+        dataMatrixData: this.produit["datamatrixData"]
+          .replace("<<SN>>", this.sn.prefix + this.sn.suffix)
+          .replace("<<OF>>", this.OF)
+          .replace("<<FormatLot>>", this.lot.data),
         idEtiquette: this.idEtiquette,
         action: "impression",
         date: new Date(),
