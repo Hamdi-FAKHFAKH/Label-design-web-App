@@ -5,6 +5,7 @@ import { ImpressionHttpService } from "../ImpressionEtiquette/impressionHttpServ
 var domToPdf = require("dom-to-pdf");
 @Injectable()
 export class LabelService {
+  // initial label data
   private initLabelInfo: infoLabel = {
     id: null,
     refProd: null,
@@ -19,8 +20,10 @@ export class LabelService {
     showPaddingCadre: false,
   };
   labelInfo = new BehaviorSubject<infoLabel>(this.initLabelInfo);
+  //Enable/disable the Design tab
   canDesign = false;
-  pdfData;
+  base64PdfData;
+  //
   constructor(private ImpressionHttpService: ImpressionHttpService) {}
   async convertToPdf() {
     var element = document.getElementById("test");
@@ -30,17 +33,17 @@ export class LabelService {
       scale: 3,
     };
     const pdf = await domToPdf(element, options);
-    this.pdfData = pdf.output("datauristring");
+    this.base64PdfData = pdf.output("datauristring");
   }
+  //save pdf file in the server
   sendPdfFileToServer(refProd) {
     return this.ImpressionHttpService.sendPdfFileToServer({
-      data: this.pdfData,
+      data: this.base64PdfData,
       fileName: `label-${refProd}.pdf`,
     }).toPromise();
   }
 }
-
-interface infoLabel {
+export interface infoLabel {
   id: string;
   refProd: string;
   refProdSimlaire: string;

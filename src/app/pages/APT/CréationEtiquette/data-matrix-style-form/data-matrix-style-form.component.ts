@@ -1,26 +1,28 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { DragDropService } from "../drag-drop.service";
-import { ComponetList } from "../ComposentData";
+import { LabelItem } from "../ComposentData";
 import { LabelService } from "../label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { toXML } from "jstoxml";
 import { LabeltHttpService } from "../labelHTTP.service";
+import { ProduitData } from "../../GestionProduits/GestionProduit.data";
 @Component({
   selector: "ngx-data-matrix-style-form",
   templateUrl: "./data-matrix-style-form.component.html",
   styleUrls: ["./data-matrix-style-form.component.scss"],
 })
 export class DataMatrixStyleFormComponent implements OnInit {
-  @Input() itemId;
+  // the id of the selected item in the label
+  @Input() itemId: string;
   xmlForm: string;
   math = Math;
-  listItem = [];
-  marginCliked;
+  // specify which margin selected
+  marginCliked: string;
+  //{itemID : itemObject} of items in the label
   items = {};
-  fixString = "";
-  produit;
-  tagList = [];
-  valueList = [];
+  produit: ProduitData;
+  tagList: string[] = [];
+  valueList: string[] = [];
   codage = ["ASCI"];
   barcodeObjs = [
     { name: "Code 128", value: "CODE128" },
@@ -36,19 +38,11 @@ export class DataMatrixStyleFormComponent implements OnInit {
     private labelHttpService: LabeltHttpService,
     private gestionProduitHttpService: GestionProduitHttpService
   ) {}
-  getAllItems(list: ComponetList[]) {
-    list.forEach((item) => {
-      this.items[item.id] = item;
-      if (item.children) {
-        this.getAllItems(item.children);
-      }
-    });
-  }
-
+  //
   async ngOnInit() {
     this.xmlForm = this.dragDropService.items[this.itemId].data;
     this.marginCliked = "margin";
-    this.getAllItems(this.dragDropService.list1);
+    this.items = this.dragDropService.items;
     this.tagList = (
       await this.labelHttpService.GetAllTag().toPromise()
     ).tags.map((val) => val.tag);
@@ -72,7 +66,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
       this.valueList.push("<<FormatLot>>");
     });
   }
-
+  // change QR code Parameter
   change(champName: string, champval: string) {
     if (champName == "format") {
       this.items[this.itemId].dataMatrixFormat = champval;
@@ -86,6 +80,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
       this.items[this.itemId].data = champval;
     }
   }
+  //change datamatrix style
   changeStyle(champName: string, champval: string) {
     this.items[this.itemId].style = {
       ...this.items[this.itemId].style,
@@ -101,15 +96,8 @@ export class DataMatrixStyleFormComponent implements OnInit {
       };
     }
   }
+  // add data to the dataMatrix
   addItem(tag: string, val: string) {
-    let tagexiste = false;
-    this.listItem.forEach((val) => {
-      if (Object.keys(val)[0] == tag) {
-        tagexiste = true;
-        return;
-      }
-    });
-
     if (tag == "|)>") {
       this.xmlForm = "|)>" + this.xmlForm;
     }
@@ -136,6 +124,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
     this.xmlForm = this.xmlForm + res;
     this.change("data", this.xmlForm);
   }
+  //
   changePosition(x, y) {
     const xround = Math.round(+x / 0.26);
     const yround = Math.round(+y / 0.26);

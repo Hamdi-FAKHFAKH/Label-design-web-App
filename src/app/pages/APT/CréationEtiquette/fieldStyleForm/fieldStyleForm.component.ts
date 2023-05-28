@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { DragDropService } from "../drag-drop.service";
-import { ComponentStyle, ComponetList } from "../ComposentData";
+import { ComponentStyle, LabelItem } from "../ComposentData";
 import { ProduitData } from "../../GestionProduits/GestionProduit.data";
 
 @Component({
@@ -16,16 +16,17 @@ import { ProduitData } from "../../GestionProduits/GestionProduit.data";
   styleUrls: ["./fieldStyleForm.component.scss"],
 })
 export class FieldStyleFormComponent implements OnInit, OnChanges {
+  // the id of the selected item in the label
   @Input() itemId;
   math = Math;
   produit: ProduitData;
-  list1;
+  listOfLabelElementsCopy: LabelItem[];
   componentstyle: ComponentStyle = {};
-  paddingClicked;
-  paddingValue;
-  marginValue;
-  marginCliked;
-  defaultrotation;
+  // specify which padding selected
+  paddingClicked: string;
+  // specify which margin selected
+  marginCliked: string;
+  defaultrotation: string;
   fontFamily = [
     "Verdana",
     "Geneva",
@@ -36,13 +37,14 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
     "Courier",
     "monospace",
   ];
-  defaultSelectedStyle;
+  defaultSelectedStyle: string;
   stylesDuplicated = {};
   constructor(public dragDropService: DragDropService) {}
+  //
   ngOnInit(): void {
-    // this.getAllItems(this.dragDropService.list1);
     this.produit = this.dragDropService.produit;
   }
+  // executed when changing item ID (when changing selected item)
   ngOnChanges(changes: SimpleChanges): void {
     this.paddingClicked = this.dragDropService.items[this.itemId].style[
       "padding-right"
@@ -72,23 +74,18 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
         this.dragDropService.items[this.itemId].style[key] =
           this.componentstyle[key];
     });
-
-    // const transformvalue: string = this.dragDropService.items[this.itemId].style
-    //   ? this.dragDropService.items[this.itemId].style.transform
-    //   : null;
-    // if (transformvalue) {
-    //   this.defaultrotation = transformvalue.substring(
-    //     transformvalue.indexOf("(") + 1,
-    //     transformvalue.indexOf(")")
-    //   );
-    // }
-    this.list1 = this.dragDropService.list1.slice();
-    this.list1.splice(
-      this.dragDropService.list1.findIndex((obj) => obj.id == this.itemId),
+    this.listOfLabelElementsCopy =
+      this.dragDropService.listOfLabelElements.slice();
+    this.listOfLabelElementsCopy.splice(
+      this.dragDropService.listOfLabelElements.findIndex(
+        (obj) => obj.id == this.itemId
+      ),
       1
     );
     this.defaultSelectedStyle = this.stylesDuplicated[this.itemId] || null;
   }
+
+  //change the style of the text element
   changeStyle(itemName: string, itemValue: string | number | boolean) {
     console.log();
 
@@ -129,13 +126,8 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
       ...this.dragDropService.items[this.itemId].style,
       [itemName]: itemValue,
     };
-
-    //this.dragDropService.items[this.itemId].style = this.componentstyle;
-    // Object.assign(this.dragDropService.items[this.itemId].style, this.componentstyle);
-    console.log("***style***");
-
-    console.log(this.dragDropService.items[this.itemId].style);
   }
+  //change position of the text element
   changePosition(x, y) {
     const xround = Math.round(+x / 0.26);
     const yround = Math.round(+y / 0.26);
@@ -147,6 +139,7 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
 
     console.log(this.dragDropService.dragPosition[this.itemId]);
   }
+  //duplicate Style of the text element
   duplicateStyle(data: string) {
     data &&
       Object.assign(

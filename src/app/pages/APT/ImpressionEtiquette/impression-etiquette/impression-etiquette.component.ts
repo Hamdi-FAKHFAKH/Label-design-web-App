@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from "@angular/core";
 import { ImpressionHttpService } from "../impressionHttpService";
-import { ComponetList } from "../../CréationEtiquette/ComposentData";
+import { LabelItem } from "../../CréationEtiquette/ComposentData";
 import { format } from "date-fns";
 import { LabelService } from "../../CréationEtiquette/label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
@@ -30,7 +30,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   OfList: string[];
   printerList: string[];
   formatLot: string;
-  lot: ComponetList;
+  lot: LabelItem;
   idEtiquette: string;
   produit: ProduitData;
   lotField;
@@ -38,7 +38,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   formatLotValid: boolean;
   nbrCopieValid: boolean;
   withSN: boolean;
-  etiquetteData: ComponetList[];
+  etiquetteData: LabelItem[];
   changeSn = new EventEmitter();
   numOF: string;
   listofImpressionDetail;
@@ -135,7 +135,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
       };
     }
   }
-  async loadList1Data(data: ComponetList[]) {
+  async loadList1Data(data: LabelItem[]) {
     this.formatLotValid = false;
     this.nbrCopieValid = false;
     this.lot = this.findDateFormat(data);
@@ -151,7 +151,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
     console.log("withSN");
     console.log(this.withSN);
   }
-  findDateFormat(data: ComponetList[]) {
+  findDateFormat(data: LabelItem[]) {
     const res = data.find((val) => val.refItem == "format" && val.data);
     let resarray;
     if (!res) {
@@ -167,7 +167,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
       res || resarray.find((val) => val && val.refItem == "format" && val.data)
     );
   }
-  findSN(data: ComponetList[]) {
+  findSN(data: LabelItem[]) {
     const res = data.find((val) => val.refItem == "idSN" && val.data);
     let resarray;
     if (!res) {

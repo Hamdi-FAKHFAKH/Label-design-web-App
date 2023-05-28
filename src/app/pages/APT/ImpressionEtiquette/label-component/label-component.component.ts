@@ -9,8 +9,8 @@ import {
 } from "@angular/core";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { LabeltHttpService } from "../../CréationEtiquette/labelHTTP.service";
-import { ComposentHttpData } from "../../CréationEtiquette/EtiquetteHttp.data";
-import { ComponetList } from "../../CréationEtiquette/ComposentData";
+import { ComposentHttpData } from "../../CréationEtiquette/labelHttp.data";
+import { LabelItem } from "../../CréationEtiquette/ComposentData";
 import {
   ClientData,
   CreateFormeResultData,
@@ -34,13 +34,13 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   @Input() refProd;
   @Input() OF;
   @Input() changeSN;
-  @Output() list1Event = new EventEmitter<ComponetList[]>();
+  @Output() list1Event = new EventEmitter<LabelItem[]>();
   @Output() withSN = new EventEmitter<boolean>();
   @Output() sn = new EventEmitter<SerialNumberData>();
   @Output() withDataMatrix = new EventEmitter<Boolean>();
   produit;
   formatLot;
-  list1: ComponetList[];
+  list1: LabelItem[];
   labelStyle: {
     "background-color"?: string;
     width?: string;
@@ -56,11 +56,11 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     largeur: number;
     padding: number;
   };
-  list: ComponetList[];
+  list: LabelItem[];
   SN: SerialNumberData;
   dragDropLibre: boolean = true;
-  snComp: ComponetList;
-  dataMatrixComp: ComponetList;
+  snComp: LabelItem;
+  dataMatrixComp: LabelItem;
   constructor(
     private gestionProduitHttpService: GestionProduitHttpService,
     private labelHttpService: LabeltHttpService,
@@ -74,7 +74,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     });
   }
   // return style de container en mettant son bordure none
-  rowStyle(item: ComponetList) {
+  rowStyle(item: LabelItem) {
     return {
       ...item.style,
       "border-style": "none",
@@ -285,7 +285,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       } else {
         this.dragDropLibre = false;
         this.list = [];
-        const list: ComponetList[] = [];
+        const list: LabelItem[] = [];
         this.uploadData(
           Array.from(composents),
           this.produit,
@@ -305,7 +305,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     }
   }
   // rechercher l'element Sérial Number dans un list
-  findSN(data: ComponetList[]) {
+  findSN(data: LabelItem[]) {
     const res = data.find((val) => val.refItem == "idSN" && val.data);
     let resarray;
     if (!res) {
@@ -321,7 +321,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       res || resarray.find((val) => val && val.refItem == "idSN" && val.data)
     );
   }
-  findDataMatrix(data: ComponetList[]) {
+  findDataMatrix(data: LabelItem[]) {
     const res = data.find((val) => val.refItem == "datamatrixData" && val.data);
     let resarray;
     if (!res) {
@@ -399,8 +399,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   // order item in list1
   orderElementsInList1(
     listFromDB: ComposentHttpData[],
-    listIn: ComponetList[],
-    listOut: ComponetList[]
+    listIn: LabelItem[],
+    listOut: LabelItem[]
   ) {
     listIn.forEach((val, index) => {
       listFromDB.forEach((itemFromDB) => {
@@ -437,7 +437,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     form: CreateFormeResultData[],
     lot: LotData,
     SN: GetOneSerialNumberResultData
-  ): ComponetList {
+  ): LabelItem {
     return {
       id: obj.id,
       data:

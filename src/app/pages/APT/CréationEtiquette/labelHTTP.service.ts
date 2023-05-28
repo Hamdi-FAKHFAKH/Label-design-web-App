@@ -8,7 +8,7 @@ import {
   GetComposentResultData,
   GetEtiquetteResponseData,
   GetOneComposentResultData,
-} from "./EtiquetteHttp.data";
+} from "./labelHttp.data";
 @Injectable()
 export class LabeltHttpService {
   constructor(private http: HttpClient) {}

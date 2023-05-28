@@ -7,11 +7,15 @@ import { DragDropService } from "../drag-drop.service";
   styleUrls: ["./container-style-form.component.scss"],
 })
 export class ContainerStyleFormComponent implements OnInit {
-  paddingClicked;
-  marginCliked;
-  @Input() itemId;
-  defaultrotation;
+  // specify which padding selected
+  paddingClicked: string;
+  // specify which margin selected
+  marginCliked: string;
+  // the id of the selected item in the label
+  @Input() itemId: string;
+  defaultrotation: string;
   math = Math;
+  //
   constructor(public dragDropService: DragDropService) {}
 
   ngOnInit(): void {
@@ -27,6 +31,7 @@ export class ContainerStyleFormComponent implements OnInit {
       );
     }
   }
+  // change container style
   changeStyle(itemName: string, itemValue: string) {
     this.dragDropService.items[this.itemId].style = {
       ...this.dragDropService.items[this.itemId].style,

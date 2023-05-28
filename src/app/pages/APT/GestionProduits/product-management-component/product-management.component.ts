@@ -3,18 +3,18 @@ import { LocalDataSource } from "ng2-smart-table";
 
 import { SmartTableData } from "../../../../@core/data/smart-table";
 import { NbWindowService } from "@nebular/theme";
-import { WindowFormComponent } from "../create-produit/window-form.component";
+import { ProductCreationWindowComponent } from "../create-product/product-creation-window.component";
 import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 import { exhaustMap } from "rxjs/operators";
 import { GestionProduitService } from "../GestionProduit.service";
-import { UpdateProduitComponent } from "../update-produit/update-produit.component";
+import { UpdateProduitComponent } from "../update-product/update-produit.component";
 import Swal from "sweetalert2";
 @Component({
   selector: "ngx-smart-table",
-  templateUrl: "./smart-table.component.html",
-  styleUrls: ["./smart-table.css", "./smart-table.component.scss"],
+  templateUrl: "./product-management.component.html",
+  styleUrls: ["./smart-table.css", "./product-management.component.scss"],
 })
-export class SmartTableComponent {
+export class ProductMangementComponent {
   settings = {
     hideSubHeader: true,
     pager: { display: true },
@@ -184,7 +184,7 @@ export class SmartTableComponent {
       event.confirm.reject();
     }
   }
-
+  // delete Product
   async onDeleteConfirm(event) {
     Swal.fire({
       title: "Es-tu sûr?",
@@ -226,8 +226,9 @@ export class SmartTableComponent {
       }
     });
   }
-  openWindowForm() {
-    const window = this.windowService.open(WindowFormComponent, {
+  // open the product creation window
+  openCreateProductWindow() {
+    const window = this.windowService.open(ProductCreationWindowComponent, {
       title: `Nouveau Produit`,
       windowClass: "container",
       closeOnBackdropClick: false,
@@ -239,7 +240,8 @@ export class SmartTableComponent {
       });
     });
   }
-  openUpdateProduitWindow(event) {
+  //open the product update window
+  openUpdateProductWindow(event) {
     const window = this.windowService.open(UpdateProduitComponent, {
       title: `Modification Produit`,
       windowClass: "container",

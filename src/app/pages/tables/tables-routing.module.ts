@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { TablesComponent } from "./tables.component";
-import { SmartTableComponent } from "../APT/GestionProduits/smart-table/smart-table.component";
+import { SmartTableComponent } from "../APT/GestionProduits/product-management-component/product-management.component";
 import { TreeGridComponent } from "./tree-grid/tree-grid.component";
 
 const routes: Routes = [

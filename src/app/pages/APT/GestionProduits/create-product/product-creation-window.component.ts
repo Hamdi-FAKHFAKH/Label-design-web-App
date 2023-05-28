@@ -2,44 +2,32 @@ import { Component, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { NbWindowRef } from "@nebular/theme";
 import { GestionProduitHttpService } from "../GestionProduitHttp.service";
-import { saveAs } from "file-saver";
-import { Observable, forkJoin } from "rxjs";
 import { GestionProduitService } from "../GestionProduit.service";
 import { SerialNumberData } from "../GestionProduit.data";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
 @Component({
-  templateUrl: "./window-form.component.html",
-  styleUrls: ["window-form.component.scss"],
+  templateUrl: "./product-creation-window.component.html",
+  styleUrls: ["./product-creation-window.component.scss"],
 })
-export class WindowFormComponent implements OnInit {
-  checkValueByRegex(value, id) {
-    if (value) return value.match(/^[^a-zA-Z]+$/);
-    return false;
-  }
-  formes: { id: string; name: string; path: string; clicked: boolean }[];
-  addForme(id, name, path, clicked, index) {
-    if (clicked) {
-      this.formes[index] = { id: id, name: name, path: path, clicked: true };
-    } else {
-      this.formes[index] = { id: id, name: name, path: path, clicked: false };
-    }
-    console.log(this.gestionProduitService.formes);
-  }
+export class ProductCreationWindowComponent implements OnInit {
   produits: String[] = [];
   lotData: string[] = [];
   SerialNumberData: SerialNumberData[];
   selectedSerialNumber: SerialNumberData;
   addNewSerialNumber: boolean;
   formatLotValid: Boolean = false;
-  format;
+  formatSN: string;
   lotValue: string;
+  // Icons(formes) list
+  formes: { id: string; name: string; path: string; clicked: boolean }[];
+  //
   constructor(
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService
   ) {}
-
+  //
   async ngOnInit() {
     this.gestionProduitService.formes.map((val) => {
       val.clicked = false;
@@ -60,9 +48,25 @@ export class WindowFormComponent implements OnInit {
     });
     this.addNewSerialNumber = false;
   }
+  // check if data is text
+  checkValueByRegex(value) {
+    if (value) return value.match(/^[^a-zA-Z]+$/);
+    return false;
+  }
+  // select / unselected formes
+  addForme(id, name, path, clicked, index) {
+    if (clicked) {
+      this.formes[index] = { id: id, name: name, path: path, clicked: true };
+    } else {
+      this.formes[index] = { id: id, name: name, path: path, clicked: false };
+    }
+    console.log(this.gestionProduitService.formes);
+  }
+  //close product creation window
   close() {
     this.windowRef.close();
   }
+  // Submit the product creation form
   async onSubmit(form: NgForm) {
     let success = true;
     let idSN;
@@ -85,8 +89,8 @@ export class WindowFormComponent implements OnInit {
     if (!success) {
       return;
     }
-    // créer / vérifier l'existance du Lot
-    // créer un nouveau Format de lot
+    // create / check the existence of the Lot
+    // create a new Lot Format
     if (form.value.newformatLot) {
       let res;
       try {
@@ -118,18 +122,18 @@ export class WindowFormComponent implements OnInit {
     ) {
       numLot = form.value.formatLot;
     }
-    // créer / vérifier l'existance d'un client
+    //create / check the existence of a <<client>>
     if (form.value.codeClient) {
       success =
         (await this.gestionProduitService.AddClient(form.value)) && success;
     }
-    // créer / vérifier l'existance d'un fournisseur
+    // create / check the existence of a <<fournisseur>>
     if (form.value.codeFournisseur) {
       success =
         (await this.gestionProduitService.AddFournisseur(form.value)) &&
         success;
     }
-    // créer un SerialNumber
+    // create SerialNumber
     if (
       form.value.withSN &&
       form.value.prefix &&
@@ -139,7 +143,7 @@ export class WindowFormComponent implements OnInit {
       form.value.pas &&
       this.addNewSerialNumber
     ) {
-      this.format =
+      this.formatSN =
         form.value.prefix +
         "-" +
         form.value.suffix +
@@ -150,7 +154,7 @@ export class WindowFormComponent implements OnInit {
       idSN = await this.gestionProduitService.AddSerialNumber(
         form.value,
 
-        this.format
+        this.formatSN
       );
     }
     if (!this.addNewSerialNumber && form.value.FormatSN) {
@@ -164,7 +168,7 @@ export class WindowFormComponent implements OnInit {
         formes += val.id + ";";
       }
     });
-    // créer un produit
+    // create product
     if (success && form.value.ref) {
       success = await this.gestionProduitService.CreateProduit(
         form.value,
@@ -181,23 +185,21 @@ export class WindowFormComponent implements OnInit {
           });
     }
   }
+
   SelectSn(val) {
     this.selectedSerialNumber = this.SerialNumberData[val];
   }
+
   addSN(event) {
     this.addNewSerialNumber = event.target.checked;
-    console.log(event.target.checked);
-    console.log(this.selectedSerialNumber);
   }
-  getBase641 = (e) => {
+  // get base64 data of new added icon
+  getBase64 = (e) => {
     var file = e.target.files[0];
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
       /** ******* console ********** */
-      console.log("name");
-      console.log(e.target.files[0]);
-      console.log(reader.result.toString());
       this.gestionProduitHttpService
         .createForm({
           id: uuidv4(),
@@ -211,14 +213,6 @@ export class WindowFormComponent implements OnInit {
         .toPromise()
         .then((val) => {
           console.log("image saved");
-          // this.gestionProduitService.formes.push({
-          //   name: e.target.files[0].name.substring(
-          //     0,
-          //     e.target.files[0].name.indexOf(".")
-          //   ),
-          //   clicked: false,
-          //   path: reader.result.toString(),
-          // });
           this.gestionProduitService.getFormes();
         })
         .catch((e) => {
@@ -233,6 +227,7 @@ export class WindowFormComponent implements OnInit {
       console.log("Error: ", error);
     };
   };
+
   checkFormatLot(data: string) {
     data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
       ? (this.formatLotValid = true)

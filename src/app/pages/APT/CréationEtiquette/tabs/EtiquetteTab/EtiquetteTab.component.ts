@@ -1,20 +1,20 @@
 import { Component, OnInit } from "@angular/core";
-import { LabelService } from "../../label.service";
+import { LabelService, infoLabel } from "../../label.service";
 import { GestionProduitHttpService } from "../../../GestionProduits/GestionProduitHttp.service";
 import { LabeltHttpService } from "../../labelHTTP.service";
 import { DragDropService } from "../../drag-drop.service";
-import { ComposentHttpData } from "../../EtiquetteHttp.data";
+import { ComposentHttpData } from "../../labelHttp.data";
 import {
+  AllProduitData,
   ClientData,
   CreateFormeResultData,
   FournisseurData,
-  GetFormeResultData,
   GetOneSerialNumberResultData,
   GetProduitResponseData,
   LotData,
   ProduitData,
 } from "../../../GestionProduits/GestionProduit.data";
-import { ComponetList } from "../../ComposentData";
+import { LabelItem } from "../../ComposentData";
 import Swal from "sweetalert2";
 @Component({
   selector: "ngx-etiquette-tab",
@@ -22,23 +22,26 @@ import Swal from "sweetalert2";
   styleUrls: ["./EtiquetteTab.component.scss"],
 })
 export class EtiquetteTabComponent implements OnInit {
-  largeur;
-  longueur;
-  padding;
-  color;
+  largeur: number;
+  longueur: number;
+  padding: number;
+  color: string;
   defaultRefProd: string = null;
   lastRefProd: string;
   unitLong: string;
   unitLarg: string;
   unitPadding: string;
-  labelInfo;
-  listProd;
+  labelInfo: infoLabel;
+  listProd: AllProduitData[];
   refProdWithEtiquette: ProduitData[];
   minPadding: number;
   componentsExtractedFromDB = [];
-  listOfComponentFromDB: ComponetList[];
+  listOfComponentFromDB: LabelItem[];
   productToBeCreated: ProduitData;
   produitwithEtiquette: GetProduitResponseData;
+  listFromDB: ComposentHttpData[];
+  list: LabelItem[] = [];
+  nochildren = false;
   constructor(
     private lableService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -71,7 +74,7 @@ export class EtiquetteTabComponent implements OnInit {
     });
     console.log("product to creted");
   }
-
+  //change Label info
   change(elemName, elemValue) {
     if (this.labelInfo.format == "cercle" && elemName == "longueur") {
       this.minPadding = Math.ceil(
@@ -97,7 +100,7 @@ export class EtiquetteTabComponent implements OnInit {
         });
       }, 1600);
     } else if (elemName == "refProd") {
-      if (this.dragDropService.list1.length >= 1) {
+      if (this.dragDropService.listOfLabelElements.length >= 1) {
         Swal.fire({
           title:
             "êtes-vous sûr de changer la référence ? tous les champs sur l'étiquette seront perdus",
@@ -110,7 +113,7 @@ export class EtiquetteTabComponent implements OnInit {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
             this.refProdWithEtiquette = [];
-            this.dragDropService.list1.length = 0;
+            this.dragDropService.listOfLabelElements.length = 0;
             this.lastRefProd = elemValue;
             this.lableService.labelInfo.next({
               id: null,
@@ -243,9 +246,10 @@ export class EtiquetteTabComponent implements OnInit {
     this.padding = 0;
     this.minPadding = 0;
   }
+  // position the elements imported from the database in the label
   async DownloadLabelData(val) {
     if (val && val !== null) {
-      this.dragDropService.list1.length = 0;
+      this.dragDropService.listOfLabelElements.length = 0;
       this.change("refProdSimlaire", val);
       const { produit } = await this.gestionProduitHttpService
         .getOneProduit(val)
@@ -298,7 +302,7 @@ export class EtiquetteTabComponent implements OnInit {
             .getOneSerialNumber(this.productToBeCreated.idSN)
             .toPromise()
         : null;
-      this.dragDropService.list1.length = 0;
+      this.dragDropService.listOfLabelElements.length = 0;
       this.listFromDB = [...composents];
       this.list = [];
       const forme = await Promise.all(
@@ -317,7 +321,7 @@ export class EtiquetteTabComponent implements OnInit {
         this.dragDropService.dragDropLibre = true;
         this.dragDropService.dragPosition = {};
         composents.forEach((comp) => {
-          this.dragDropService.list1.push(
+          this.dragDropService.listOfLabelElements.push(
             this.ComponentToInsert(
               comp,
               produit,
@@ -333,15 +337,15 @@ export class EtiquetteTabComponent implements OnInit {
             y: +comp.y,
           };
           this.dragDropService.nodeLookup2[comp.id] =
-            this.dragDropService.list2.find(
+            this.dragDropService.listOfDragItems.find(
               (val) => val.refItem == comp.refItem
             );
 
           console.log("*** comp ID ***");
           console.log(comp.id);
 
-          this.dragDropService.list2.splice(
-            this.dragDropService.list2.findIndex(
+          this.dragDropService.listOfDragItems.splice(
+            this.dragDropService.listOfDragItems.findIndex(
               (val) => val.refItem == comp.refItem
             ),
             1
@@ -349,15 +353,17 @@ export class EtiquetteTabComponent implements OnInit {
         });
       } else {
         this.dragDropService.dragDropLibre = false;
-        const list: ComponetList[] = [];
+        const list: LabelItem[] = [];
         this.uploadData(produit, client, fournisseur, forme, lot, SN);
         this.fillList1(composents, this.list, list);
-        this.dragDropService.list1 = [...list];
+        this.dragDropService.listOfLabelElements = [...list];
       }
       // save all items in list1 into object
-      this.dragDropService.getAllItems(this.dragDropService.list1);
+      this.dragDropService.getAllItems(
+        this.dragDropService.listOfLabelElements
+      );
       console.log("****list 1 ******");
-      console.log(this.dragDropService.list1);
+      console.log(this.dragDropService.listOfLabelElements);
 
       if (this.labelInfo) {
         this.longueur = this.labelInfo.longueur;
@@ -367,7 +373,7 @@ export class EtiquetteTabComponent implements OnInit {
       }
     }
   }
-  list: ComponetList[] = [];
+  // convert component data imported from database to object
   ComponentToInsert(
     obj: ComposentHttpData,
     produit,
@@ -433,18 +439,7 @@ export class EtiquetteTabComponent implements OnInit {
       },
     };
   }
-  findCompoent(list: ComponetList[], component: ComponetList) {
-    list.forEach((val) => {
-      console.log("egale");
-
-      console.log(val.id);
-      console.log(component.id);
-    });
-    return list.some((val) => val.id === component.id);
-  }
-  listFromDB: ComposentHttpData[];
-  nochildren = false;
-
+  // fill in a list with the elements imported from the DB
   uploadData(produit, client, fournisseur, form, lot, SN) {
     this.listFromDB.map((item) => {
       if (item && item.children == "") {
@@ -500,10 +495,11 @@ export class EtiquetteTabComponent implements OnInit {
       this.uploadData(produit, client, fournisseur, form, lot, SN);
     }
   }
+  // sort list items
   fillList1(
     listFromDB: ComposentHttpData[],
-    listIn: ComponetList[],
-    listOut: ComponetList[]
+    listIn: LabelItem[],
+    listOut: LabelItem[]
   ) {
     listIn.forEach((val, index) => {
       listFromDB.forEach((itemFromDB) => {

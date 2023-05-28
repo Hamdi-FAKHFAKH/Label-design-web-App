@@ -8,18 +8,21 @@ import { DragDropService } from "../drag-drop.service";
   templateUrl: "./tabs.component.html",
 })
 export class TabsComponent implements OnInit {
-  canDesign;
+  // enable/disable design Tab
+  canDesign: boolean;
   designTabActive = false;
   labelTabActive = false;
   constructor(
     private labelService: LabelService,
     public dragDropService: DragDropService
   ) {}
+  //
   ngOnInit(): void {
     this.labelService.labelInfo.subscribe((val) => {
       val.refProd ? (this.canDesign = true) : (this.canDesign = false);
     });
   }
+  //change Selected Tab
   tabChange(e) {
     if (e.tabId == "label" || e.tabId == "design") {
       this.dragDropService.propertyTabActive = false;

@@ -350,25 +350,33 @@
               style="padding-left: 0px"
               *ngIf="forme.checked"
             >
-              <img
-                *ngFor="let item of formes; let i = index"
-                src="{{ item.path }}"
-                alt=""
-                height="20"
-                width="20"
-                (click)="
-                  item.clicked = !item.clicked;
-                  addForme(item.id, item.name, item.path, item.clicked, i)
+              <div
+                style="
+                  border: 1px #3374b5 solid;
+                  padding: 11px 4px;
+                  width: 210px;
                 "
-                [ngClass]="{ imgClicked: item.clicked }"
-                style="margin-top: 6px"
-              />
+              >
+                <img
+                  *ngFor="let item of formes; let i = index"
+                  src="{{ item.path }}"
+                  alt=""
+                  height="20"
+                  width="20"
+                  (click)="
+                    item.clicked = !item.clicked;
+                    addForme(item.id, item.name, item.path, item.clicked, i)
+                  "
+                  [ngClass]="{ imgClicked: item.clicked }"
+                  style="margin-top: 6px"
+                />
+              </div>
               <input
                 #formeInput
                 type="file"
                 ref="{hiddenFileInput}"
                 style="display: 'none'"
-                (change)="getBase641($event)"
+                (change)="getBase64($event)"
               />
               <button
                 type="button"
@@ -420,7 +428,11 @@
       >
         Enregistrer Modification
       </button>
-      <button type="button" class="btn btn-danger ms-3" (click)="close()">
+      <button
+        type="button"
+        class="btn btn-danger ms-3"
+        (click)="closeUpdateWindow()"
+      >
         Annuler
       </button>
     </div>

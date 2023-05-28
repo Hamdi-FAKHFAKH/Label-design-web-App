@@ -8,17 +8,21 @@ import { DragDropService } from "../drag-drop.service";
 })
 export class FormeStyleFormComponent implements OnInit {
   @Input() itemId;
+  // specify which margin(top,bottom,...) selected
   marginCliked;
+  // specify which padding selected
   paddingClicked;
   defaultrotation;
   math = Math;
   constructor(public dragDropService: DragDropService) {}
+  //change the style of the forme element
   changeStyle(champName: string, champval: string) {
     this.dragDropService.items[this.itemId].style = {
       ...this.dragDropService.items[this.itemId].style,
       [champName]: champval,
     };
   }
+
   ngOnInit(): void {
     this.paddingClicked = "padding";
     this.marginCliked = "margin";
@@ -32,6 +36,7 @@ export class FormeStyleFormComponent implements OnInit {
       );
     }
   }
+  //
   changePosition(x, y) {
     const xround = Math.round(+x / 0.26);
     const yround = Math.round(+y / 0.26);

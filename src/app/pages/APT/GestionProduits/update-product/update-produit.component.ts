@@ -5,7 +5,7 @@ import { GestionProduitHttpService } from "../GestionProduitHttp.service";
 import { GestionProduitService } from "../GestionProduit.service";
 import { AllProduitData, SerialNumberData } from "../GestionProduit.data";
 import Swal from "sweetalert2";
-
+import { v4 as uuidv4 } from "uuid";
 @Component({
   selector: "ngx-update-produit",
   templateUrl: "./update-produit.component.html",
@@ -14,38 +14,19 @@ import Swal from "sweetalert2";
 export class UpdateProduitComponent implements OnInit {
   formes: { id: string; name: string; path: string; clicked: boolean }[] = [];
   lotValue: string;
-  //vérifier le Format de Lot
+  //check Lot Format
   formatLotValid: boolean = false;
-  // ajoute forme clicked
-  addForme(id, name, path, clicked, index) {
-    if (clicked) {
-      this.formes[index] = { id: id, name: name, path: path, clicked: true };
-    } else {
-      this.formes[index] = { id: id, name: name, path: path, clicked: false };
-    }
-    console.log(this.gestionProduitService.formes);
-  }
   windowdata: AllProduitData;
   produits: String[] = [];
   lotData: string[] = [];
   refProd: string;
-
+  //
   constructor(
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService
   ) {}
-  async getFormes() {
-    const val = await this.gestionProduitHttpService.getForms().toPromise();
-    val.forms.forEach((obj) => {
-      this.formes.push({
-        id: obj.id,
-        name: obj.name,
-        path: obj.path,
-        clicked: false,
-      });
-    });
-  }
+  //
   async ngOnInit() {
     await this.getFormes();
     this.gestionProduitHttpService.getSDTPRA().subscribe((res) => {
@@ -71,9 +52,33 @@ export class UpdateProduitComponent implements OnInit {
     });
     this.lotValue = this.windowdata.numLot;
   }
-  close() {
+  // get all Formes(icons) From DB
+  async getFormes() {
+    this.formes.length = 0;
+    const val = await this.gestionProduitHttpService.getForms().toPromise();
+    val.forms.forEach((obj) => {
+      this.formes.push({
+        id: obj.id,
+        name: obj.name,
+        path: obj.path,
+        clicked: false,
+      });
+    });
+  }
+  // select / unselected formes
+  addForme(id, name, path, clicked, index) {
+    if (clicked) {
+      this.formes[index] = { id: id, name: name, path: path, clicked: true };
+    } else {
+      this.formes[index] = { id: id, name: name, path: path, clicked: false };
+    }
+    console.log(this.gestionProduitService.formes);
+  }
+  //
+  closeUpdateWindow() {
     this.windowRef.close();
   }
+  // Submit the product update form
   async onSubmit(form: NgForm) {
     let success = true;
     let idSN;
@@ -151,6 +156,41 @@ export class UpdateProduitComponent implements OnInit {
       success ? this.windowRef.close() : alert("Produit creation Failed");
     }
   }
+  // get base64 data of new added icon
+  getBase64 = (e) => {
+    var file = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      /** ******* console ********** */
+      this.gestionProduitHttpService
+        .createForm({
+          id: uuidv4(),
+          name: e.target.files[0].name.substring(
+            0,
+            e.target.files[0].name.indexOf(".")
+          ),
+          clicked: false,
+          path: reader.result.toString(),
+        })
+        .toPromise()
+        .then((val) => {
+          console.log("image saved");
+          this.getFormes();
+        })
+        .catch((e) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Icon déja existe !",
+          });
+        });
+    };
+    reader.onerror = function (error) {
+      console.log("Error: ", error);
+    };
+  };
+  //
   checkFormatLot(data: string) {
     data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
       ? (this.formatLotValid = true)

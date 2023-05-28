@@ -32,7 +32,7 @@
         type="button"
         class="btn btn-success"
         style="float: right; font-family: Arial, FontAwesome"
-        (click)="openWindowForm()"
+        (click)="openCreateProductWindow()"
       >
         &#xf055; Créer un Nouveau Produit
       </button>
@@ -45,7 +45,7 @@
                 [settings]="settings"
                 [source]="source"
                 (delete)="onDeleteConfirm($event)"
-                (edit)="openUpdateProduitWindow($event)"
+                (edit)="openUpdateProductWindow($event)"
               >
               </ng2-smart-table>
             </div>

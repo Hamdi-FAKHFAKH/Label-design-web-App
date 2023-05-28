@@ -12,10 +12,10 @@ import {
   NbDatepickerModule,
   NbLayoutModule,
 } from "@nebular/theme";
-import { SmartTableComponent } from "./GestionProduits/smart-table/smart-table.component";
-import { WindowFormComponent } from "./GestionProduits/create-produit/window-form.component";
+import { ProductMangementComponent } from "./GestionProduits/product-management-component/product-management.component";
+import { ProductCreationWindowComponent } from "./GestionProduits/create-product/product-creation-window.component";
 import { CommonModule } from "@angular/common";
-import { UpdateProduitComponent } from "./GestionProduits/update-produit/update-produit.component";
+import { UpdateProduitComponent } from "./GestionProduits/update-product/update-produit.component";
 import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
 import { LabelComponentComponent } from "./ImpressionEtiquette/label-component/label-component.component";
 import { ImpressionHttpService } from "./ImpressionEtiquette/impressionHttpService";
@@ -61,8 +61,8 @@ import { DetailImpressionHttpService } from "./DetailImpression/detailImpression
   ],
   declarations: [
     AptComponent,
-    SmartTableComponent,
-    WindowFormComponent,
+    ProductMangementComponent,
+    ProductCreationWindowComponent,
     UpdateProduitComponent,
     ImpressionEtiquetteComponent,
     LabelComponentComponent,

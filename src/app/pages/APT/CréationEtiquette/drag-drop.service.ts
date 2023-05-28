@@ -4,7 +4,7 @@ import { Inject, Injectable } from "@angular/core";
 import { v4 as uuidv4 } from "uuid";
 import { GestionProduitHttpService } from "../GestionProduits/GestionProduitHttp.service";
 import { LabelService } from "./label.service";
-import { ComponentTitle, ComponetList } from "./ComposentData";
+import { ComponentTitle, LabelItem } from "./ComposentData";
 import { ProduitData } from "../GestionProduits/GestionProduit.data";
 export interface DropInfo {
   targetId: string;
@@ -14,19 +14,24 @@ export interface DropInfo {
 export class DragDropService {
   // ids for connected drop lists
   dropTargetIds = ["label"]; //contient tous les id
-  nodeLookup2 = {}; // object containe all elements in list2 {key : element id , value : element}
-  items = {}; // object containe all elements in list1 {key : element id , value : element}
-  showDragPlaceholder;
+  // object containe all elements in listOfDragItems {key : element id , value : element}
+  nodeLookup2 = {};
+  // object containe all elements in listOfLabelElements {key : element id , value : element}
+  items = {};
+  showDragPlaceholder: boolean;
+  //product reference
   refproduit: string;
+  //produit data
   produit: ProduitData;
   // list of elements in the label
-  list1: ComponetList[] = [];
-  // list of draggable elements
-  list2: ComponetList[];
+  listOfLabelElements: LabelItem[] = [];
+  // list of items to drag
+  listOfDragItems: LabelItem[];
   // determine the type of action to be taken and the target ID
   dropActionTodo: DropInfo = {
     targetId: "label",
   };
+  // if false the mode of drag and drop is with container
   dragDropLibre: boolean = true;
   // position of draggable elements
   dragPosition = {};
@@ -50,7 +55,7 @@ export class DragDropService {
   // boxClass list
   boxClassList = {};
   //fill dropTargetIds list and nodeLookup2 object
-  prepareDragDrop(nodes: ComponetList[]) {
+  prepareDragDrop(nodes: LabelItem[]) {
     nodes.forEach((node) => {
       this.dropTargetIds.push(node.id);
       this.nodeLookup2[node.id] = node;
@@ -59,7 +64,6 @@ export class DragDropService {
       }
     });
   }
-
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private gestionProduitHttpService: GestionProduitHttpService,
@@ -67,7 +71,7 @@ export class DragDropService {
   ) {
     this.labelService.labelInfo.subscribe((val) => {
       if (this.refproduit !== val.refProd && val.refProd !== null) {
-        this.list2 = [
+        this.listOfDragItems = [
           {
             id: uuidv4(),
             type: "container-2",
@@ -173,7 +177,7 @@ export class DragDropService {
                       .getOneSerialNumber(resProduit.produit.idSN)
                       .toPromise()
                       .then((serialNumber) => {
-                        this.list2.push({
+                        this.listOfDragItems.push({
                           id: uuidv4(),
                           type: "text",
                           refItem: item,
@@ -184,10 +188,10 @@ export class DragDropService {
                           style: Object.assign({}, this.defaultTextStyle),
                           children: [],
                         });
-                        this.prepareDragDrop(this.list2);
+                        this.prepareDragDrop(this.listOfDragItems);
                       });
                 } else if (item == "withOF" && resProduit.produit.withOF) {
-                  this.list2.push({
+                  this.listOfDragItems.push({
                     id: uuidv4(),
                     type: "text",
                     refItem: "of",
@@ -211,7 +215,7 @@ export class DragDropService {
                             children: [],
                             data: obj.form.path,
                           };
-                          this.list2.push(icon);
+                          this.listOfDragItems.push(icon);
                           this.nodeLookup2[id] = icon;
                         })
                         .catch((err) => {
@@ -224,7 +228,7 @@ export class DragDropService {
                     .getOneLot(resProduit.produit.numLot)
                     .toPromise()
                     .then((lot) => {
-                      this.list2.push(
+                      this.listOfDragItems.push(
                         {
                           id: uuidv4(),
                           type: "text",
@@ -242,7 +246,7 @@ export class DragDropService {
                           style: Object.assign({}, this.defaultTextStyle),
                         }
                       );
-                      this.prepareDragDrop(this.list2);
+                      this.prepareDragDrop(this.listOfDragItems);
                     });
                 } else if (
                   resProduit.produit.codeClient &&
@@ -252,7 +256,7 @@ export class DragDropService {
                     .getClient(resProduit.produit.codeClient)
                     .toPromise()
                     .then((client) => {
-                      this.list2.push(
+                      this.listOfDragItems.push(
                         {
                           id: uuidv4(),
                           type: "text",
@@ -270,7 +274,7 @@ export class DragDropService {
                           style: Object.assign({}, this.defaultTextStyle),
                         }
                       );
-                      this.prepareDragDrop(this.list2);
+                      this.prepareDragDrop(this.listOfDragItems);
                     });
                 } else if (
                   resProduit.produit.codeFournisseur &&
@@ -280,7 +284,7 @@ export class DragDropService {
                     .getFournisseur(resProduit.produit.codeFournisseur)
                     .toPromise()
                     .then((fournisseur) => {
-                      this.list2.push(
+                      this.listOfDragItems.push(
                         {
                           id: uuidv4(),
                           type: "text",
@@ -298,10 +302,10 @@ export class DragDropService {
                           style: Object.assign({}, this.defaultTextStyle),
                         }
                       );
-                      this.prepareDragDrop(this.list2);
+                      this.prepareDragDrop(this.listOfDragItems);
                     });
                 } else {
-                  this.list2.push({
+                  this.listOfDragItems.push({
                     id: uuidv4(),
                     type: item == "withDataMatrix" ? "QRcode" : "text",
                     refItem: item == "withDataMatrix" ? "datamatrixData" : item,
@@ -332,7 +336,7 @@ export class DragDropService {
           });
       }
     });
-    this.list2 = [
+    this.listOfDragItems = [
       {
         id: uuidv4(),
         type: "container-2",
@@ -427,6 +431,7 @@ export class DragDropService {
   }
   // called when element dragged
   dragMoved(event) {
+    //get element under the mouse position
     let e = this.document.elementFromPoint(
       event.pointerPosition.x,
       event.pointerPosition.y
@@ -472,16 +477,13 @@ export class DragDropService {
       this.dropActionTodo["action"] = "inside";
     }
   }
-
+  //called when element dropped
   drop(event: CdkDragDrop<string[]>) {
     if (!this.dropActionTodo) return;
     const draggedItemId = event.item.data; //draggebel
-    const parentItemId = event.previousContainer.id; //dragebel previous parent
-    const targetListId: string = "label"; //parent of drag area
-    //get object of the dragebel item
+    //get object of the dragged item
     const draggedItem = this.nodeLookup2[draggedItemId];
-    console.log(event.dropPoint);
-
+    //insert dragged item inside a container or inside the label
     if (
       this.dropActionTodo.action == "insideLeft" &&
       draggedItem &&
@@ -537,9 +539,8 @@ export class DragDropService {
           event.currentIndex
         );
       } else {
-        // const id = uuidv4();
         if (draggedItem.type === "container-2") {
-          this.list1.splice(
+          this.listOfLabelElements.splice(
             event.currentIndex,
             0,
             Object.assign(
@@ -565,7 +566,7 @@ export class DragDropService {
             )
           );
         } else if (draggedItem.type === "container-3") {
-          this.list1.splice(
+          this.listOfLabelElements.splice(
             event.currentIndex,
             0,
             Object.assign(
@@ -597,7 +598,7 @@ export class DragDropService {
             )
           );
         } else if (draggedItem.type === "container") {
-          this.list1.splice(
+          this.listOfLabelElements.splice(
             event.currentIndex,
             0,
             Object.assign(
@@ -616,8 +617,8 @@ export class DragDropService {
             )
           );
         } else {
-          this.list2.splice(event.previousIndex, 1);
-          this.list1.splice(
+          this.listOfDragItems.splice(event.previousIndex, 1);
+          this.listOfLabelElements.splice(
             event.currentIndex,
             0,
             Object.assign(
@@ -630,22 +631,23 @@ export class DragDropService {
             )
           );
         }
-        this.items[draggedItemId] = this.list1[event.currentIndex];
+        this.items[draggedItemId] =
+          this.listOfLabelElements[event.currentIndex];
         this.dragPosition[draggedItemId] = {
           x: 0,
           y: 0,
         };
         if (!this.selectedItem) {
-          this.selectedItem = this.list1[0].id;
+          this.selectedItem = this.listOfLabelElements[0].id;
         }
-        console.log(this.list1);
+        console.log(this.listOfLabelElements);
         console.log(this.dragPosition);
       }
     }
-    this.getAllItems(this.list1);
+    this.getAllItems(this.listOfLabelElements);
   }
-  // fill items object with all elements in list1
-  getAllItems(list: ComponetList[]) {
+  // fill items object with all elements in listOfLabelElements
+  getAllItems(list: LabelItem[]) {
     list.forEach((item) => {
       this.items[item.id] = item;
       this.boxClassList[item.id] = false;

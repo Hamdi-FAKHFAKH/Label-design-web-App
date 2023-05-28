@@ -6,7 +6,7 @@
     id="flexSwitchCheckChecked"
     checked
     [(ngModel)]="dragDropService.dragDropLibre"
-    [disabled]="dragDropService.list1.length > 0"
+    [disabled]="dragDropService.listOfLabelElements.length > 0"
   />
   <label class="form-check-label" for="flexSwitchCheckChecked"
     >Mode Drag & Drop Libre
@@ -19,7 +19,7 @@
 <div
   cdkDropList
   (cdkDropListDropped)="onDrop($event)"
-  [cdkDropListData]="dragDropService.list2"
+  [cdkDropListData]="dragDropService.listOfDragItems"
   [cdkDropListConnectedTo]="dragDropService.dropTargetIds"
   [cdkDropListSortingDisabled]="true"
   id="design"
@@ -29,7 +29,7 @@
       <nb-accordion-item-header> Containers </nb-accordion-item-header>
       <nb-accordion-item-body>
         <div
-          *ngFor="let item of dragDropService.list2"
+          *ngFor="let item of dragDropService.listOfDragItems"
           cdkDrag
           [cdkDragData]="item.id"
           (cdkDragMoved)="dragMoved($event)"
@@ -65,7 +65,7 @@
       <nb-accordion-item-header> Champs </nb-accordion-item-header>
       <nb-accordion-item-body>
         <div
-          *ngFor="let item of dragDropService.list2"
+          *ngFor="let item of dragDropService.listOfDragItems"
           cdkDrag
           [cdkDragData]="item.id"
           (cdkDragMoved)="dragMoved($event)"
@@ -100,7 +100,7 @@
         </fieldset>
         <div style="display: flex; margin-bottom: 20px">
           <div
-            *ngFor="let item1 of dragDropService.list2"
+            *ngFor="let item1 of dragDropService.listOfDragItems"
             cdkDrag
             [cdkDragData]="item1.id"
             (cdkDragMoved)="dragMoved($event)"
@@ -147,7 +147,7 @@
 <div>
   <nb-accordion>
     <nb-accordion-item
-      *ngFor="let item of dragDropService.list1"
+      *ngFor="let item of dragDropService.listOfLabelElements"
       [disabled]="
         !['container', 'container-2', 'container-3', 'img'].includes(item.type)
       "

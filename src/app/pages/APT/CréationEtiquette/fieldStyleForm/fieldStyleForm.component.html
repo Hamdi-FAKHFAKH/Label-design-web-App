@@ -25,7 +25,7 @@
       [(ngModel)]="defaultSelectedStyle"
     >
       <option value="null" selected>--Select Style--</option>
-      <option *ngFor="let item of list1" [value]="item.id">
+      <option *ngFor="let item of listOfLabelElementsCopy" [value]="item.id">
         {{ item.title }}
       </option>
     </select>

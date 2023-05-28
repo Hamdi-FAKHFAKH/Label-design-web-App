@@ -1,10 +1,10 @@
-export interface ComponetList {
+export interface LabelItem {
   id: string;
   type: string;
   refItem: string;
   title: string; //titre a afficher
   format?: string; //format de icon(shape)
-  children?: ComponetList[];
+  children?: LabelItem[];
   style?: ComponentStyle;
   data: string;
   dataMatrixFormat?: string;

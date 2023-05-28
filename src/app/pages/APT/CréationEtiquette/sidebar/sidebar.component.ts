@@ -18,11 +18,12 @@ import { v4 as uuidv4 } from "uuid";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import { CdkDragEnd, CdkDropList } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
-import { ComponentTitle, ComponetList } from "../ComposentData";
+import { ComponentTitle, LabelItem } from "../ComposentData";
 import Swal from "sweetalert2";
 import domtoimage from "dom-to-image";
 import { NbSidebarService, NbWindowService } from "@nebular/theme";
 import { te } from "date-fns/locale";
+import { infoLabel } from "../label.service";
 @Component({
   selector: "ngx-sidebar",
   templateUrl: "./sidebar.component.html",
@@ -32,38 +33,33 @@ export class SidebarComponent implements OnInit {
   @ViewChildren("dimension") elReference: QueryList<ElementRef>;
   @ViewChild(CdkDropList) dropList?: CdkDropList;
   @ViewChild("template") templateRef: TemplateRef<any>;
-  containerNotVide;
-  container2NotVide;
-  container3NotVide;
-  labelStyle;
-  labelInfo;
-  list1;
-  list3 = [];
-  list4 = [];
-  ListWithNewID = [];
-  imgSrc;
-  idEtiquette;
-  itemId;
-  selectedItemClass = {};
+  containerNotVide: boolean;
+  container2NotVide: boolean;
+  container3NotVide: boolean;
+  labelStyle: {
+    width: string;
+    height: string;
+    padding: string;
+    "border-radius"?: string;
+    "background-color": string;
+  };
+  labelInfo: infoLabel;
+  ListWithNewID: LabelItem[] = [];
+  imgSrc: string;
+  idEtiquette: string;
+  itemId: string;
   constructor(
     private labelService: LabelService,
     private lablHttpService: LabeltHttpService,
     private gestionProduitHttpService: GestionProduitHttpService,
     public dragDropService: DragDropService,
-    private windowService: NbWindowService,
-    private sidebarService: NbSidebarService
+    private windowService: NbWindowService
   ) {}
-
-  entred(e) {
-    console.log("entred");
-    console.log(e);
-  }
   ngOnInit(): void {
     this.containerNotVide = false;
     this.container2NotVide = false;
     this.container3NotVide = false;
     this.labelService.labelInfo.subscribe((info) => {
-      // console.log(info);
       if (info) {
         this.labelStyle = {
           "background-color": info.color,
@@ -81,20 +77,7 @@ export class SidebarComponent implements OnInit {
       this.labelInfo = info;
     });
   }
-  // pour récuperer la hauteur et la largeur des containers
-  // ngAfterViewInit() {
-  //   console.log(
-  //     this.elReference.toArray().forEach((val) => {
-  //       console.log("item");
-  //       console.log(val.nativeElement.getAttribute("item"));
-
-  //       console.log("height");
-  //       console.log(val.nativeElement.offsetHeight);
-  //       console.log("width");
-  //       console.log(val.nativeElement.offsetWidth);
-  //     })
-  //   );
-  // }
+  // zoomIn / ZoomOut the label
   zoomIn() {
     this.labelStyle = {
       ...this.labelStyle,
@@ -204,7 +187,9 @@ export class SidebarComponent implements OnInit {
         if (result.isConfirmed) {
           if (
             produit.withDataMatrix &&
-            !this.dragDropService.list1.some((val) => val.type == "QRcode")
+            !this.dragDropService.listOfLabelElements.some(
+              (val) => val.type == "QRcode"
+            )
           ) {
             Swal.fire(
               "DataMatrix introuvable?",
@@ -215,7 +200,7 @@ export class SidebarComponent implements OnInit {
           }
           if (
             produit.withSN &&
-            !this.dragDropService.list1.some(
+            !this.dragDropService.listOfLabelElements.some(
               (val) => val.title == ComponentTitle.SN
             )
           ) {
@@ -228,7 +213,7 @@ export class SidebarComponent implements OnInit {
           }
           if (
             produit.withOF &&
-            !this.dragDropService.list1.some(
+            !this.dragDropService.listOfLabelElements.some(
               (val) => val.title == ComponentTitle.OF
             )
           ) {
@@ -260,16 +245,14 @@ export class SidebarComponent implements OnInit {
               .catch((err) => {
                 console.log(err.error.Status);
               });
-            console.log("***list1***");
-            console.log(this.dragDropService.list1);
+
+            console.log(this.dragDropService.listOfLabelElements);
             this.FillList1WithNewID(
-              this.dragDropService.list1,
+              this.dragDropService.listOfLabelElements,
               this.ListWithNewID
             );
-            console.log("***list1 after fill***");
-            console.log(this.ListWithNewID);
             await this.createComponent(
-              this.dragDropService.list1,
+              this.dragDropService.listOfLabelElements,
               this.idEtiquette
             );
           }
@@ -313,14 +296,14 @@ export class SidebarComponent implements OnInit {
           .catch((err) => {
             console.log(err.error.Status);
           });
-        console.log("***list1***");
-        console.log(this.dragDropService.list1);
-        this.FillList1WithNewID(this.dragDropService.list1, this.ListWithNewID);
-        console.log("***list1 after fill***");
-        console.log(this.ListWithNewID);
+        console.log(this.dragDropService.listOfLabelElements);
+        this.FillList1WithNewID(
+          this.dragDropService.listOfLabelElements,
+          this.ListWithNewID
+        );
         try {
           await this.createComponent(
-            this.dragDropService.list1,
+            this.dragDropService.listOfLabelElements,
             this.idEtiquette
           );
           Swal.fire({
@@ -336,17 +319,17 @@ export class SidebarComponent implements OnInit {
 
   onDrop(event) {
     this.dragDropService.drop(event);
-    this.containerNotVide = this.dragDropService.list1.some(
+    this.containerNotVide = this.dragDropService.listOfLabelElements.some(
       (item) =>
         item.type == "container" &&
         item.children.some((val) => val.children.length > 0)
     );
-    this.container2NotVide = this.dragDropService.list1.some(
+    this.container2NotVide = this.dragDropService.listOfLabelElements.some(
       (item) =>
         item.children.length == 2 &&
         item.children.some((val) => val.children.length > 0)
     );
-    this.container3NotVide = this.dragDropService.list1.some(
+    this.container3NotVide = this.dragDropService.listOfLabelElements.some(
       (item) =>
         item.children.length == 3 &&
         item.children.some((val) => val.children.length > 0)
@@ -356,13 +339,14 @@ export class SidebarComponent implements OnInit {
     this.dragDropService.dragMoved(event);
   }
   delete(id: string) {}
-  rowStyle(item: ComponetList) {
+  // .row style
+  rowStyle(item: LabelItem) {
     return {
       ...item.style,
       "border-style": "none",
     };
   }
-  async createComponent(list: ComponetList[], idEtiquette) {
+  async createComponent(list: LabelItem[], idEtiquette) {
     await Promise.all(
       list.map(async (obj, index) => {
         if (obj.children && obj.children.length > 0) {
@@ -505,7 +489,8 @@ export class SidebarComponent implements OnInit {
     );
     //console.log($event.source);
   }
-  FillList1WithNewID(list: ComponetList[], ListWithNewID: ComponetList[]) {
+  // fill list Of Label Elements with new id;
+  FillList1WithNewID(list: LabelItem[], ListWithNewID: LabelItem[]) {
     list.forEach((item, index) => {
       const id = uuidv4();
       ListWithNewID.push(Object.assign({}, { ...item, id: id, children: [] }));
@@ -516,12 +501,12 @@ export class SidebarComponent implements OnInit {
       }
     });
   }
+  //
   openLabelView() {
     var node = document.getElementById("container");
     domtoimage.toSvg(node).then(
       (data) => {
         this.imgSrc = data;
-        console.log(data);
       },
       {
         style: { width: "400px", height: "200px !important", display: "block" },
@@ -534,19 +519,22 @@ export class SidebarComponent implements OnInit {
       buttons: { minimize: true, fullScreen: false, maximize: false },
     });
   }
+  //
   setTabPropertyActive(itemId) {
     console.log(itemId);
     // this.sidebarService.toggle(false, "creationEtiquette");
     this.dragDropService.propertyTabActive = true;
     this.dragDropService.selectedItem = itemId;
   }
-  textStyle(item: ComponetList) {
+  //
+  textStyle(item: LabelItem) {
     const style = {};
     Object.keys(item.style).forEach((key) => {
       if (key != "transform") style[key] = item.style[key];
     });
     return style;
   }
+  //get id of selected item
   setItemId(data) {
     console.log(data);
     this.itemId = data;
@@ -558,35 +546,41 @@ export class SidebarComponent implements OnInit {
     // console.log(this.dragDropService.boxClassList);
     // console.log(this.dragDropService.boxClassList[this.itemId]);
   }
+  //delete the selected element in the label
   remove(id: string) {
     console.log(id + "deleted");
-    console.log(this.dragDropService.list1);
+    console.log(this.dragDropService.listOfLabelElements);
 
-    const index = this.dragDropService.list1.findIndex((obj) => {
+    const index = this.dragDropService.listOfLabelElements.findIndex((obj) => {
       return obj.id == id;
     });
     if (index != -1) {
-      this.dragDropService.list2.push(this.dragDropService.list1[index]);
-      this.dragDropService.list1.splice(index, 1);
+      this.dragDropService.listOfDragItems.push(
+        this.dragDropService.listOfLabelElements[index]
+      );
+      this.dragDropService.listOfLabelElements.splice(index, 1);
     } else {
-      this.dragDropService.list1.forEach((obj, index) => {
+      this.dragDropService.listOfLabelElements.forEach((obj, index) => {
         obj.children.forEach((obj1, index1) => {
           if (obj1.id == id) {
-            this.dragDropService.list2.push(
-              this.dragDropService.list1[index].children[index1]
+            this.dragDropService.listOfDragItems.push(
+              this.dragDropService.listOfLabelElements[index].children[index1]
             );
-            this.dragDropService.list1[index].children.splice(index1, 1);
+            this.dragDropService.listOfLabelElements[index].children.splice(
+              index1,
+              1
+            );
             return;
           }
           obj1.children &&
             obj1.children.forEach((obj2, index2) => {
               if (obj2.id == id) {
-                this.dragDropService.list2.push(
-                  this.dragDropService.list1[index].children[index1].children[
-                    index2
-                  ]
+                this.dragDropService.listOfDragItems.push(
+                  this.dragDropService.listOfLabelElements[index].children[
+                    index1
+                  ].children[index2]
                 );
-                this.dragDropService.list1[index].children[
+                this.dragDropService.listOfLabelElements[index].children[
                   index1
                 ].children.splice(index2, 1);
                 console.log(`${obj.id}- ${obj1.id} - ${obj2.id}`);
@@ -596,26 +590,31 @@ export class SidebarComponent implements OnInit {
       });
     }
   }
+  //detect keybord event
   @HostListener("document:keydown", ["$event"])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code === "ArrowUp") {
       this.dragDropService.dragPosition[this.itemId] = {
         x: +this.dragDropService.dragPosition[this.itemId].x,
-        y: this.dragDropService.dragPosition[this.itemId].y - 1,
+        y:
+          +this.dragDropService.dragPosition[this.itemId].y - 3.8 >= 0 &&
+          +this.dragDropService.dragPosition[this.itemId].y - 3.8,
       };
     } else if (event.code === "ArrowDown") {
       this.dragDropService.dragPosition[this.itemId] = {
         x: +this.dragDropService.dragPosition[this.itemId].x,
-        y: this.dragDropService.dragPosition[this.itemId].y + 1,
+        y: this.dragDropService.dragPosition[this.itemId].y + 3.8,
       };
     } else if (event.code === "ArrowLeft") {
       this.dragDropService.dragPosition[this.itemId] = {
-        x: +this.dragDropService.dragPosition[this.itemId].x - 1,
+        x:
+          +this.dragDropService.dragPosition[this.itemId].x - 3.8 >= 0 &&
+          +this.dragDropService.dragPosition[this.itemId].x - 3.8,
         y: this.dragDropService.dragPosition[this.itemId].y,
       };
     } else if (event.code === "ArrowRight") {
       this.dragDropService.dragPosition[this.itemId] = {
-        x: +this.dragDropService.dragPosition[this.itemId].x + 1,
+        x: +this.dragDropService.dragPosition[this.itemId].x + 3.8,
         y: this.dragDropService.dragPosition[this.itemId].y,
       };
     } else if (event.code === "Delete") {
