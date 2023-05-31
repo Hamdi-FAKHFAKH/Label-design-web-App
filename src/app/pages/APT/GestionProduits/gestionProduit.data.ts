@@ -8,7 +8,7 @@ export interface AllProduitData {
   codeClient: string;
   desClient: string;
   desFournisseur: string;
-  format: string;
+  formatLot: string;
   desLot: string;
   ref: string;
   nomProduit: string;
@@ -196,4 +196,15 @@ export interface CreateFormeResultData {
 export interface GetFormeResultData {
   Status: string;
   forms: FormeData[];
+}
+export interface HistoriqueProduitData {
+  refProd: string;
+  operation: string;
+  motif: string;
+  data: string;
+  userMatricule: string;
+}
+export interface CreateHistoriqueProduitResultData {
+  Status: string;
+  historiqueProduit: HistoriqueProduitData;
 }

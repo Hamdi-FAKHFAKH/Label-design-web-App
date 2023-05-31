@@ -6,6 +6,7 @@ import { GestionProduitService } from "../GestionProduit.service";
 import { SerialNumberData } from "../GestionProduit.data";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import { AuthService } from "../../../../auth/authService.service";
 @Component({
   templateUrl: "./product-creation-window.component.html",
   styleUrls: ["./product-creation-window.component.scss"],
@@ -25,7 +26,8 @@ export class ProductCreationWindowComponent implements OnInit {
   constructor(
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
-    private gestionProduitService: GestionProduitService
+    private gestionProduitService: GestionProduitService,
+    private authService: AuthService
   ) {}
   //
   async ngOnInit() {
@@ -176,13 +178,46 @@ export class ProductCreationWindowComponent implements OnInit {
         idSN,
         formes
       );
-      !!success
-        ? this.windowRef.close()
-        : Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Échec de la création du produit",
-          });
+      if (!!success) {
+        this.windowRef.close();
+        //create historique Produit
+        let produitData = {
+          ref: form.value.ref,
+          ref1: form.value.ref1 || null,
+          ref2: form.value.ref2 || null,
+          codeClient: form.value.codeClient || null,
+          codeFournisseur: form.value.codeFournisseur || null,
+          nomProduit: form.value.nomProduit,
+          idEtiquette: null,
+          formes: formes,
+          idSN: idSN || null,
+          numLot: numLot || null,
+          withDataMatrix: form.value.withDataMatrix || false,
+          withOF: form.value.withOF || false,
+          withSN: form.value.withSN || false,
+          text1: form.value.text1,
+          text2: form.value.text2,
+          text3: form.value.text3,
+          text4: form.value.text4,
+          text5: form.value.text5,
+          createur: null,
+          modificateur: null,
+        };
+        await this.gestionProduitHttpService
+          .createHistoriqueProduit({
+            refProd: form.value.ref,
+            data: "",
+            motif: "",
+            operation: "Create",
+            userMatricule: this.authService.user.getValue().matricule,
+          })
+          .toPromise();
+      } else
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Échec de la création du produit",
+        });
     }
   }
 

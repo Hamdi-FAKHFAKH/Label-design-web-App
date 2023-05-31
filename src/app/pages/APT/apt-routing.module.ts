@@ -5,6 +5,7 @@ import { AptComponent } from "./apt.component";
 import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
 import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
+import { ControlPrintedLabelsComponent } from "./ContrôlerEtiquettesImprimée/control-printed-labels/control-printed-labels.component";
 
 const routes: Routes = [
   {
@@ -34,6 +35,10 @@ const routes: Routes = [
       {
         path: "DetailImpression",
         component: DetailImpressionComponent,
+      },
+      {
+        path: "ControlEtiquette",
+        component: ControlPrintedLabelsComponent,
       },
       {
         path: "",

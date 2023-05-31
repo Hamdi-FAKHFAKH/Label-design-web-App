@@ -14,6 +14,9 @@ export interface EtiquetteImprimeeData {
   formatLot: string;
   filePath: string;
   dataMatrixData: string;
+  checked?: boolean;
+  problem?: string;
+  nbrDuplication?: number;
 }
 export interface GetEtiquetteImprimeeResultData {
   Status: string;

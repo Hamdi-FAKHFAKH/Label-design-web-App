@@ -27,7 +27,7 @@
       </div></a
     >
   </div>
-  <nb-select
+  <!-- <nb-select
     [selected]="currentTheme"
     (selectedChange)="changeTheme($event)"
     status="primary"
@@ -35,7 +35,7 @@
     <nb-option *ngFor="let theme of themes" [value]="theme.value">
       {{ theme.name }}</nb-option
     >
-  </nb-select>
+  </nb-select> -->
 </div>
 
 <div class="header-container">
@@ -51,12 +51,15 @@
       class="control-item"
       icon="settings-2"
       title="Gérer Profil"
-    ></nb-action>
+      (click)="router.navigate(['/pages/profil'])"
+    >
+    </nb-action>
     <nb-action class="user-action" *nbIsGranted="['view', 'user']">
       <nb-user
-        [onlyPicture]="userPictureOnly"
-        [name]="user?.name"
-        [picture]="user?.picture"
+        (click)="router.navigate(['/pages/profil'])"
+        [onlyPicture]="false"
+        [name]="user?.nom + ' ' + user?.prenom"
+        [picture]="avatarSrc"
       >
       </nb-user>
     </nb-action>

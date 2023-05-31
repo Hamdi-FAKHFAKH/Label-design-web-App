@@ -1,0 +1,76 @@
+.card-title {
+  font-size: medium;
+  text-align: center;
+  border-bottom: 1px solid;
+  padding-bottom: 10px;
+}
+.etiquette {
+  padding: 4px 0px;
+  text-align: center;
+  background-color: #efefef;
+  margin: 10px 0px;
+  border-radius: 7px;
+}
+.etiquetteChecked {
+  padding: 4px 0px;
+  text-align: center;
+  background-color: #28a745;
+  margin: 10px 0px;
+  border-radius: 7px;
+  color: white;
+}
+.etiquetteDuplicated {
+  padding: 4px 0px;
+  text-align: center;
+  background-color: #dc3545;
+  margin: 10px 0px;
+  border-radius: 7px;
+  color: white;
+}
+.etiquetteNotFound {
+  padding: 4px 0px;
+  text-align: center;
+  background-color: #ffc107;
+  margin: 10px 0px;
+  border-radius: 7px;
+  color: white;
+}
+.row:first-child {
+  display: flex;
+  margin-right: 0px;
+  margin-left: 0px;
+  align-items: flex-end;
+}
+.badge:not(.probBadge) {
+  color: white;
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  padding-top: 5px;
+  padding-bottom: 4px;
+  color: white;
+  font-size: small;
+}
+#problemMessage {
+  margin-top: -5px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+#problemMessage .bg-danger,
+#problemMessage .bg-warning {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+.probBadge {
+  width: 20px;
+  padding-bottom: 3px;
+  padding-top: 5px;
+  height: 21px;
+  color: black;
+  background-color: #eed1d1 !important;
+}

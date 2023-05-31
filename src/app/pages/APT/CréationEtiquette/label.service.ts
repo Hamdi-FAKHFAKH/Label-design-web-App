@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { LabeltHttpService } from "./labelHTTP.service";
 import { ImpressionHttpService } from "../ImpressionEtiquette/impressionHttpService";
-var domToPdf = require("dom-to-pdf");
+import { downloadPdf, getcanvas } from "dom-to-pdf";
 @Injectable()
 export class LabelService {
   // initial label data
@@ -32,7 +32,11 @@ export class LabelService {
       compression: "FAST",
       scale: 3,
     };
-    const pdf = await domToPdf(element, options);
+    const pdf = await downloadPdf(element, options);
+    console.log("canvas");
+    // const canvas = await getcanvas(element, options);
+    // console.log(canvas);
+    // document.getElementById("printComponent").appendChild(canvas);
     this.base64PdfData = pdf.output("datauristring");
   }
   //save pdf file in the server

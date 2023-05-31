@@ -50,30 +50,3 @@ export class LoginComponent {
       });
   }
 }
-
-// this.reqOptions = {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/json",
-//     Accept: "application/json",
-//   },
-//   body: JSON.stringify({
-//     Matricule: this.Matricule,
-//     MotDePasse: this.Password,
-//   }),
-// };
-// fetch("http://localhost:3080/api/v1/SignIn", this.reqOptions).then(
-//   async (res) => {
-//     if (res.status === 200) {
-//       this.router.navigate(["/home"]);
-//     } else {
-//       const err = await res.json();
-//       this.ErrorMsg = err.message;
-//       console.log(this.matriculeElement);
-
-//       this.ErrorMsg.includes("Login incorrect")
-//         ? this.matriculeElement.nativeElement.focus()
-//         : this.passwordElement.nativeElement.focus();
-//     }
-//   }
-// );

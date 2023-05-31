@@ -23,6 +23,8 @@ import {
   GetFormeResultData,
   GetOneLotResponseData,
   GetAllProduitDataResponseData,
+  CreateHistoriqueProduitResultData,
+  HistoriqueProduitData,
 } from "./GestionProduit.data";
 
 @Injectable()
@@ -169,6 +171,12 @@ export class GestionProduitHttpService {
   getOneForm(id: string) {
     return this.http.get<CreateFormeResultData>(
       `http://localhost:3080/api/v1/forms/${id}`
+    );
+  }
+  createHistoriqueProduit(obj: HistoriqueProduitData) {
+    return this.http.post<CreateHistoriqueProduitResultData>(
+      "http://localhost:3080/api/v1/historiqueProduit",
+      obj
     );
   }
 }

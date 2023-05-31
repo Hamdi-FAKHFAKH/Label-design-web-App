@@ -6,6 +6,7 @@ import { GestionProduitService } from "../GestionProduit.service";
 import { AllProduitData, SerialNumberData } from "../GestionProduit.data";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
+import { AuthService } from "../../../../auth/authService.service";
 @Component({
   selector: "ngx-update-produit",
   templateUrl: "./update-produit.component.html",
@@ -24,7 +25,8 @@ export class UpdateProduitComponent implements OnInit {
   constructor(
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
-    private gestionProduitService: GestionProduitService
+    private gestionProduitService: GestionProduitService,
+    private authService: AuthService
   ) {}
   //
   async ngOnInit() {
@@ -153,7 +155,21 @@ export class UpdateProduitComponent implements OnInit {
         this.windowdata.idSN,
         formes
       );
-      success ? this.windowRef.close() : alert("Produit creation Failed");
+      if (success) {
+        this.windowRef.close();
+        const produitData = JSON.stringify(this.windowdata);
+        console.log(produitData.replaceAll('"', '\\"'));
+
+        await this.gestionProduitHttpService
+          .createHistoriqueProduit({
+            refProd: this.windowdata.ref,
+            data: produitData.replaceAll("'", '"'),
+            motif: "",
+            operation: "Update",
+            userMatricule: this.authService.user.getValue().matricule,
+          })
+          .toPromise();
+      } else alert("Produit creation Failed");
     }
   }
   // get base64 data of new added icon

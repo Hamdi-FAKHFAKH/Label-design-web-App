@@ -28,6 +28,17 @@ export class DetailImpressionHttpService {
       "http://localhost:3080/api/v1/etiquetteImprimee"
     );
   }
+  GetALLEtiquettesByOF(ofnum: string) {
+    return this.http.get<GetEtiquetteImprimeeResultData>(
+      `http://localhost:3080/api/v1/etiquetteImprimee/findByOF/${ofnum}`
+    );
+  }
+  GetALLEtiquettesByQRcode(qrcodeData: string) {
+    return this.http.post<GetEtiquetteImprimeeResultData>(
+      `http://localhost:3080/api/v1/etiquetteImprimee/findByQrcode`,
+      { qrcodeData: qrcodeData }
+    );
+  }
   GetPrintDetail() {
     return this.http.get<GetPrintDetailResultData>(
       "http://localhost:3080/api/v1/etiquetteImprimee/printDetail"

@@ -63,7 +63,7 @@ export class ProductMangementComponent {
         type: "string",
         filter: false,
       },
-      format: {
+      formatLot: {
         title: "Format Lot",
         type: "string",
         filter: false,
@@ -147,15 +147,9 @@ export class ProductMangementComponent {
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
       const tableData = [];
       res.produits.forEach((val) => {
-        this.gestionProduitHttpService
-          .getOneLot(val.numLot)
-          .toPromise()
-          .then((Lot) => {
-            tableData.push({ ...val, FormatLot: Lot.lot.format });
-            this.source.load(tableData);
-            console.log(tableData);
-          });
+        tableData.push(val);
       });
+      this.source.load(tableData);
     });
   }
   async onEdit(event) {

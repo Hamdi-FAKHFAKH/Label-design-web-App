@@ -30,6 +30,8 @@ import { LabelService } from "./CréationEtiquette/label.service";
 import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
 import { DetailImpressionHttpService } from "./DetailImpression/detailImpressionHttp.service";
+import { ControlPrintedLabelsComponent } from "./ContrôlerEtiquettesImprimée/control-printed-labels/control-printed-labels.component";
+import { CheckPrintedLabelHttp } from "./ContrôlerEtiquettesImprimée/checkPrintedLabelHttp.service";
 
 @NgModule({
   imports: [
@@ -43,6 +45,7 @@ import { DetailImpressionHttpService } from "./DetailImpression/detailImpression
     NbInputModule,
     NbTreeGridModule,
     Ng2SmartTableModule,
+    NbLayoutModule,
     CommonModule,
     QRCodeModule,
     NgxBarcodeModule,
@@ -68,6 +71,7 @@ import { DetailImpressionHttpService } from "./DetailImpression/detailImpression
     LabelComponentComponent,
     HistoriqueOFComponent,
     DetailImpressionComponent,
+    ControlPrintedLabelsComponent,
   ],
   exports: [],
   providers: [
@@ -76,6 +80,7 @@ import { DetailImpressionHttpService } from "./DetailImpression/detailImpression
     DragDropService,
     LabelService,
     DetailImpressionHttpService,
+    CheckPrintedLabelHttp,
   ],
 })
 export class AptModule {}

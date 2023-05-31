@@ -1,4 +1,14 @@
-import { Component, OnInit, Output, EventEmitter, Input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  ViewChild,
+  ElementRef,
+  Renderer2,
+  AfterViewInit,
+} from "@angular/core";
 import { ImpressionHttpService } from "../impressionHttpService";
 import { LabelItem } from "../../CréationEtiquette/ComposentData";
 import { format } from "date-fns";
@@ -12,6 +22,9 @@ import { LocalDataSource } from "ng2-smart-table";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 import { user } from "../../../../auth/user";
 import { AuthService } from "../../../../auth/authService.service";
+import { getcanvas } from "dom-to-pdf";
+import { Renderer } from "leaflet";
+
 class RegexFormatLot {
   public static readonly "date" =
     /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
@@ -24,6 +37,8 @@ class RegexFormatLot {
   styleUrls: ["./impression-etiquette.component.scss", "./smart-table.css"],
 })
 export class ImpressionEtiquetteComponent implements OnInit {
+  @ViewChild("printComponent", { static: false }) d1: ElementRef;
+
   sn: SerialNumberData;
   refProd: string;
   OF: string;
@@ -96,7 +111,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
     private labelService: LabelService,
     private gestionProduitHttpService: GestionProduitHttpService,
     private detailImpressionHttpService: DetailImpressionHttpService,
-    private authService: AuthService
+    private authService: AuthService,
+    private renderer: Renderer2
   ) {}
   async ngOnInit() {
     this.formatLotValid = false;

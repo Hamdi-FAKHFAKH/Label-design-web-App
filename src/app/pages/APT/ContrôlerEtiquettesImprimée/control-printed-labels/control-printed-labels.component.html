@@ -1,0 +1,261 @@
+<nb-layout>
+  <nb-layout-column>
+    <div class="col">
+      <div class="row">
+        <div class="col-2" style="padding-left: 0px">
+          <label for="">Numéro OF</label>
+          <input
+            type="text"
+            class="form-control"
+            name=""
+            id=""
+            aria-describedby="helpId"
+            placeholder="N° OF"
+            list="listof"
+            (input)="findOF($event.target.value)"
+          />
+          <datalist id="listof">
+            <option *ngFor="let item of oFnumbers" [value]="item"></option>
+          </datalist>
+        </div>
+        <div class="col" style="padding-left: 0px; padding-right: 0px">
+          <label for="">Données DataMatrix</label>
+          <input
+            class="form-control"
+            name=""
+            id=""
+            type="text"
+            #dataMatrixData
+            (keydown.enter)="
+              checkDataMatrix(dataMatrixData.value); dataMatrixData.value = ''
+            "
+          />
+        </div>
+        <div class="col-1" style="padding-right: 0px">
+          <br />
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="
+              checkDataMatrix(dataMatrixData.value); dataMatrixData.value = ''
+            "
+          >
+            Vérifier
+          </button>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div
+              class="card-body"
+              style="background-color: rgb(108, 117, 125, 0.1)"
+            >
+              <span class="badge bg-primary">{{
+                etiquettes ? etiquettes.length : 0
+              }}</span>
+              <h4 class="card-title">
+                List des Etiquettes
+                <span
+                  style="
+                    font-weight: normal;
+                    font-size: small;
+                    display: block;
+                    margin-top: -8px;
+                  "
+                >
+                  [id - NumOF - SN - FormatLot]</span
+                >
+              </h4>
+              <div
+                style="
+                  overflow-y: scroll;
+                  max-height: 390px;
+                  padding-right: 15px;
+                "
+              >
+                <div
+                  *ngIf="!etiquettes || !etiquettes.length"
+                  style="text-align: center"
+                >
+                  Aucun données
+                </div>
+                <div
+                  *ngFor="let item of etiquettes"
+                  [ngClass]="{
+                    etiquette: !item.checked,
+                    etiquetteChecked: item.checked
+                  }"
+                >
+                  <div style="display: flex; justify-content: space-around">
+                    <div>
+                      {{ item.id }} - {{ item.numOF }} -
+                      <div style="font-weight: 600; display: inline">
+                        {{ item.serialNumber }}
+                      </div>
+                      - {{ item.formatLot }}
+                    </div>
+                    <nb-icon *ngIf="item.checked" icon="checkmark-outline">
+                    </nb-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div
+              class="card-body"
+              style="background-color: rgba(40, 167, 69, 0.2)"
+            >
+              <span class="badge bg-success">{{
+                listOfCheckedLabel ? listOfCheckedLabel.length : 0
+              }}</span>
+              <h4 class="card-title">
+                List des Etiquettes Valide
+                <span
+                  style="
+                    font-weight: normal;
+                    font-size: small;
+                    display: block;
+                    margin-top: -5px;
+                  "
+                >
+                  [id - NumOF - SN - FormatLot]</span
+                >
+              </h4>
+              <div
+                style="
+                  overflow-y: scroll;
+                  max-height: 390px;
+                  padding-right: 15px;
+                "
+              >
+                <div
+                  *ngIf="!listOfCheckedLabel || !listOfCheckedLabel.length"
+                  style="text-align: center"
+                >
+                  Aucun données
+                </div>
+                <div
+                  *ngFor="let item of listOfCheckedLabel"
+                  [ngClass]="{
+                    etiquette: !item.checked,
+                    etiquetteChecked: item.checked
+                  }"
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      padding: 1px 11px;
+                    "
+                  >
+                    <div>
+                      {{ item.id }} - {{ item.numOF }} -
+                      <div style="font-weight: 600; display: inline">
+                        {{ item.serialNumber }}
+                      </div>
+                      - {{ item.formatLot }}
+                    </div>
+                    <nb-icon *ngIf="item.checked" icon="checkmark-outline">
+                    </nb-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="padding-right: 0px">
+          <div class="card">
+            <div
+              class="card-body"
+              style="background-color: rgb(220, 53, 69, 0.2)"
+            >
+              <span class="badge bg-danger">{{ nbrOfProblem }}</span>
+              <h4 class="card-title">
+                Problémes
+                <div id="problemMessage">
+                  <div style="display: flex; align-items: center">
+                    <div class="bg-danger"></div>
+                    <span
+                      style="
+                        color: rgb(220, 53, 69);
+                        font-size: small;
+                        font-weight: 600;
+                      "
+                      >DataMatrix dupliquée</span
+                    >
+                  </div>
+                  <div style="display: flex; align-items: center">
+                    <div class="bg-warning"></div>
+                    <span
+                      style="color: #ffc107; font-size: small; font-weight: 600"
+                      >DataMatrix inexistant</span
+                    >
+                  </div>
+                </div>
+              </h4>
+              <div
+                style="
+                  overflow-y: scroll;
+                  max-height: 390px;
+                  padding-right: 15px;
+                "
+              >
+                <div
+                  *ngIf="
+                    !listOfLabelsWithProblem || !listOfLabelsWithProblem.length
+                  "
+                  style="text-align: center"
+                >
+                  Aucun problème
+                </div>
+                <div
+                  *ngFor="let item of listOfLabelsWithProblem"
+                  [ngClass]="{
+                    etiquetteDuplicated: item.problem === 'duplicated',
+                    etiquetteNotFound: item.problem === 'not Found'
+                  }"
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      padding: 1px 11px;
+                    "
+                  >
+                    <div *ngIf="item.problem !== 'not Found'">
+                      {{ item.id }} - {{ item.numOF }} -
+                      <div style="font-weight: 600; display: inline">
+                        {{ item.serialNumber }}
+                      </div>
+                      - {{ item.formatLot }}
+                    </div>
+                    <span
+                      class="badge bg-info probBadge"
+                      *ngIf="item.problem !== 'not Found'"
+                    >
+                      {{ item.nbrDuplication }}
+                    </span>
+                    <div *ngIf="item.problem === 'not Found'">
+                      Produit non trouvé
+                    </div>
+                    <span
+                      class="badge bg-info probBadge"
+                      *ngIf="item.problem === 'not Found'"
+                    >
+                      {{ item.nbr }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nb-layout-column>
+</nb-layout>

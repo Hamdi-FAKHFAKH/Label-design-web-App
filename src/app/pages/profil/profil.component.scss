@@ -1,8 +1,6 @@
 .card:first-of-type {
-  width: 600px;
   border-radius: 15px;
-  margin-left: 30px;
-  margin-top: 30px;
+  margin-left: 10px;
 }
 .card-header {
   padding-bottom: 38px;
@@ -12,17 +10,18 @@
 }
 #subProfil {
   margin-left: 30px;
-  margin-top: 14px;
+  margin-top: 28px;
   /* margin-bottom: 20px; */
 }
 #subProfil div:first-child {
   font-size: 25px;
-  margin-bottom: 22px;
+  margin-bottom: 10px;
   font-weight: 800;
 }
 #subProfil div:nth-child(2) {
   font-size: 17px;
   margin-bottom: 8px;
+  font-weight: 600;
 }
 #subProfil div:nth-child(3) {
   font-size: 17px;

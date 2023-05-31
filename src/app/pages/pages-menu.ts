@@ -46,6 +46,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
             link: "/pages/apt/HistoriqueOF",
             icon: "clock",
           },
+          {
+            title: "Vérification des étiquettes",
+            link: "/pages/apt/ControlEtiquette",
+            icon: "checkmark-circle-outline",
+          },
           // {
           //   title: "Tabs",
           //   pathMatch: "prefix",

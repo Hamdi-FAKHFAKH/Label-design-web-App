@@ -21,7 +21,7 @@ const routes: Routes = [
 
       {
         path: "",
-        redirectTo: "apt",
+        redirectTo: "profil",
         pathMatch: "full",
       },
       {

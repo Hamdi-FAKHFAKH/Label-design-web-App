@@ -12,6 +12,9 @@ import { map, takeUntil } from "rxjs/operators";
 import { Subject, Subscribable, Subscription } from "rxjs";
 import { AuthService } from "../../../auth/authService.service";
 import { CookieService } from "ngx-cookie-service";
+import { GestionUtilisateursHttpService } from "../../../pages/GestionUtilisateursHttp.service";
+import { UtilisateurData } from "../../../pages/GestionUtilisateursHttp.data";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "ngx-header",
@@ -20,11 +23,11 @@ import { CookieService } from "ngx-cookie-service";
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
-  userPictureOnly: boolean = false;
-  user: any;
+  user: UtilisateurData;
   private userSub: Subscription;
   authenticated: boolean;
-
+  avatarColor;
+  generateAvatar;
   themes = [
     {
       value: "default",
@@ -46,7 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   currentTheme = "default";
   smallDevice = false;
-
+  avatarSrc;
   userMenu = [{ title: "Profile" }, { title: "Log out" }];
 
   constructor(
@@ -57,10 +60,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     private breakpointService: NbMediaBreakpointsService,
     private authService: AuthService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private gestionUtilisateursHttpService: GestionUtilisateursHttpService,
+    public router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.generateAvatar = this.authService.generateAvatar;
+    this.avatarColor = this.authService.avatarColor;
+    this.user = (
+      await this.gestionUtilisateursHttpService
+        .getOneUtilisateur(this.authService.user.getValue().matricule)
+        .toPromise()
+    ).utilisateur;
+    this.avatarSrc = this.generateAvatar(
+      this.user?.nom.slice(0, 1) + this.user?.prenom.slice(0, 1),
+      this.avatarColor?.foregroundColor,
+      this.avatarColor?.backgroundColor
+    );
+    this.avatarColor = this.authService.avatarColor;
     const loadedTheme: string = this.cookieService.get("theme");
     if (loadedTheme) {
       this.themeService.changeTheme(loadedTheme);
@@ -70,22 +88,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.authenticated = !!user;
       console.log(this.authenticated);
     });
-    this.userService
-      .getUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any) => (this.user = users.nick));
-
-    const { xl } = this.breakpointService.getBreakpointsMap();
-    this.themeService
-      .onMediaQueryChange()
-      .pipe(
-        map(([, currentBreakpoint]) => currentBreakpoint.width < xl),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(
-        (isLessThanXl: boolean) => (this.userPictureOnly = isLessThanXl)
-      );
-
     this.themeService
       .onThemeChange()
       .pipe(
