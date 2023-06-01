@@ -16,12 +16,7 @@ import {
 import { NbEvaIconsModule } from "@nebular/eva-icons";
 import { NbSecurityModule } from "@nebular/security";
 
-import {
-  FooterComponent,
-  HeaderComponent,
-  SearchInputComponent,
-  TinyMCEComponent,
-} from "./components";
+import { HeaderComponent } from "./components";
 import {
   CapitalizePipe,
   PluralPipe,
@@ -49,13 +44,7 @@ const NB_MODULES = [
   NbIconModule,
   NbEvaIconsModule,
 ];
-const COMPONENTS = [
-  HeaderComponent,
-  FooterComponent,
-  SearchInputComponent,
-  TinyMCEComponent,
-  OneColumnLayoutComponent,
-];
+const COMPONENTS = [HeaderComponent, OneColumnLayoutComponent];
 const PIPES = [
   CapitalizePipe,
   PluralPipe,

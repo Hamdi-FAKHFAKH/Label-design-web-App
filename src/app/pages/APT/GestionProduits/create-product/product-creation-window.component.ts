@@ -7,6 +7,7 @@ import { SerialNumberData } from "../GestionProduit.data";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
 import { AuthService } from "../../../../auth/authService.service";
+import { HistoriqueService } from "../../../HistoriqueHttp.service";
 @Component({
   templateUrl: "./product-creation-window.component.html",
   styleUrls: ["./product-creation-window.component.scss"],
@@ -27,7 +28,8 @@ export class ProductCreationWindowComponent implements OnInit {
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService,
-    private authService: AuthService
+    private authService: AuthService,
+    private historiqueService: HistoriqueService
   ) {}
   //
   async ngOnInit() {
@@ -181,29 +183,7 @@ export class ProductCreationWindowComponent implements OnInit {
       if (!!success) {
         this.windowRef.close();
         //create historique Produit
-        let produitData = {
-          ref: form.value.ref,
-          ref1: form.value.ref1 || null,
-          ref2: form.value.ref2 || null,
-          codeClient: form.value.codeClient || null,
-          codeFournisseur: form.value.codeFournisseur || null,
-          nomProduit: form.value.nomProduit,
-          idEtiquette: null,
-          formes: formes,
-          idSN: idSN || null,
-          numLot: numLot || null,
-          withDataMatrix: form.value.withDataMatrix || false,
-          withOF: form.value.withOF || false,
-          withSN: form.value.withSN || false,
-          text1: form.value.text1,
-          text2: form.value.text2,
-          text3: form.value.text3,
-          text4: form.value.text4,
-          text5: form.value.text5,
-          createur: null,
-          modificateur: null,
-        };
-        await this.gestionProduitHttpService
+        await this.historiqueService
           .createHistoriqueProduit({
             refProd: form.value.ref,
             data: "",

@@ -7,6 +7,7 @@ import { AllProduitData, SerialNumberData } from "../GestionProduit.data";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import { AuthService } from "../../../../auth/authService.service";
+import { HistoriqueService } from "../../../HistoriqueHttp.service";
 @Component({
   selector: "ngx-update-produit",
   templateUrl: "./update-produit.component.html",
@@ -26,7 +27,8 @@ export class UpdateProduitComponent implements OnInit {
     public windowRef: NbWindowRef,
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService,
-    private authService: AuthService
+    private authService: AuthService,
+    private historiqueService: HistoriqueService
   ) {}
   //
   async ngOnInit() {
@@ -144,6 +146,30 @@ export class UpdateProduitComponent implements OnInit {
           .getOneProduit(this.windowdata.ref)
           .toPromise()
       ).produit.idEtiquette;
+      const { value: motif } = await Swal.fire({
+        title: "Entrez votre motif de Modification",
+        input: "text",
+        inputLabel: "Motif de Modification",
+        showCancelButton: true,
+        inputValidator: (value) => {
+          if (!value) {
+            return "Vous devez écrire votre motif!";
+          }
+        },
+      });
+      console.log(motif);
+      if (motif) {
+        const produitData = JSON.stringify(this.windowdata);
+        await this.historiqueService
+          .createHistoriqueProduit({
+            refProd: this.windowdata.ref,
+            data: produitData.replaceAll("'", '"'),
+            motif: motif,
+            operation: "Update",
+            userMatricule: this.authService.user.getValue().matricule,
+          })
+          .toPromise();
+      }
       success = await this.gestionProduitService.updateProduit(
         {
           ...form.value,
@@ -157,19 +183,12 @@ export class UpdateProduitComponent implements OnInit {
       );
       if (success) {
         this.windowRef.close();
-        const produitData = JSON.stringify(this.windowdata);
-        console.log(produitData.replaceAll('"', '\\"'));
-
-        await this.gestionProduitHttpService
-          .createHistoriqueProduit({
-            refProd: this.windowdata.ref,
-            data: produitData.replaceAll("'", '"'),
-            motif: "",
-            operation: "Update",
-            userMatricule: this.authService.user.getValue().matricule,
-          })
-          .toPromise();
-      } else alert("Produit creation Failed");
+      } else
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Échec de la mise à jour du produit!",
+        });
     }
   }
   // get base64 data of new added icon
@@ -206,7 +225,7 @@ export class UpdateProduitComponent implements OnInit {
       console.log("Error: ", error);
     };
   };
-  //
+  // check lot format
   checkFormatLot(data: string) {
     data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
       ? (this.formatLotValid = true)

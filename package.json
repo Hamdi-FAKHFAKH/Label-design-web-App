@@ -120,7 +120,6 @@
     "codelyzer": "^0.0.28",
     "conventional-changelog-cli": "^2.2.2",
     "eslint": "^8.23.0",
-    "husky": "0.13.3",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.3.19",

@@ -32,6 +32,7 @@ import { DetailImpressionComponent } from "./DetailImpression/detail-impression/
 import { DetailImpressionHttpService } from "./DetailImpression/detailImpressionHttp.service";
 import { ControlPrintedLabelsComponent } from "./ContrôlerEtiquettesImprimée/control-printed-labels/control-printed-labels.component";
 import { CheckPrintedLabelHttp } from "./ContrôlerEtiquettesImprimée/checkPrintedLabelHttp.service";
+import { HistoriqueService } from "../HistoriqueHttp.service";
 
 @NgModule({
   imports: [
@@ -81,6 +82,7 @@ import { CheckPrintedLabelHttp } from "./ContrôlerEtiquettesImprimée/checkPrin
     LabelService,
     DetailImpressionHttpService,
     CheckPrintedLabelHttp,
+    HistoriqueService,
   ],
 })
 export class AptModule {}

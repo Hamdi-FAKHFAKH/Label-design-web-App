@@ -30,6 +30,12 @@ class RegexFormatLot {
     /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
   public static readonly "dd/MM" = /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])$/gm;
   public static readonly "MM/yyyy" = /^(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
+  public static readonly "dd/MM/yyyy" =
+    /^(0[0-9]|1[0-9])\/(0[0-9]|1[0-2])\/(20[2-9][0-9])$/gm;
+  public static readonly "dd-MM-yyyy" =
+    /^(0[0-9]|1[0-9])\-(0[0-9]|1[0-2])\-(20[2-9][0-9])$/gm;
+  public static readonly "dd MM yyyy" =
+    /^(0[0-9]|1[0-9])\s(0[0-9]|1[0-2])\s(20[2-9][0-9])$/gm;
 }
 @Component({
   selector: "ngx-impression-etiquette",
@@ -38,7 +44,7 @@ class RegexFormatLot {
 })
 export class ImpressionEtiquetteComponent implements OnInit {
   @ViewChild("printComponent", { static: false }) d1: ElementRef;
-
+  lotdata;
   sn: SerialNumberData;
   refProd: string;
   OF: string;
@@ -53,6 +59,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   formatLotValid: boolean;
   nbrCopieValid: boolean;
   withSN: boolean;
+  datamatrix;
   etiquetteData: LabelItem[];
   changeSn = new EventEmitter();
   numOF: string;
@@ -125,6 +132,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
       .toPromise();
   }
   async getOFinfo(ofnum) {
+    // this.OfList = this.OfList.filter((val) => val.startsWith(ofnum)).slice(
+    //   0,
+    //   2
+    // );
     this.source.load([]);
     this.lotField = "";
     this.nbrCopie = "";
@@ -155,8 +166,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
     this.formatLotValid = false;
     this.nbrCopieValid = false;
     this.lot = this.findDateFormat(data);
+    this.datamatrix = this.findDataMatrix(data);
     if (this.lot) {
       this.formatLot = this.lot.data;
+      this.datamatrix;
     } else {
       this.formatLot = null;
       this.formatLotValid = true;
@@ -183,6 +196,23 @@ export class ImpressionEtiquetteComponent implements OnInit {
       res || resarray.find((val) => val && val.refItem == "format" && val.data)
     );
   }
+  findDataMatrix(data: LabelItem[]) {
+    const res = data.find((val) => val.refItem == "datamatrixData" && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children.length > 0) {
+          return this.findDataMatrix(val.children);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res ||
+      resarray.find((val) => val && val.refItem == "datamatrixData" && val.data)
+    );
+  }
   findSN(data: LabelItem[]) {
     const res = data.find((val) => val.refItem == "idSN" && val.data);
     let resarray;
@@ -205,6 +235,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
       : this.formatLot == "MM/yyyy" && date.getDate() == 1;
   changeDate(e: Date) {
     this.lot.data = format(e, this.formatLot);
+    this.lotdata = this.lot.data;
+    this.datamatrix.data = this.datamatrix.data
+      .toString()
+      .replaceAll(this.formatLot, this.lot.data);
     this.formatLotValid = true;
     this.impressionDetail = {
       ...this.impressionDetail,
@@ -216,6 +250,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
     if (data.match(RegexFormatLot[this.formatLot]) && data) {
       this.formatLotValid = true;
       this.lot.data = data;
+      this.lotdata = this.lot.data;
+      this.datamatrix.data = this.datamatrix.data
+        .toString()
+        .replaceAll(this.formatLot, this.lot.data);
       this.impressionDetail = {
         ...this.impressionDetail,
         lot: this.lot.data,
@@ -393,9 +431,9 @@ export class ImpressionEtiquetteComponent implements OnInit {
     await this.detailImpressionHttpService
       .CreateEtiquetteImprimee({
         dataMatrixData: this.produit["datamatrixData"]
-          .replace("<<SN>>", this.sn.prefix + this.sn.suffix)
+          .replace("<<SN>>", this.sn?.prefix + this.sn?.suffix)
           .replace("<<OF>>", this.OF)
-          .replace("<<FormatLot>>", this.lot.data),
+          .replace("<<FormatLot>>", this.impressionDetail.lot),
         idEtiquette: this.idEtiquette,
         action: "impression",
         date: new Date(),

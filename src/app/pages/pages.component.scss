@@ -1,10 +1,8 @@
 @import "../@theme/styles/themes";
-
 @include nb-install-component() {
   ::ng-deep router-outlet + * {
     display: block;
     animation: fade 1s;
-
     @keyframes fade {
       from {
         opacity: 0;
@@ -15,7 +13,4 @@
       }
     }
   }
-}
-nb-menu .menu-item a:hover {
-  color: bisque;
 }

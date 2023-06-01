@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { LayoutService } from "../../../@core/utils";
+import { LayoutService } from "../../../@core/utils/layout.service";
 import {
   NbMediaBreakpointsService,
   NbMenuService,

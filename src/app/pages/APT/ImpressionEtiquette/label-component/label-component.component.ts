@@ -32,8 +32,9 @@ import { Router } from "@angular/router";
 })
 export class LabelComponentComponent implements OnChanges, OnInit {
   @Input() refProd;
-  @Input() OF;
+  @Input() OF: string;
   @Input() changeSN;
+  @Input() lotdata;
   @Output() list1Event = new EventEmitter<LabelItem[]>();
   @Output() withSN = new EventEmitter<boolean>();
   @Output() sn = new EventEmitter<SerialNumberData>();
@@ -80,15 +81,31 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       "border-style": "none",
     };
   }
-  ngOnChanges(): void {
-    this.refProd &&
-      this.loadEtiquette(this.refProd)
-        .then(() => {
-          console.log("load SUCCESS");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("onchange");
+    console.log(changes);
+    if (
+      changes.refProd &&
+      changes.refProd.currentValue !== changes.refProd.previousValue
+    ) {
+      this.refProd &&
+        this.loadEtiquette(this.refProd)
+          .then(() => {
+            console.log("load SUCCESS");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    } else {
+      if (this.dataMatrixComp) {
+        this.dataMatrixComp.data = this.dataMatrixComp.data
+          .replace("<<FormatLot>>", this.lotdata)
+          .replace(
+            changes.lotdata?.previousValue,
+            changes.lotdata?.currentValue
+          );
+      }
+    }
   }
   // charger les élements de l'étiquette en fonction de référence Produit a partir de la BD
   async loadEtiquette(refProd: string) {
@@ -213,16 +230,17 @@ export class LabelComponentComponent implements OnChanges, OnInit {
 
       if (SN) {
         this.SN = SN.serialNumber;
-        //Find Last SN
-        const lastSerialNumber: string = (
+        const printedLabel = (
           await this.detailImpressionHttpService
             .GetALLEtiquettesImprimees()
             .toPromise()
-        ).etiquettesImprimees
-          .filter((val) => val.refProd == refProd)
+        ).etiquettesImprimees.filter((val) => val.refProd == refProd);
+        //Find Last SN
+        const lastSerialNumber: string = printedLabel
           .map((obj) => obj.serialNumber.split(this.SN.prefix)[1])
           .sort()
           .pop();
+
         if (lastSerialNumber) {
           this.SN.suffix = lastSerialNumber;
           //increment the SN by one step
@@ -457,7 +475,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           ? produit[obj.refItem]
               .replace(
                 "<<SN>>",
-                SN.serialNumber.prefix + SN.serialNumber.suffix
+                SN?.serialNumber.prefix + SN?.serialNumber.suffix
               )
               .replace("<<OF>>", this.OF)
               .replace("<<FormatLot>>", lot.format)
@@ -505,6 +523,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   // changer le Numéro de Série dans l'étiquette
   changeSn = () => {
     console.log(this.produit.datamatrixData);
+    console.log(this.lotdata);
 
     const lastSn = this.SN.prefix + this.SN.suffix;
     const suff = parseInt(this.SN.suffix) + +this.SN.pas;
@@ -515,7 +534,9 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         "<<SN>>",
         this.snComp.data
       );
+      this.dataMatrixComp.data = this.dataMatrixComp.data
+        .replace("<<FormatLot>>", this.lotdata)
+        .replace("<<OF>>", this.OF);
     }
-    console.log(this.dataMatrixComp);
   };
 }

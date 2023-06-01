@@ -6,8 +6,6 @@ import {
   NbThemeService,
 } from "@nebular/theme";
 
-import { UserData } from "../../../@core/data/users";
-import { LayoutService } from "../../../@core/utils";
 import { map, takeUntil } from "rxjs/operators";
 import { Subject, Subscribable, Subscription } from "rxjs";
 import { AuthService } from "../../../auth/authService.service";
@@ -56,8 +54,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
     private themeService: NbThemeService,
-    private userService: UserData,
-    private layoutService: LayoutService,
+
     private breakpointService: NbMediaBreakpointsService,
     private authService: AuthService,
     private cookieService: CookieService,
@@ -117,7 +114,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleSidebar(): boolean {
     this.sidebarService.toggle(true, "menu-sidebar");
-    this.layoutService.changeLayoutSize();
 
     return false;
   }

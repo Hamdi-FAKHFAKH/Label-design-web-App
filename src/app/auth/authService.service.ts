@@ -13,7 +13,6 @@ interface authData {
   matricule: string;
   tokenExpiration: number;
 }
-
 @Injectable()
 export class AuthService {
   constructor(private http: HttpClient, private router: Router) {
@@ -22,8 +21,11 @@ export class AuthService {
   }
   // observateur sur le user
   user = new BehaviorSubject<user>(null);
-  TokenExpirationTimer;
-  avatarColor;
+  TokenExpirationTimer: NodeJS.Timeout;
+  avatarColor: {
+    backgroundColor: string;
+    foregroundColor: string;
+  };
 
   logIn(matricule, password) {
     return this.http
@@ -82,7 +84,7 @@ export class AuthService {
   colorsAvatarProfil = [
     {
       backgroundColor: "#008080",
-      forgroundColor: this.getContrastTextColor("#008080"),
+      foregroundColor: this.getContrastTextColor("#008080"),
     },
     {
       backgroundColor: "#4569af",

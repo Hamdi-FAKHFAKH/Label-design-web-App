@@ -39,6 +39,7 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import { NbDateFnsDateModule } from "@nebular/date-fns";
 import { NbMomentDateModule } from "@nebular/moment";
+import { HistoriqueService } from "./pages/HistoriqueHttp.service";
 
 // import { FormsModule } from "@angular/forms";
 @NgModule({
@@ -82,6 +83,7 @@ import { NbMomentDateModule } from "@nebular/moment";
     AuthService,
     GestionProduitHttpService,
     GestionProduitService,
+    HistoriqueService,
 
     {
       provide: HTTP_INTERCEPTORS,

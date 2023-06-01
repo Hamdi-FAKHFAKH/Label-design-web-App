@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
 import { AuthService } from "./authService.service";
 import { Injectable } from "@angular/core";
 import { exhaustMap, take } from "rxjs/operators";
-// add token in the header of all request HTTP
+//*************************************** Inject token in the header of all request HTTP ************************************* */
 @Injectable()
 export class authInterceptorService implements HttpInterceptor {
   constructor(private authService: AuthService) {}

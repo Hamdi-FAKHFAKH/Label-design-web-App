@@ -224,6 +224,19 @@ export class SidebarComponent implements OnInit {
             );
             return;
           }
+          if (
+            produit.numLot &&
+            !this.dragDropService.listOfLabelElements.some(
+              (val) => val.title == ComponentTitle.formatLot
+            )
+          ) {
+            Swal.fire(
+              "Format de LOT introuvable?",
+              "Veuillez inclure le format de LOT sur l'étiquette",
+              "info"
+            );
+            return;
+          }
           const res = await this.lablHttpService
             .UpdateEtiquette(this.idEtiquette, {
               couleur: this.labelInfo.color,
@@ -593,32 +606,36 @@ export class SidebarComponent implements OnInit {
   //detect keybord event
   @HostListener("document:keydown", ["$event"])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.code === "ArrowUp") {
-      this.dragDropService.dragPosition[this.itemId] = {
-        x: +this.dragDropService.dragPosition[this.itemId].x,
-        y:
-          +this.dragDropService.dragPosition[this.itemId].y - 3.8 >= 0 &&
-          +this.dragDropService.dragPosition[this.itemId].y - 3.8,
-      };
-    } else if (event.code === "ArrowDown") {
-      this.dragDropService.dragPosition[this.itemId] = {
-        x: +this.dragDropService.dragPosition[this.itemId].x,
-        y: this.dragDropService.dragPosition[this.itemId].y + 3.8,
-      };
-    } else if (event.code === "ArrowLeft") {
-      this.dragDropService.dragPosition[this.itemId] = {
-        x:
-          +this.dragDropService.dragPosition[this.itemId].x - 3.8 >= 0 &&
-          +this.dragDropService.dragPosition[this.itemId].x - 3.8,
-        y: this.dragDropService.dragPosition[this.itemId].y,
-      };
-    } else if (event.code === "ArrowRight") {
-      this.dragDropService.dragPosition[this.itemId] = {
-        x: +this.dragDropService.dragPosition[this.itemId].x + 3.8,
-        y: this.dragDropService.dragPosition[this.itemId].y,
-      };
-    } else if (event.code === "Delete") {
-      this.remove(this.itemId);
+    let focusedElement: Element;
+    focusedElement = document.activeElement;
+    if (focusedElement && focusedElement.tagName === "BODY") {
+      if (event.code === "ArrowUp") {
+        this.dragDropService.dragPosition[this.itemId] = {
+          x: +this.dragDropService.dragPosition[this.itemId].x,
+          y:
+            +this.dragDropService.dragPosition[this.itemId].y - 3.8 >= 0 &&
+            +this.dragDropService.dragPosition[this.itemId].y - 3.8,
+        };
+      } else if (event.code === "ArrowDown") {
+        this.dragDropService.dragPosition[this.itemId] = {
+          x: +this.dragDropService.dragPosition[this.itemId].x,
+          y: this.dragDropService.dragPosition[this.itemId].y + 3.8,
+        };
+      } else if (event.code === "ArrowLeft") {
+        this.dragDropService.dragPosition[this.itemId] = {
+          x:
+            +this.dragDropService.dragPosition[this.itemId].x - 3.8 >= 0 &&
+            +this.dragDropService.dragPosition[this.itemId].x - 3.8,
+          y: this.dragDropService.dragPosition[this.itemId].y,
+        };
+      } else if (event.code === "ArrowRight") {
+        this.dragDropService.dragPosition[this.itemId] = {
+          x: +this.dragDropService.dragPosition[this.itemId].x + 3.8,
+          y: this.dragDropService.dragPosition[this.itemId].y,
+        };
+      } else if (event.code === "Delete") {
+        this.remove(this.itemId);
+      }
     }
   }
 }

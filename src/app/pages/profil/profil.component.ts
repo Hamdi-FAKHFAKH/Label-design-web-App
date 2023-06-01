@@ -19,7 +19,10 @@ export class ProfilComponent implements OnInit {
   confirNewPass;
   newPass: string;
   oldPass: string;
-  avatarColor: string;
+  avatarColor: {
+    backgroundColor: string;
+    foregroundColor: string;
+  };
   passwordnotValid: boolean = true;
   ConfirmpasswordnotValid: boolean = true;
   avatarSrc: string;
@@ -39,19 +42,22 @@ export class ProfilComponent implements OnInit {
         title: "Opération",
         filter: false,
       },
-      // motif: {
-      //   title: "Motif",
-      //   filter: false,
-      // },
       updatedAt: { filter: false, title: "Date Time" },
+      motif: {
+        title: "Motif",
+        filter: false,
+      },
     },
   };
+  source: LocalDataSource = new LocalDataSource();
+  //
   constructor(
     private gestionUtilisateursHttpService: GestionUtilisateursHttpService,
     private authService: AuthService,
     private historiqueService: HistoriqueService
   ) {}
-  source: LocalDataSource = new LocalDataSource();
+
+  //
   async ngOnInit() {
     this.avatarColor = this.authService.avatarColor;
     this.user = (
@@ -101,6 +107,7 @@ export class ProfilComponent implements OnInit {
       })
     );
   }
+  //
   getBase641 = (e) => {
     var file = e.target.files[0];
     let reader = new FileReader();
@@ -150,9 +157,11 @@ export class ProfilComponent implements OnInit {
       console.log(error);
     }
   }
+  //
   onchangePassword() {
     this.passwordnotValid = !this.newPass || this.newPass.length < 4;
   }
+  //
   onchangeConfirmPassword() {
     this.ConfirmpasswordnotValid = this.confirNewPass !== this.newPass;
   }

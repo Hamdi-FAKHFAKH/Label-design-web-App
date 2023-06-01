@@ -65,7 +65,7 @@
                     margin-top: -8px;
                   "
                 >
-                  [id - NumOF - SN - FormatLot]</span
+                  [RefProd - NumOF - SN - FormatLot]</span
                 >
               </h4>
               <div
@@ -90,11 +90,11 @@
                 >
                   <div style="display: flex; justify-content: space-around">
                     <div>
-                      {{ item.id }} - {{ item.numOF }} -
+                      {{ item.refProd }} - {{ item.numOF }} -
                       <div style="font-weight: 600; display: inline">
                         {{ item.serialNumber }}
                       </div>
-                      - {{ item.formatLot }}
+                      - {{ item.formatLot || " __ " }}
                     </div>
                     <nb-icon *ngIf="item.checked" icon="checkmark-outline">
                     </nb-icon>
@@ -123,7 +123,7 @@
                     margin-top: -5px;
                   "
                 >
-                  [id - NumOF - SN - FormatLot]</span
+                  [RefProd - NumOF - SN - FormatLot]</span
                 >
               </h4>
               <div
@@ -154,11 +154,11 @@
                     "
                   >
                     <div>
-                      {{ item.id }} - {{ item.numOF }} -
+                      {{ item.refProd }} - {{ item.numOF }} -
                       <div style="font-weight: 600; display: inline">
                         {{ item.serialNumber }}
                       </div>
-                      - {{ item.formatLot }}
+                      - {{ item.formatLot || " __" }}
                     </div>
                     <nb-icon *ngIf="item.checked" icon="checkmark-outline">
                     </nb-icon>
@@ -172,7 +172,7 @@
           <div class="card">
             <div
               class="card-body"
-              style="background-color: rgb(220, 53, 69, 0.2)"
+              style="background-color: rgb(220, 53, 69, 0.1)"
             >
               <span class="badge bg-danger">{{ nbrOfProblem }}</span>
               <h4 class="card-title">
@@ -228,11 +228,11 @@
                     "
                   >
                     <div *ngIf="item.problem !== 'not Found'">
-                      {{ item.id }} - {{ item.numOF }} -
+                      {{ item.refProd }} - {{ item.numOF }} -
                       <div style="font-weight: 600; display: inline">
                         {{ item.serialNumber }}
                       </div>
-                      - {{ item.formatLot }}
+                      - {{ item.formatLot || " __" }}
                     </div>
                     <span
                       class="badge bg-info probBadge"

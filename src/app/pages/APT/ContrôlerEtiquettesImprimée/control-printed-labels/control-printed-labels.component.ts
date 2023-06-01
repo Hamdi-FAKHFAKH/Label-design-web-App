@@ -35,11 +35,12 @@ export class ControlPrintedLabelsComponent implements OnInit {
   }
   async findOF(data: string) {
     if (!data) {
-      this.oFnumbers = this.ofData.slice(0, 10).map((val) => val.ofnum);
+      this.oFnumbers = this.ofData.slice(0, 20).map((val) => val.ofnum);
     } else {
       this.oFnumbers = this.ofData
         .filter((val) => val.ofnum.startsWith(data))
-        .map((val) => val.ofnum);
+        .map((val) => val.ofnum)
+        .slice(0, 20);
       this.etiquettes = (
         await this.detailImpressionHttpService
           .GetALLEtiquettesByOF(data)
@@ -49,6 +50,7 @@ export class ControlPrintedLabelsComponent implements OnInit {
       });
     }
   }
+  // check the validity of dataMatrix
   async checkDataMatrix(data: string) {
     if (data) {
       if (this.etiquettes) {

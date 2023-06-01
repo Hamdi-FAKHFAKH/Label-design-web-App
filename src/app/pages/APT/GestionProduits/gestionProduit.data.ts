@@ -197,14 +197,3 @@ export interface GetFormeResultData {
   Status: string;
   forms: FormeData[];
 }
-export interface HistoriqueProduitData {
-  refProd: string;
-  operation: string;
-  motif: string;
-  data: string;
-  userMatricule: string;
-}
-export interface CreateHistoriqueProduitResultData {
-  Status: string;
-  historiqueProduit: HistoriqueProduitData;
-}

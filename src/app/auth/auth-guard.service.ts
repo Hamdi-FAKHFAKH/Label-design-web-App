@@ -10,6 +10,7 @@ import {
 import { Observable } from "rxjs";
 import { AuthService } from "./authService.service";
 import { map, take } from "rxjs/operators";
+// ********************************************** Protect Route **************************************************/
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}

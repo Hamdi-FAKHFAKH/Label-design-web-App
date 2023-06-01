@@ -218,7 +218,8 @@
     [attr.data-id]="item.id"
     [ngStyle]="textStyle(item)"
     style="cursor: move"
-    class="draggedText outline"
+    class="draggedText"
+    [ngClass]="{ outline: itemId === item.id }"
     (click)="setItemId(item.id); setTabPropertyActive(item.id)"
   >
     <!-- (dblclick)="setTabPropertyActive(item.id)" -->
@@ -239,6 +240,7 @@
     width="20"
     class="draggedText"
     (click)="setItemId(item.id); setTabPropertyActive(item.id)"
+    [ngClass]="{ outline: itemId === item.id }"
   />
   <div
     cdkDrag
@@ -251,6 +253,7 @@
     style="width: fit-content !important; display: block"
     class="draggedText"
     (click)="setItemId(item.id); setTabPropertyActive(item.id)"
+    [ngClass]="{ outline: itemId === item.id }"
   >
     <div
       *ngIf="item.dataMatrixFormat === 'qrcode'"
@@ -287,16 +290,6 @@
       [bc-margin-bottom]="item.style['margin-bottom'] || 0"
       [bc-margin]="item.style['margin'] || 0"
     ></ngx-barcode>
-    <!-- <ejs-barcodegenerator
-      style="display: block"
-      #barcode
-      id="barcode"
-      width="200px"
-      height="150px"
-      mode="SVG"
-      type="Codabar"
-      value="123456789"
-    ></ejs-barcodegenerator> -->
   </div>
   <div *ngIf="item.type === 'container-1'" [attr.data-id]="item.id"></div>
   <img

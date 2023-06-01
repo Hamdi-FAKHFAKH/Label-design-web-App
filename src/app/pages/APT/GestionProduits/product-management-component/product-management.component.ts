@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { LocalDataSource } from "ng2-smart-table";
 
-import { SmartTableData } from "../../../../@core/data/smart-table";
 import { NbWindowService } from "@nebular/theme";
 import { ProductCreationWindowComponent } from "../create-product/product-creation-window.component";
 import { GestionProduitHttpService } from "../GestionProduitHttp.service";
@@ -9,6 +8,8 @@ import { exhaustMap } from "rxjs/operators";
 import { GestionProduitService } from "../GestionProduit.service";
 import { UpdateProduitComponent } from "../update-product/update-produit.component";
 import Swal from "sweetalert2";
+import { HistoriqueService } from "../../../HistoriqueHttp.service";
+import { AuthService } from "../../../../auth/authService.service";
 @Component({
   selector: "ngx-smart-table",
   templateUrl: "./product-management.component.html",
@@ -142,7 +143,9 @@ export class ProductMangementComponent {
   constructor(
     private windowService: NbWindowService,
     private gestionProduitHttpService: GestionProduitHttpService,
-    private gestionProduitService: GestionProduitService
+    private gestionProduitService: GestionProduitService,
+    private historiqueService: HistoriqueService,
+    private authService: AuthService
   ) {
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
       const tableData = [];
@@ -192,18 +195,44 @@ export class ProductMangementComponent {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await this.gestionProduitService.deleteProduit(event.data.ref);
-          Swal.fire({
-            title: "Supprimer!",
-            text: "Produit supprimé!",
-            icon: "success",
-            confirmButtonColor: "#3085d6",
-          }).then(() => {
-            this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
-              this.source.load(res.produits);
-            });
-            this.source.refresh();
+          const { value: motif } = await Swal.fire({
+            title: "Entrez votre motif de suppression",
+            input: "text",
+            inputLabel: "Motif de Suppression",
+            showCancelButton: true,
+            inputValidator: (value) => {
+              if (!value) {
+                return "Vous devez écrire votre motif!";
+              }
+            },
           });
+          console.log(motif);
+          if (motif) {
+            const produitData = JSON.stringify(event.data);
+            await this.historiqueService
+              .createHistoriqueProduit({
+                refProd: event.data.ref,
+                data: produitData.replaceAll("'", '"'),
+                motif: motif,
+                operation: "Delete",
+                userMatricule: this.authService.user.getValue().matricule,
+              })
+              .toPromise();
+            await this.gestionProduitService.deleteProduit(event.data.ref);
+            Swal.fire({
+              title: "Supprimer!",
+              text: "Produit supprimé!",
+              icon: "success",
+              confirmButtonColor: "#3085d6",
+            }).then(() => {
+              this.gestionProduitHttpService
+                .getAllProduits()
+                .subscribe((res) => {
+                  this.source.load(res.produits);
+                });
+              this.source.refresh();
+            });
+          }
         } catch (e) {
           Swal.fire({
             icon: "error",
@@ -249,6 +278,7 @@ export class ProductMangementComponent {
       });
     });
   }
+  // search data
   onSearch(query: string = "") {
     if (query == "") {
       this.source.reset(false);
