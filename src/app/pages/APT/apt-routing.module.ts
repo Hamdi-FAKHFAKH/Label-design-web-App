@@ -5,7 +5,7 @@ import { AptComponent } from "./apt.component";
 import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
 import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
-import { ControlPrintedLabelsComponent } from "./ContrôlerEtiquettesImprimée/control-printed-labels/control-printed-labels.component";
+import { ControlPrintedLabelsComponent } from "./Control-printed-labels/control-printed-labels/control-printed-labels.component";
 
 const routes: Routes = [
   {
@@ -24,7 +24,7 @@ const routes: Routes = [
       {
         path: "CreationEtiquette",
         loadChildren: () =>
-          import("./CréationEtiquette/CreationEtiquette.module").then(
+          import("./Create-label/CreationEtiquette.module").then(
             (m) => m.CreattionEtiquetteModule
           ),
       },

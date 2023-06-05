@@ -11,7 +11,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Ng2SmartTableModule } from "ng2-smart-table";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { GestionUtilisateursHttpService } from "./GestionUtilisateursHttp.service";
-import { FormsModule, NgForm } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { HistoriqueService } from "./HistoriqueHttp.service";
 @NgModule({
   imports: [

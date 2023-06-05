@@ -30,7 +30,6 @@ export class LoginComponent {
         catchError((error) => {
           // Here you can handle the error (bad request) and retrieve the HTTP status code
           const statusCode = error.status;
-          console.log(error);
 
           if (statusCode == 400) {
             this.ErrorMsg = error.error.message;

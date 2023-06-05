@@ -3,8 +3,11 @@
   "compilerOptions": {
     "importHelpers": true,
     "noUnusedLocals": false,
+    "baseUrl": ".",
+    // "paths": {
+    //   "@env": ["src/environments/*"]
+    // },
     //TODO : remove "skipLibCheck": true,
-
     "module": "es2020",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

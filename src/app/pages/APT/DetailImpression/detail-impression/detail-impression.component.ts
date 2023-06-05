@@ -161,14 +161,12 @@ export class DetailImpressionComponent implements OnInit {
                 .toPromise()
                 .then((response) => {
                   if (!response.etiquetteImprimee) {
-                    console.log(response.etiquetteImprimee);
                     throw new Error(response.Status);
                   }
                   return response.etiquetteImprimee;
                 });
             })
             .catch((error) => {
-              console.log(error);
               Swal.showValidationMessage(`Request failed: ${error}`);
             });
         },
@@ -186,30 +184,11 @@ export class DetailImpressionComponent implements OnInit {
     }
   }
   getSmartTableData(val: PrintDetailData[]) {
-    let dateImp;
-    let dateReImp;
     return val.map((val) => {
-      dateImp = new Date(val.dateImpr);
-      dateReImp = new Date(val.dateReimpr);
       return {
         ...val,
-        dateImpr: `${new Intl.DateTimeFormat("en", {
-          day: "2-digit",
-        }).format(dateImp)}/${new Intl.DateTimeFormat("en", {
-          month: "2-digit",
-        }).format(dateImp)}/${new Intl.DateTimeFormat("en", {
-          year: "numeric",
-        }).format(dateImp)}`,
-        dateReimpr:
-          +val.nbrCopie > 1
-            ? `${new Intl.DateTimeFormat("en", {
-                day: "2-digit",
-              }).format(dateReImp)}/${new Intl.DateTimeFormat("en", {
-                month: "2-digit",
-              }).format(dateReImp)}/${new Intl.DateTimeFormat("en", {
-                year: "numeric",
-              }).format(dateReImp)}`
-            : "-",
+        dateImpr: this.formatDate(val.dateImpr),
+        dateReimpr: +val.nbrCopie > 1 ? this.formatDate(val.dateReimpr) : "-",
         action:
           +val.nbrCopie > 1 && val.serialNumber !== "-"
             ? "Réimpression"
@@ -244,5 +223,30 @@ export class DetailImpressionComponent implements OnInit {
         false
       );
     }
+  }
+  // format date
+  formatDate(date) {
+    let d = new Date(date);
+    let ye = new Intl.DateTimeFormat("en", {
+      year: "numeric",
+    }).format(d);
+    let mo = new Intl.DateTimeFormat("en", {
+      month: "2-digit",
+    }).format(d);
+    let da = new Intl.DateTimeFormat("en", {
+      day: "2-digit",
+    }).format(d);
+    let h = new Intl.DateTimeFormat("fr", {
+      hour: "2-digit",
+    })
+      .format(d)
+      .replace(" h", "");
+    let mm = new Intl.DateTimeFormat("en", {
+      minute: "2-digit",
+    }).format(d);
+    let ss = new Intl.DateTimeFormat("en", {
+      second: "2-digit",
+    }).format(d);
+    return `${da}/${mo}/${ye} ${h}:${mm}:${ss}`;
   }
 }

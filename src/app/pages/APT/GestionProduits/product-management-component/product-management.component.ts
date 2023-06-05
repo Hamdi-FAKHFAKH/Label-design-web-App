@@ -157,7 +157,6 @@ export class ProductMangementComponent {
   }
   async onEdit(event) {
     let success = true;
-    console.log(event.newData);
     if (event.newData && event.newData.codeFournisseur) {
       this.gestionProduitService.AddFournisseur(event.newData);
     }
@@ -206,7 +205,6 @@ export class ProductMangementComponent {
               }
             },
           });
-          console.log(motif);
           if (motif) {
             const produitData = JSON.stringify(event.data);
             await this.historiqueService

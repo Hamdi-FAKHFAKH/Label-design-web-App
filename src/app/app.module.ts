@@ -17,7 +17,6 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import {
   NbAccordionModule,
   NbCardModule,
-  NbChatModule,
   NbDatepickerModule,
   NbDialogModule,
   NbLayoutModule,
@@ -40,8 +39,6 @@ import {
 import { NbDateFnsDateModule } from "@nebular/date-fns";
 import { NbMomentDateModule } from "@nebular/moment";
 import { HistoriqueService } from "./pages/HistoriqueHttp.service";
-
-// import { FormsModule } from "@angular/forms";
 @NgModule({
   declarations: [AppComponent, LoginComponent],
   imports: [

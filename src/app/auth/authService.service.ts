@@ -4,8 +4,8 @@ import { HttpClient } from "@angular/common/http";
 import { catchError, tap } from "rxjs/operators";
 import { BehaviorSubject, Subject, throwError } from "rxjs";
 import { Router } from "@angular/router";
-import { CookieService } from "ngx-cookie-service";
 
+import { environment } from "./../../environments/environment.development";
 interface authData {
   Status: string;
   msg: string;
@@ -29,18 +29,15 @@ export class AuthService {
 
   logIn(matricule, password) {
     return this.http
-      .post<authData>("http://localhost:3080/api/v1/SignIn", {
+      .post<authData>(`${environment.apiUrl}/api/v1/SignIn`, {
         matricule: matricule,
         motDePasse: password,
       })
       .pipe(
         tap((resData: authData) => {
-          console.log("resdata " + resData.tokenExpiration);
-
           const expireDate = new Date(
             new Date().getTime() + resData.tokenExpiration * 60 * 60 * 1000
           );
-          console.log(matricule);
 
           const u = new user(matricule, resData.token, expireDate);
           this.user.next(u);
@@ -62,7 +59,6 @@ export class AuthService {
       _token: string;
       _tokenExpiration: Date;
     } = JSON.parse(localStorage.getItem("userData"));
-    console.log(userData.matricule);
 
     const loggedUser = new user(
       userData.matricule,

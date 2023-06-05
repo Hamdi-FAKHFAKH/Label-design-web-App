@@ -10,13 +10,7 @@ import { NbSecurityModule, NbRoleProvider } from "@nebular/security";
 import { of as observableOf } from "rxjs";
 
 import { throwIfAlreadyLoaded } from "./module-import-guard";
-import {
-  AnalyticsService,
-  LayoutService,
-  PlayerService,
-  SeoService,
-  StateService,
-} from "./utils";
+import { LayoutService, SeoService, StateService } from "./utils";
 
 const socialLinks = [
   {
@@ -79,9 +73,7 @@ export const NB_CORE_PROVIDERS = [
     provide: NbRoleProvider,
     useClass: NbSimpleRoleProvider,
   },
-  AnalyticsService,
   LayoutService,
-  PlayerService,
   SeoService,
   StateService,
 ];

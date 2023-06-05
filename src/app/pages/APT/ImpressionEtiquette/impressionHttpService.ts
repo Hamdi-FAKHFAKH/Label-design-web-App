@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
   FileDeleted,
@@ -7,40 +7,40 @@ import {
   GetOneOFResultData,
   PrintData,
 } from "./impressionServiceData";
+import { environment } from "../../../../environments/environment.development";
 
 @Injectable()
 export class ImpressionHttpService {
   constructor(private http: HttpClient) {}
   GetRefProduitByOF(ofnum) {
     return this.http.get<GetOneOFResultData>(
-      `http://localhost:3080/api/v1/OF/${ofnum}`
+      `${environment.apiUrl}/api/v1/OFs/${ofnum}`
     );
   }
   GetAllOF() {
-    return this.http.get<GetOFResultData>(`http://localhost:3080/api/v1/OF`);
+    return this.http.get<GetOFResultData>(`${environment.apiUrl}/api/v1/OFs`);
   }
   GetPrinterList() {
-    return this.http.get<string[]>(`https://localhost:5001/printer`);
+    return this.http.get<string[]>(`${environment.microServiceUrl}/printer`);
   }
   PrintLabel(obj: PrintData) {
-    return this.http.post(`https://localhost:5001/print`, obj, {
+    return this.http.post(`${environment.microServiceUrl}/print`, obj, {
       observe: "response",
     });
   }
-  CheckFileExistence(obj) {
-    return this.http.post<FileExist>(
-      `http://localhost:3080/api/v1/LabelFile/`,
-      obj
-    );
+  CheckFileExistence(path) {
+    return this.http.get<FileExist>(`${environment.apiUrl}/api/v1/LabelFile`, {
+      params: new HttpParams().set("path", path),
+    });
   }
-  DeleteFile(obj) {
+  DeleteFile(path) {
     return this.http.delete<FileDeleted>(
-      `http://localhost:3080/api/v1/LabelFile/`,
-      { body: obj }
+      `${environment.apiUrl}/api/v1/LabelFile`,
+      { params: new HttpParams().set("path", path) }
     );
   }
 
   sendPdfFileToServer(formData) {
-    return this.http.post("http://localhost:3080/api/v1/savePdfFile", formData);
+    return this.http.post(`${environment.apiUrl}/api/v1/LabelFile`, formData);
   }
 }

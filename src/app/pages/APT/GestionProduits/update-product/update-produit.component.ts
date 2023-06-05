@@ -42,16 +42,10 @@ export class UpdateProduitComponent implements OnInit {
       }
     });
     this.refProd = this.windowdata.ref;
-    console.log("****selected forms");
-    console.log(this.windowdata.formes.split(";"));
-    console.log("****all forms****");
-    console.log(this.formes);
 
     this.windowdata.formes.split(";").forEach((forme, index) => {
       if (forme) {
         const selectedForme = this.formes.find((obj) => obj.id == forme);
-        console.log(selectedForme);
-        selectedForme ? (selectedForme.clicked = true) : null;
       }
     });
     this.lotValue = this.windowdata.numLot;
@@ -76,7 +70,6 @@ export class UpdateProduitComponent implements OnInit {
     } else {
       this.formes[index] = { id: id, name: name, path: path, clicked: false };
     }
-    console.log(this.gestionProduitService.formes);
   }
   //
   closeUpdateWindow() {
@@ -96,7 +89,6 @@ export class UpdateProduitComponent implements OnInit {
           .numLot;
         numLot = res;
       } catch (e) {
-        console.log(e);
         if (e.error.erreur.errors[0].path == "PK__Lot__E5A90244EAD7D78F") {
           Swal.fire({
             icon: "error",
@@ -157,7 +149,6 @@ export class UpdateProduitComponent implements OnInit {
           }
         },
       });
-      console.log(motif);
       if (motif) {
         const produitData = JSON.stringify(this.windowdata);
         await this.historiqueService
@@ -210,7 +201,6 @@ export class UpdateProduitComponent implements OnInit {
         })
         .toPromise()
         .then((val) => {
-          console.log("image saved");
           this.getFormes();
         })
         .catch((e) => {
@@ -221,15 +211,12 @@ export class UpdateProduitComponent implements OnInit {
           });
         });
     };
-    reader.onerror = function (error) {
-      console.log("Error: ", error);
-    };
+    reader.onerror = function (error) {};
   };
   // check lot format
   checkFormatLot(data: string) {
     data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
       ? (this.formatLotValid = true)
       : (this.formatLotValid = false);
-    console.log(this.formatLotValid);
   }
 }

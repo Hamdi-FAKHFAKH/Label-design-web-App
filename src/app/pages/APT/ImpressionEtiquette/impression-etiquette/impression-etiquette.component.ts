@@ -10,9 +10,9 @@ import {
   AfterViewInit,
 } from "@angular/core";
 import { ImpressionHttpService } from "../impressionHttpService";
-import { LabelItem } from "../../CréationEtiquette/ComposentData";
+import { LabelItem } from "../../Create-label/ComposentData";
 import { format } from "date-fns";
-import { LabelService } from "../../CréationEtiquette/label.service";
+import { LabelService } from "../../Create-label/label.service";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
 import {
   ProduitData,
@@ -49,6 +49,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   refProd: string;
   OF: string;
   OfList: string[];
+  OfListData: string[];
   printerList: string[];
   formatLot: string;
   lot: LabelItem;
@@ -124,22 +125,22 @@ export class ImpressionEtiquetteComponent implements OnInit {
   async ngOnInit() {
     this.formatLotValid = false;
     this.nbrCopieValid = false;
-    this.OfList = (
+    this.OfListData = (
       await this.impressionHttpService.GetAllOF().toPromise()
     ).of.map((res) => res.ofnum);
     this.printerList = await this.impressionHttpService
       .GetPrinterList()
       .toPromise();
+    this.OfList = this.OfListData.slice(0, 20);
   }
   async getOFinfo(ofnum) {
-    // this.OfList = this.OfList.filter((val) => val.startsWith(ofnum)).slice(
-    //   0,
-    //   2
-    // );
     this.source.load([]);
     this.lotField = "";
     this.nbrCopie = "";
     if (ofnum) {
+      this.OfList = this.OfListData.filter((val) =>
+        val.startsWith(ofnum)
+      ).slice(0, 20);
       const of = (
         await this.impressionHttpService.GetRefProduitByOF(ofnum).toPromise()
       ).of;
@@ -160,6 +161,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
         OF: of.ofnum,
         refProduit: of.proref,
       };
+    } else {
+      this.OfList = this.OfListData.slice(0, 20);
     }
   }
   async loadList1Data(data: LabelItem[]) {
@@ -177,8 +180,6 @@ export class ImpressionEtiquetteComponent implements OnInit {
   }
   withSNFunction(data) {
     this.withSN = data;
-    console.log("withSN");
-    console.log(this.withSN);
   }
   findDateFormat(data: LabelItem[]) {
     const res = data.find((val) => val.refItem == "format" && val.data);
@@ -265,8 +266,6 @@ export class ImpressionEtiquetteComponent implements OnInit {
   }
 
   changenbrCopie(data: string) {
-    console.log(data.match(/^[1-9]{1}([0-9]){0,2}$/gm));
-
     if (data.match(/^[1-9]{1}([0-9]){0,2}$/gm)) {
       this.nbrCopieValid = true;
       this.nbrCopie = +data;
@@ -291,26 +290,18 @@ export class ImpressionEtiquetteComponent implements OnInit {
       try {
         fileexist = (
           await this.impressionHttpService
-            .CheckFileExistence({
-              path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
-            })
+            .CheckFileExistence(
+              `PdfFiles/label-${this.refProd}.pdf`.replace("/", "%2F")
+            )
             .toPromise()
         ).exist;
-      } catch (error) {
-        console.log("File Not Found");
-      }
+      } catch (error) {}
       let printStatus;
       if (fileexist) {
         const resde = await this.impressionHttpService
-          .DeleteFile({
-            path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
-          })
+          .DeleteFile(`PdfFiles/label-${this.refProd}.pdf`.replace("/", "%2F"))
           .toPromise();
-        console.log("**delete**");
-        console.log(resde);
         const res = await this.labelService.sendPdfFileToServer(this.refProd);
-        console.log("**send PDF**");
-        console.log(res);
         printStatus = (
           await this.impressionHttpService
             .PrintLabel({
@@ -320,11 +311,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
             })
             .toPromise()
         ).status;
-        console.log("**print label**");
       } else {
         fileexist = await this.labelService.sendPdfFileToServer(this.refProd);
-        console.log("file exist");
-        console.log(fileexist);
         printStatus = (
           await this.impressionHttpService
             .PrintLabel({
@@ -354,31 +342,25 @@ export class ImpressionEtiquetteComponent implements OnInit {
         try {
           fileexist = (
             await this.impressionHttpService
-              .CheckFileExistence({
-                path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
-                  this.refProd
-                }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`,
-              })
+              .CheckFileExistence(
+                `PdfFiles/label-${this.refProd}-${
+                  this.sn ? this.sn.prefix + this.sn.suffix : ""
+                }.pdf`.replace("/", "%2F")
+              )
               .toPromise()
           ).exist;
-        } catch (error) {
-          console.log("File Not Found");
-        }
+        } catch (error) {}
         let printStatus;
         if (fileexist) {
           const resde = await this.impressionHttpService
-            .DeleteFile({
-              path: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
-            })
+            .DeleteFile(
+              `PdfFiles/label-${this.refProd}.pdf`.replace("/", "%2F")
+            )
             .toPromise();
-          console.log("**delete**");
-          console.log(resde);
 
           const res = await this.labelService.sendPdfFileToServer(
             `${this.refProd}-${this.sn ? this.sn.prefix + this.sn.suffix : ""}`
           );
-          console.log("**send PDF**");
-          console.log(res);
 
           printStatus = (
             await this.impressionHttpService
@@ -391,13 +373,10 @@ export class ImpressionEtiquetteComponent implements OnInit {
               })
               .toPromise()
           ).status;
-          console.log("**print label**");
         } else {
           fileexist = await this.labelService.sendPdfFileToServer(
             `${this.refProd}-${this.sn ? this.sn.prefix + this.sn.suffix : ""}`
           );
-          console.log("file exist");
-          console.log(fileexist);
           printStatus = (
             await this.impressionHttpService
               .PrintLabel({

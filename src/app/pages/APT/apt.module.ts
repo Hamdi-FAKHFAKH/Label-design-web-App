@@ -15,24 +15,25 @@ import {
 import { ProductMangementComponent } from "./GestionProduits/product-management-component/product-management.component";
 import { ProductCreationWindowComponent } from "./GestionProduits/create-product/product-creation-window.component";
 import { CommonModule } from "@angular/common";
-import { UpdateProduitComponent } from "./GestionProduits/update-product/update-produit.component";
-import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
 import { LabelComponentComponent } from "./ImpressionEtiquette/label-component/label-component.component";
 import { ImpressionHttpService } from "./ImpressionEtiquette/impressionHttpService";
-import { LabeltHttpService } from "./CréationEtiquette/labelHTTP.service";
+import { LabeltHttpService } from "./Create-label/labelHTTP.service";
 import { QRCodeModule } from "angularx-qrcode";
 import { NgxBarcodeModule } from "ngx-barcode";
 import { NbDateFnsDateModule } from "@nebular/date-fns";
 import { NbMomentDateModule } from "@nebular/moment";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { DragDropService } from "./CréationEtiquette/drag-drop.service";
-import { LabelService } from "./CréationEtiquette/label.service";
+import { DragDropService } from "./Create-label/drag-drop.service";
+import { LabelService } from "./Create-label/label.service";
 import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
 import { DetailImpressionHttpService } from "./DetailImpression/detailImpressionHttp.service";
-import { ControlPrintedLabelsComponent } from "./ContrôlerEtiquettesImprimée/control-printed-labels/control-printed-labels.component";
-import { CheckPrintedLabelHttp } from "./ContrôlerEtiquettesImprimée/checkPrintedLabelHttp.service";
+
 import { HistoriqueService } from "../HistoriqueHttp.service";
+import { ControlPrintedLabelsComponent } from "./Control-printed-labels/control-printed-labels/control-printed-labels.component";
+import { CheckPrintedLabelHttp } from "./Control-printed-labels/checkPrintedLabelHttp.service";
+import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
+import { UpdateProduitComponent } from "./GestionProduits/update-product/update-produit.component";
 
 @NgModule({
   imports: [

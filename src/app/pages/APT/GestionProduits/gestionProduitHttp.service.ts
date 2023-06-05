@@ -5,12 +5,9 @@ import {
   FournisseurData,
   LotData,
   GetLotResponseData,
-  GetProduitResponseData,
   GetSDTPRAResponseData,
   SerialNumberData,
   ProduitData,
-  ClientDataResult,
-  FournisseurResultData,
   GetClientResponseData,
   GetFournisseurResultData,
   GetSerialNumberResultData,
@@ -24,6 +21,7 @@ import {
   GetOneLotResponseData,
   GetAllProduitDataResponseData,
 } from "./GestionProduit.data";
+import { environment } from "../../../../environments/environment.development";
 
 @Injectable()
 export class GestionProduitHttpService {
@@ -31,144 +29,144 @@ export class GestionProduitHttpService {
   /**************************************************** Produit ***************************************************** */
   getAllProduits() {
     return this.http.get<GetAllProduitDataResponseData>(
-      "http://localhost:3080/api/v1/Produits/allData"
+      `${environment.apiUrl}/api/v1/Produits/allData`
     );
   }
   createProduit(obj: ProduitData) {
     return this.http.post<ProduitData>(
-      "http://localhost:3080/api/v1/Produits",
+      `${environment.apiUrl}/api/v1/Produits`,
       obj
     );
   }
   updateProduit(obj: ProduitData, id: string) {
-    console.log("obj to update" + obj.ref);
+    console.log(`obj to update` + obj.ref);
 
     return this.http.put<updateProduitResponseData>(
-      `http://localhost:3080/api/v1/Produits/${id}`,
+      `${environment.apiUrl}/api/v1/Produits/${id}`,
       obj
     );
   }
   deleteProduit(id: string) {
     return this.http.delete<updateProduitResponseData>(
-      `http://localhost:3080/api/v1/Produits/${id}`
+      `${environment.apiUrl}/api/v1/Produits/${id}`
     );
   }
   getOneProduit(id: string) {
     return this.http.get<getOneProduitResponseData>(
-      `http://localhost:3080/api/v1/Produits/${id}`
+      `${environment.apiUrl}/api/v1/Produits/${id}`
     );
   }
   /****************************************************** SDTPRA ***************************************************************/
   getSDTPRA() {
     return this.http.get<GetSDTPRAResponseData>(
-      "http://localhost:3080/api/v1/SDTPRA"
+      `${environment.apiUrl}/api/v1/SDTPRAs`
     );
   }
   /***************************************************** Lot ******************************************************************/
   getLots() {
     return this.http.get<GetLotResponseData>(
-      "http://localhost:3080/api/v1/lot"
+      `${environment.apiUrl}/api/v1/lots`
     );
   }
   createLot(obj: LotData) {
     return this.http.post<GetOneLotResponseData>(
-      "http://localhost:3080/api/v1/lot",
+      `${environment.apiUrl}/api/v1/lots`,
       obj
     );
   }
   updateLot(obj: LotData, id: string) {
     return this.http.put<UpdateLotResponseData>(
-      `http://localhost:3080/api/v1/lot/${id}`,
+      `${environment.apiUrl}/api/v1/lots/${id}`,
       obj
     );
   }
   getOneLot(id: string) {
     return this.http.get<GetOneLotResponseData>(
-      `http://localhost:3080/api/v1/lot/${id}`
+      `${environment.apiUrl}/api/v1/lots/${id}`
     );
   }
   /****************************************************** Client *************************************************************/
   createClient(obj: ClientData) {
     return this.http.post<ClientData>(
-      "http://localhost:3080/api/v1/client",
+      `${environment.apiUrl}/api/v1/clients`,
       obj
     );
   }
   getClient(idClient: string) {
     return this.http.get<GetClientResponseData>(
-      `http://localhost:3080/api/v1/client/${idClient}`,
+      `${environment.apiUrl}/api/v1/clients/${idClient}`,
       {
-        observe: "response",
+        observe: `response`,
       }
     );
   }
   updateClient(idClient: string, obj: ClientData) {
     return this.http.put<GetClientResponseData>(
-      `http://localhost:3080/api/v1/client/${idClient}`,
+      `${environment.apiUrl}/api/v1/clients/${idClient}`,
       obj,
       {
-        observe: "response",
+        observe: `response`,
       }
     );
   }
   /******************************************************* Fournisseur ******************************************************* */
   createFournisseur(obj: FournisseurData) {
     return this.http.post<GetFournisseurResultData>(
-      "http://localhost:3080/api/v1/fournisseur",
+      `${environment.apiUrl}/api/v1/fournisseurs`,
       obj,
       {
-        observe: "response",
+        observe: `response`,
       }
     );
   }
   getFournisseur(idFournisseur: string) {
     return this.http.get<GetFournisseurResultData>(
-      `http://localhost:3080/api/v1/fournisseur/${idFournisseur}`,
+      `${environment.apiUrl}/api/v1/fournisseurs/${idFournisseur}`,
       {
-        observe: "response",
+        observe: `response`,
       }
     );
   }
   updateFournisseur(idFournisseur: string, obj: FournisseurData) {
     return this.http.put<GetFournisseurResultData>(
-      `http://localhost:3080/api/v1/fournisseur/${idFournisseur}`,
+      `${environment.apiUrl}/api/v1/fournisseurs/${idFournisseur}`,
       obj,
       {
-        observe: "response",
+        observe: `response`,
       }
     );
   }
   /************************************************************* SerialNumber ***************************************************/
   createSerialNumber(obj: SerialNumberData) {
     return this.http.post<FournisseurData>(
-      "http://localhost:3080/api/v1/serialNumber",
+      `${environment.apiUrl}/api/v1/serialNumbers`,
       obj
     );
   }
   getSerialNumber() {
     return this.http.get<GetSerialNumberResultData>(
-      "http://localhost:3080/api/v1/serialNumber"
+      `${environment.apiUrl}/api/v1/serialNumbers`
     );
   }
   getOneSerialNumber(id: string) {
     return this.http.get<GetOneSerialNumberResultData>(
-      `http://localhost:3080/api/v1/serialNumber/${id}`
+      `${environment.apiUrl}/api/v1/serialNumbers/${id}`
     );
   }
   createForm(obj: FormeData) {
     return this.http.post<CreateFormeResultData>(
-      "http://localhost:3080/api/v1/forms",
+      `${environment.apiUrl}/api/v1/forms`,
       obj
     );
   }
   getForms() {
     return this.http.get<GetFormeResultData>(
-      "http://localhost:3080/api/v1/forms"
+      `${environment.apiUrl}/api/v1/forms`
     );
   }
   getOneForm(id: string) {
     return this.http.get<CreateFormeResultData>(
-      `http://localhost:3080/api/v1/forms/${id}`
+      `${environment.apiUrl}/api/v1/forms/${id}`
     );
   }
 }

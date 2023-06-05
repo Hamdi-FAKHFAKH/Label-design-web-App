@@ -24,6 +24,7 @@ export class ProfilComponent implements OnInit {
     foregroundColor: string;
   };
   passwordnotValid: boolean = true;
+  passwordIncorrect: boolean = true;
   ConfirmpasswordnotValid: boolean = true;
   avatarSrc: string;
   // smart table settings
@@ -114,22 +115,17 @@ export class ProfilComponent implements OnInit {
     reader.readAsDataURL(file);
     reader.onload = () => {
       /** ******* console ********** */
-      console.log("name");
-      console.log(e.target.files[0]);
-      console.log(reader.result.toString());
       this.imgdata = reader.result.toString();
     };
-    reader.onerror = function (error) {
-      console.log("Error: ", error);
-    };
+    reader.onerror = function (error) {};
   };
   async changeMotPasse() {
-    console.log(this.oldPass);
     try {
       const res = await this.gestionUtilisateursHttpService
         .checkPassword(this.authService.user.getValue().matricule, this.oldPass)
         .toPromise();
       if (res.Status == "Success") {
+        this.passwordIncorrect = true;
         if (
           this.newPass == this.confirNewPass &&
           this.newPass !== this.oldPass
@@ -137,7 +133,8 @@ export class ProfilComponent implements OnInit {
           const result = await this.gestionUtilisateursHttpService
             .updateUtilisateur(
               this.authService.user.getValue().matricule,
-              this.newPass
+              this.newPass,
+              this.imgdata
             )
             .toPromise();
           if (result.UtilisateurUpdated) {
@@ -152,10 +149,10 @@ export class ProfilComponent implements OnInit {
             this.authService.logOut();
           }
         }
+      } else {
+        this.passwordIncorrect = false;
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
   //
   onchangePassword() {

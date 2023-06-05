@@ -7,34 +7,36 @@ import {
   authData,
   updateUtilisateurResultData,
 } from "./GestionUtilisateursHttp.data";
+import { environment } from "../../environments/environment.development";
 
 @Injectable()
 export class GestionUtilisateursHttpService {
   constructor(private http: HttpClient) {}
   getOneUtilisateur(matricule: string) {
     return this.http.get<GetOneUtilisateurResultResponseData>(
-      `http://localhost:3080/api/v1/utilisateur/${matricule}`
+      `${environment.apiUrl}/api/v1/utilisateurs/${matricule}`
     );
   }
   getAtelierName(id: string) {
     return this.http.get<GetOneAtelierResultResponseData>(
-      `http://localhost:3080/api/v1/Atelier/${id}`
+      `${environment.apiUrl}/api/v1/Ateliers/${id}`
     );
   }
   checkPassword(matricule: string, password: string) {
     return this.http.post<CheckPassword>(
-      "http://localhost:3080/api/v1/checkPassword",
+      `${environment.apiUrl}/api/v1/checkPassword`,
       {
         matricule: matricule,
         motDePasse: password,
       }
     );
   }
-  updateUtilisateur(matricule, password) {
+  updateUtilisateur(matricule, password, imgData: string) {
     return this.http.put<updateUtilisateurResultData>(
-      `http://localhost:3080/api/v1/utilisateur/${matricule}`,
+      `${environment.apiUrl}/api/v1/utilisateurs/${matricule}`,
       {
         motDePasse: password,
+        imgData: imgData,
       }
     );
   }

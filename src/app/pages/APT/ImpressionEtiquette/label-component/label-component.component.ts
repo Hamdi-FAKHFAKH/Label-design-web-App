@@ -8,9 +8,9 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { GestionProduitHttpService } from "../../GestionProduits/GestionProduitHttp.service";
-import { LabeltHttpService } from "../../CréationEtiquette/labelHTTP.service";
-import { ComposentHttpData } from "../../CréationEtiquette/labelHttp.data";
-import { LabelItem } from "../../CréationEtiquette/ComposentData";
+import { LabeltHttpService } from "../../Create-label/labelHTTP.service";
+import { ComposentHttpData } from "../../Create-label/labelHttp.data";
+import { LabelItem } from "../../Create-label/ComposentData";
 import {
   ClientData,
   CreateFormeResultData,
@@ -19,7 +19,7 @@ import {
   LotData,
   SerialNumberData,
 } from "../../GestionProduits/GestionProduit.data";
-import { DragDropService } from "../../CréationEtiquette/drag-drop.service";
+import { DragDropService } from "../../Create-label/drag-drop.service";
 import Swal from "sweetalert2";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
@@ -82,20 +82,14 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     };
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("onchange");
-    console.log(changes);
     if (
       changes.refProd &&
       changes.refProd.currentValue !== changes.refProd.previousValue
     ) {
       this.refProd &&
         this.loadEtiquette(this.refProd)
-          .then(() => {
-            console.log("load SUCCESS");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+          .then(() => {})
+          .catch((err) => {});
     } else {
       if (this.dataMatrixComp) {
         this.dataMatrixComp.data = this.dataMatrixComp.data
@@ -141,10 +135,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           .GetOneEtiquette(this.produit.idEtiquette)
           .toPromise()
       ).etiquette;
-    } catch (e) {
-      console.log(e);
-    }
-    console.log(etiquette);
+    } catch (e) {}
     if (!etiquette) {
       Swal.fire({
         icon: "error",
@@ -316,7 +307,6 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         this.orderElementsInList1(composents, this.list, list);
         this.snComp = this.findSN(list);
         this.dataMatrixComp = this.findDataMatrix(list);
-        console.log(this.snComp);
         this.list1 = list;
       }
       this.list1Event.emit(this.list1);
@@ -356,9 +346,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       resarray.find((val) => val && val.refItem == "dataMatrixData" && val.data)
     );
   }
-  navigate() {
-    console.log("hellp");
-  }
+  navigate() {}
   // parcourir les element a partir de BD et les insérer dans list ( utiliser dans le drag & drop avec container)
   uploadData(listFromDB, produit, client, fournisseur, form, lot, SN) {
     listFromDB.map((item) => {
@@ -522,9 +510,6 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   }
   // changer le Numéro de Série dans l'étiquette
   changeSn = () => {
-    console.log(this.produit.datamatrixData);
-    console.log(this.lotdata);
-
     const lastSn = this.SN.prefix + this.SN.suffix;
     const suff = parseInt(this.SN.suffix) + +this.SN.pas;
     this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");

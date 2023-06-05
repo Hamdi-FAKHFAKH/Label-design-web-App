@@ -45,7 +45,6 @@ export class ProductCreationWindowComponent implements OnInit {
       for (const i in res.lots) {
         this.lotData.push(res.lots[i]);
       }
-      console.log(this.lotData);
     });
     this.gestionProduitHttpService.getSerialNumber().subscribe((res) => {
       this.SerialNumberData = res.serialNumber;
@@ -64,7 +63,6 @@ export class ProductCreationWindowComponent implements OnInit {
     } else {
       this.formes[index] = { id: id, name: name, path: path, clicked: false };
     }
-    console.log(this.gestionProduitService.formes);
   }
   //close product creation window
   close() {
@@ -102,7 +100,6 @@ export class ProductCreationWindowComponent implements OnInit {
           .numLot;
         numLot = res;
       } catch (e) {
-        console.log(e);
         if (e.error.erreur.errors[0].path == "PK__Lot__E5A90244EAD7D78F") {
           Swal.fire({
             icon: "error",
@@ -227,7 +224,6 @@ export class ProductCreationWindowComponent implements OnInit {
         })
         .toPromise()
         .then((val) => {
-          console.log("image saved");
           this.gestionProduitService.getFormes();
         })
         .catch((e) => {
@@ -238,15 +234,12 @@ export class ProductCreationWindowComponent implements OnInit {
           });
         });
     };
-    reader.onerror = function (error) {
-      console.log("Error: ", error);
-    };
+    reader.onerror = function (error) {};
   };
 
   checkFormatLot(data: string) {
     data.match(/^(dd|MM|yyyy)(\-|\/|\s)(dd|MM|yyyy)(\-|\/|\s)?(dd|MM|yyyy)?$/gm)
       ? (this.formatLotValid = true)
       : (this.formatLotValid = false);
-    console.log(this.formatLotValid);
   }
 }

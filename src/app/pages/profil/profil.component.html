@@ -1,131 +1,170 @@
 <nb-layout>
   <nb-layout-column>
-    <div class="row">
-      <div class="col-5 px-0">
+    <div class="col">
+      <div class="row">
         <div class="card">
-          <div class="card-header">
-            <div style="display: flex; align-items: start">
-              <input
-                #formeInput
-                type="file"
-                ref="{hiddenFileInput}"
-                style="display: 'none'"
-                (change)="getBase641($event)"
-              />
-              <img
-                *ngIf="user && user.nom && user.prenom"
-                [src]="imgdata || avatarSrc"
-                alt=""
-                style="border-radius: 50%; margin-left: 20px"
-                width="150"
-              />
-              <div id="subProfil">
-                <div>{{ user && user.prenom }} {{ user && user.nom }}</div>
-                <div>{{ user && user.roles }}</div>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  (click)="isnewMotdePasse = true"
-                >
-                  Change Mot de Passe
-                </button>
-              </div>
-            </div>
-          </div>
           <div class="card-body">
-            <fa-icon
-              icon="camera"
-              size="1x"
-              title="Edit"
-              (click)="formeInput.click()"
-            ></fa-icon>
-            <div class="profil-item">
-              <div>Matricule</div>
-              <div>{{ user && user.matricule }}</div>
-            </div>
-            <div class="profil-item">
-              <div>Statut</div>
-              <div>{{ user && user.statut ? "Active" : "Déactiver" }}</div>
-            </div>
-            <div class="profil-item">
-              <div>Nom de PC</div>
-              <div>{{ user && user.nomPC }}</div>
-            </div>
-            <div class="profil-item">
-              <div>Atelier</div>
-              <div>{{ atelierName }}</div>
-            </div>
-            <div class="profil-item">
-              <div>SuperUser</div>
-              <div>{{ user && user.superUser }}</div>
-            </div>
-            <div class="profil-item" *ngIf="isnewMotdePasse">
-              <div>Ancien Mot de Passe</div>
-              <div>
-                <input
-                  [(ngModel)]="oldPass"
-                  type="password"
-                  class="form-control"
-                  placeholder="Ancien Mot de Passe"
-                />
-                <span style="color: red; font-size: small"
-                  >Mot de Passe Incorrecte</span
-                >
+            <div class="row" style="align-items: start">
+              <div
+                class="col-3"
+                style="display: flex; justify-content: flex-start"
+              >
+                <div style="display: flex; flex-direction: column">
+                  <input
+                    #formeInput
+                    type="file"
+                    ref="{hiddenFileInput}"
+                    style="display: 'none'"
+                    (change)="getBase641($event)"
+                  />
+                  <img
+                    *ngIf="user && user.nom && user.prenom"
+                    [src]="imgdata || avatarSrc"
+                    alt=""
+                    style="
+                      border-radius: 50%;
+                      margin: auto;
+                      margin-top: 9px;
+                      margin-bottom: 20px;
+                      align-items: center;
+                    "
+                    width="150"
+                    height="150"
+                  />
+                  <div id="subProfil">
+                    <div>{{ user && user.nom }}</div>
+                    <div>{{ user && user.prenom }}</div>
+                    <div>{{ user && user.roles }}</div>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      style="margin-top: 15px; margin-left: 10px"
+                      (click)="isnewMotdePasse = true"
+                    >
+                      Change Mot de Passe
+                    </button>
+                  </div>
+                </div>
+                <fa-icon
+                  icon="camera"
+                  size="1x"
+                  title="Edit"
+                  (click)="formeInput.click()"
+                ></fa-icon>
               </div>
-            </div>
-            <div class="profil-item" *ngIf="isnewMotdePasse">
-              <div>Nouveau Mot de Passe</div>
-              <div>
-                <input
-                  #NPass="ngModel"
-                  [(ngModel)]="newPass"
-                  type="password"
-                  class="form-control"
-                  placeholder="Nouveau Mot de Passe"
-                  (input)="onchangePassword()"
-                  [ngClass]="{
-                    'is-valid':
-                      (!passwordnotValid || newPass !== oldPass) &&
-                      NPass.touched,
-                    'is-invalid':
-                      (passwordnotValid || newPass === oldPass) && NPass.touched
-                  }"
-                />
-                <span
-                  style="color: red; font-size: small"
-                  *ngIf="passwordnotValid && NPass.touched"
-                >
-                  Le mot de passe doit comporter au moins 4 caractères.
-                </span>
-                <span
-                  style="color: red; font-size: small"
-                  *ngIf="newPass === oldPass && NPass.touched"
-                >
-                  Le nouveau MDP ne peut pas être identique à l'ancien MDP.
-                </span>
-              </div>
-            </div>
-            <div class="profil-item" *ngIf="isnewMotdePasse">
-              <div>Confirmation Nouveau Mot de Passe</div>
-              <div>
-                <input
-                  type="password"
-                  #confNP="ngModel"
-                  class="form-control"
-                  placeholder="Confirmation Nouveau Mot de Passe"
-                  [(ngModel)]="confirNewPass"
-                  (input)="onchangeConfirmPassword()"
-                  [ngClass]="{
-                    'is-valid': !ConfirmpasswordnotValid && confNP.touched,
-                    'is-invalid': ConfirmpasswordnotValid && confNP.touched
-                  }"
-                />
-                <span
-                  style="color: red; font-size: small"
-                  *ngIf="ConfirmpasswordnotValid && confNP.touched"
-                  >Le mot de passe et la confirmation du mot de passe ne
-                  correspondent pas</span
-                >
+              <div class="col">
+                <div class="row" style="margin-top: 30px">
+                  <div class="profil-item col-4">
+                    <div>Matricule</div>
+                    <div>{{ user && user.matricule }}</div>
+                  </div>
+                  <div class="profil-item col">
+                    <div>SuperUser</div>
+                    <div>{{ user && user.superUser }}</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="profil-item col-4">
+                    <div>Statut</div>
+                    <div>
+                      {{ user && user.statut ? "Active" : "Déactiver" }}
+                    </div>
+                  </div>
+                  <div class="profil-item col">
+                    <div>Ancien Mot de Passe</div>
+                    <div>
+                      <div class="input-group has-validation">
+                        <input
+                          [disabled]="!isnewMotdePasse"
+                          [(ngModel)]="oldPass"
+                          type="password"
+                          class="form-control"
+                          placeholder="Ancien Mot de Passe"
+                          [ngModel]="isnewMotdePasse ? '' : '123456'"
+                        />
+                      </div>
+                      <span
+                        style="color: red; font-size: small"
+                        *ngIf="!passwordIncorrect"
+                        >Mot de Passe Incorrecte</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="profil-item col-4">
+                    <div>Nom de PC</div>
+                    <div>{{ user && user.nomPC }}</div>
+                  </div>
+                  <div class="profil-item col" *ngIf="isnewMotdePasse">
+                    <div>Nouveau Mot de Passe</div>
+                    <div>
+                      <input
+                        #NPass="ngModel"
+                        [(ngModel)]="newPass"
+                        type="password"
+                        class="form-control"
+                        placeholder="Nouveau Mot de Passe"
+                        (input)="onchangePassword()"
+                        [ngClass]="{
+                          'is-valid':
+                            (!passwordnotValid || newPass !== oldPass) &&
+                            NPass.touched,
+                          'is-invalid':
+                            (passwordnotValid || newPass === oldPass) &&
+                            NPass.touched
+                        }"
+                      />
+                      <span
+                        style="color: red; font-size: small"
+                        *ngIf="passwordnotValid && NPass.touched"
+                      >
+                        Le mot de passe doit comporter au moins 4 caractères.
+                      </span>
+                      <span
+                        style="color: red; font-size: small"
+                        *ngIf="
+                          newPass === oldPass &&
+                          NPass.touched &&
+                          !passwordnotValid
+                        "
+                      >
+                        Le nouveau MDP ne peut pas être identique à l'ancien
+                        MDP.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="profil-item col-4">
+                    <div>Atelier</div>
+                    <div>{{ atelierName }}</div>
+                  </div>
+                  <div class="profil-item col" *ngIf="isnewMotdePasse">
+                    <div>Confirmation Mot de Passe</div>
+                    <div>
+                      <input
+                        type="password"
+                        #confNP="ngModel"
+                        class="form-control"
+                        placeholder="Confirmation Mot de Passe"
+                        [(ngModel)]="confirNewPass"
+                        (input)="onchangeConfirmPassword()"
+                        [ngClass]="{
+                          'is-valid':
+                            !ConfirmpasswordnotValid && confNP.touched,
+                          'is-invalid':
+                            ConfirmpasswordnotValid && confNP.touched
+                        }"
+                      />
+                      <span
+                        style="color: red; font-size: small"
+                        *ngIf="ConfirmpasswordnotValid && confNP.touched"
+                        >confirmation de mot de passe incorrect</span
+                      >
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div style="display: flex; justify-content: flex-end">
@@ -137,13 +176,12 @@
                 Enregistrer
               </button>
             </div>
-            <div></div>
           </div>
         </div>
       </div>
-      <div class="col px-1">
-        <div class="card" style="width: fit-content">
-          <div class="card-body" style="overflow: hidden; width: 618px">
+      <div class="row">
+        <div class="card" style="width: 100%">
+          <div class="card-body" style="overflow: hidden; width: 100%">
             <div style="overflow: auto; width: 100%">
               <div style="min-width: 700px; margin-bottom: 20px">
                 <ng2-smart-table

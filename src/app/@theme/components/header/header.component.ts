@@ -83,7 +83,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.currentTheme = this.themeService.currentTheme;
     this.userSub = this.authService.user.subscribe((user) => {
       this.authenticated = !!user;
-      console.log(this.authenticated);
     });
     this.themeService
       .onThemeChange()

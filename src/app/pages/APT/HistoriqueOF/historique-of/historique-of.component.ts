@@ -89,7 +89,18 @@ export class HistoriqueOFComponent implements OnInit {
         let da = new Intl.DateTimeFormat("en", {
           day: "2-digit",
         }).format(d);
-        return { ...val, date: `${da}/${mo}/${ye}` };
+        let h = new Intl.DateTimeFormat("fr", {
+          hour: "2-digit",
+        })
+          .format(d)
+          .replace(" h", "");
+        let mm = new Intl.DateTimeFormat("en", {
+          minute: "2-digit",
+        }).format(d);
+        let ss = new Intl.DateTimeFormat("en", {
+          second: "2-digit",
+        }).format(d);
+        return { ...val, date: `${da}/${mo}/${ye}  ${h}:${mm}:${ss}` };
       })
     );
   }
