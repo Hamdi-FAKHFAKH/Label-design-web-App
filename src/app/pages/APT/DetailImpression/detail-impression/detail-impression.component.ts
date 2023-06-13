@@ -8,6 +8,7 @@ import {
 import { AuthService } from "../../../../auth/authService.service";
 import Swal from "sweetalert2";
 import { ImpressionHttpService } from "../../ImpressionEtiquette/impressionHttpService";
+import { Utils } from "../../../formatDate";
 
 @Component({
   selector: "ngx-detail-impression",
@@ -18,7 +19,8 @@ export class DetailImpressionComponent implements OnInit {
   constructor(
     private detailImpressionHttp: DetailImpressionHttpService,
     private authService: AuthService,
-    private impressionHttpService: ImpressionHttpService
+    private impressionHttpService: ImpressionHttpService,
+    private utils: Utils
   ) {}
   printDetail: PrintDetailData[];
   settings = {
@@ -187,8 +189,9 @@ export class DetailImpressionComponent implements OnInit {
     return val.map((val) => {
       return {
         ...val,
-        dateImpr: this.formatDate(val.dateImpr),
-        dateReimpr: +val.nbrCopie > 1 ? this.formatDate(val.dateReimpr) : "-",
+        dateImpr: this.utils.formatDate(val.dateImpr),
+        dateReimpr:
+          +val.nbrCopie > 1 ? this.utils.formatDate(val.dateReimpr) : "-",
         action:
           +val.nbrCopie > 1 && val.serialNumber !== "-"
             ? "Réimpression"
@@ -223,30 +226,5 @@ export class DetailImpressionComponent implements OnInit {
         false
       );
     }
-  }
-  // format date
-  formatDate(date) {
-    let d = new Date(date);
-    let ye = new Intl.DateTimeFormat("en", {
-      year: "numeric",
-    }).format(d);
-    let mo = new Intl.DateTimeFormat("en", {
-      month: "2-digit",
-    }).format(d);
-    let da = new Intl.DateTimeFormat("en", {
-      day: "2-digit",
-    }).format(d);
-    let h = new Intl.DateTimeFormat("fr", {
-      hour: "2-digit",
-    })
-      .format(d)
-      .replace(" h", "");
-    let mm = new Intl.DateTimeFormat("en", {
-      minute: "2-digit",
-    }).format(d);
-    let ss = new Intl.DateTimeFormat("en", {
-      second: "2-digit",
-    }).format(d);
-    return `${da}/${mo}/${ye} ${h}:${mm}:${ss}`;
   }
 }

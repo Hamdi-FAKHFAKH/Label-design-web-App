@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { LocalDataSource } from "ng2-smart-table";
 import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
+import { Utils } from "../../../formatDate";
 
 @Component({
   selector: "ngx-historique-of",
@@ -71,7 +72,10 @@ export class HistoriqueOFComponent implements OnInit {
   };
 
   source: LocalDataSource = new LocalDataSource();
-  constructor(private detailImpressionHttp: DetailImpressionHttpService) {}
+  constructor(
+    private detailImpressionHttp: DetailImpressionHttpService,
+    private utils: Utils
+  ) {}
 
   async ngOnInit() {
     this.etiquettes = (
@@ -79,28 +83,7 @@ export class HistoriqueOFComponent implements OnInit {
     ).etiquettesImprimees;
     this.source.load(
       this.etiquettes.map((val) => {
-        let d = new Date(val.date);
-        let ye = new Intl.DateTimeFormat("en", {
-          year: "numeric",
-        }).format(d);
-        let mo = new Intl.DateTimeFormat("en", {
-          month: "2-digit",
-        }).format(d);
-        let da = new Intl.DateTimeFormat("en", {
-          day: "2-digit",
-        }).format(d);
-        let h = new Intl.DateTimeFormat("fr", {
-          hour: "2-digit",
-        })
-          .format(d)
-          .replace(" h", "");
-        let mm = new Intl.DateTimeFormat("en", {
-          minute: "2-digit",
-        }).format(d);
-        let ss = new Intl.DateTimeFormat("en", {
-          second: "2-digit",
-        }).format(d);
-        return { ...val, date: `${da}/${mo}/${ye}  ${h}:${mm}:${ss}` };
+        return { ...val, date: this.utils.formatDate(val.date) };
       })
     );
   }

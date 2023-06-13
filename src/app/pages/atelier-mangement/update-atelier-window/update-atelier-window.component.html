@@ -1,0 +1,76 @@
+<form
+  (ngSubmit)="onSubmit(f)"
+  #f="ngForm"
+  class="form"
+  data-bs-spy="scroll"
+  style="overflow-y: auto; width: 100%; overflow-x: hidden; padding-right: 10px"
+>
+  <br />
+  <div class="col" style="width: 100%">
+    <div class="row">
+      <div class="form-group">
+        <label for="codeAtelier"
+          >Code Atelier <span style="color: red">*</span></label
+        >
+        <input
+          required
+          type="text"
+          class="form-control"
+          name="Liecod"
+          id="codeAtelier"
+          placeholder="Code Atelier"
+          [ngModel]="atelierdata.Liecod"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label for="codeAtelier"
+          >Libelle d'atelier <span style="color: red">*</span></label
+        >
+        <input
+          required
+          type="text"
+          class="form-control"
+          name="Libelle_Atelier"
+          id="libelleAtelier"
+          [ngModel]="atelierdata.Libelle_Atelier"
+          placeholder="Libelle d'atelier"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label for="codeAtelier"
+          >Unité de Production <span style="color: red">*</span></label
+        >
+        <input
+          required
+          type="text"
+          class="form-control"
+          name="Unite_Production"
+          id="uniteProduction"
+          [ngModel]="atelierdata.Unite_Production"
+          placeholder="Unité de Production"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col" style="text-align: end">
+      <button
+        type="submit"
+        class="btn btn-success"
+        style="margin-right: 15px"
+        [disabled]="!f.valid"
+      >
+        Enregistrer
+      </button>
+      <button type="button" class="btn btn-danger ms-3" (click)="close()">
+        Annuler
+      </button>
+    </div>
+  </div>
+</form>
+<span style="color: red">* champs obligatoires</span>
+<!-- [disabled]="!f.valid" -->

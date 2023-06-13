@@ -37,10 +37,17 @@ export class ProductCreationWindowComponent implements OnInit {
       val.clicked = false;
     });
     this.formes = this.gestionProduitService.formes;
+    const protypCod = (
+      await this.gestionProduitHttpService
+        .getProdTypesFromAtelierCode(this.authService.user.getValue().atelier)
+        .toPromise()
+    ).lienProTypeAtelier.map((val) => val.ProtypCod);
+
     const { SDTPRA } = await this.gestionProduitHttpService
-      .getSDTPRA()
+      .getSDTPRA(protypCod)
       .toPromise();
     this.produits = SDTPRA;
+
     this.gestionProduitHttpService.getLots().subscribe((res) => {
       for (const i in res.lots) {
         this.lotData.push(res.lots[i]);
@@ -87,6 +94,14 @@ export class ProductCreationWindowComponent implements OnInit {
         success = false;
         return;
       }
+    }
+    if (!form.value.ref) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Veuillez sélectionner la référence du produit",
+      });
+      return;
     }
     if (!success) {
       return;
@@ -154,9 +169,16 @@ export class ProductCreationWindowComponent implements OnInit {
 
       idSN = await this.gestionProduitService.AddSerialNumber(
         form.value,
-
         this.formatSN
       );
+      if (!idSN) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Numéro de Série déja Exist!",
+        });
+        return;
+      }
     }
     if (!this.addNewSerialNumber && form.value.FormatSN) {
       idSN = this.selectedSerialNumber.idSN;
@@ -169,8 +191,8 @@ export class ProductCreationWindowComponent implements OnInit {
         formes += val.id + ";";
       }
     });
-    // create product
     if (success && form.value.ref) {
+      // create product
       success = await this.gestionProduitService.CreateProduit(
         form.value,
         numLot,

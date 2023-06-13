@@ -20,10 +20,13 @@ import { CdkDragEnd, CdkDropList } from "@angular/cdk/drag-drop";
 import { DragDropService } from "../drag-drop.service";
 import { ComponentTitle, LabelItem } from "../ComposentData";
 import Swal from "sweetalert2";
-import domtoimage from "dom-to-image";
+import { getcanvas } from "dom-to-pdf";
 import { NbSidebarService, NbWindowService } from "@nebular/theme";
 import { te } from "date-fns/locale";
 import { infoLabel } from "../label.service";
+import { NavigationStart, Route, Router } from "@angular/router";
+import { CanComponentDeactivate } from "../CanDeactivate";
+import { Observable } from "rxjs";
 @Component({
   selector: "ngx-sidebar",
   templateUrl: "./label-container.component.html",
@@ -53,7 +56,8 @@ export class SidebarComponent implements OnInit {
     private lablHttpService: LabeltHttpService,
     private gestionProduitHttpService: GestionProduitHttpService,
     public dragDropService: DragDropService,
-    private windowService: NbWindowService
+    private windowService: NbWindowService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.containerNotVide = false;
@@ -77,6 +81,7 @@ export class SidebarComponent implements OnInit {
       this.labelInfo = info;
     });
   }
+
   // zoomIn / ZoomOut the label
   zoomIn() {
     this.labelStyle = {
@@ -509,20 +514,21 @@ export class SidebarComponent implements OnInit {
     });
   }
   //
-  openLabelView() {
-    var node = document.getElementById("container");
-    domtoimage.toSvg(node).then(
-      (data) => {
-        this.imgSrc = data;
-      },
-      {
-        style: { width: "400px", height: "200px !important", display: "block" },
-      }
-    );
+  async openLabelView() {
+    var element = document.getElementById("test");
+    var options = {
+      filename: "label.pdf",
+      compression: "FAST",
+      scale: 1,
+    };
+    const canva = await getcanvas(element, options);
+    // canva.height = 300;
+    // canva.width = 00;
+    this.imgSrc = canva.toDataURL("image/jpeg", 1.0);
+    console.log(canva.height);
     const window = this.windowService.open(this.templateRef, {
       title: `Nouveau Produit`,
-      windowClass: "container",
-      closeOnBackdropClick: false,
+      windowClass: "col-6",
       buttons: { minimize: true, fullScreen: false, maximize: false },
     });
   }

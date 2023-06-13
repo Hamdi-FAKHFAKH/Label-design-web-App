@@ -20,7 +20,6 @@ import {
 } from "../../GestionProduits/GestionProduit.data";
 import { LocalDataSource } from "ng2-smart-table";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
-import { user } from "../../../../auth/user";
 import { AuthService } from "../../../../auth/authService.service";
 import { getcanvas } from "dom-to-pdf";
 import { Renderer } from "leaflet";

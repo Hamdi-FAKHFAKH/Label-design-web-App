@@ -7,7 +7,7 @@ import {
   GetOneOFResultData,
   PrintData,
 } from "./impressionServiceData";
-import { environment } from "../../../../environments/environment.development";
+import { environment } from "../../../../environments/environment";
 
 @Injectable()
 export class ImpressionHttpService {

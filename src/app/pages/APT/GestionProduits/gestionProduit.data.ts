@@ -86,7 +86,13 @@ export interface GetSDTPRAResponseData {
 }
 export interface SDTPRAResponseData {
   status: string;
-  SDTPRA: string[];
+  SDTPRA: SDTPRAData[];
+}
+export interface SDTPRAData {
+  proRef: string;
+  protypCod: string;
+  prodes1: string;
+  prodes2: string;
 }
 
 //---------------------------------------------------  LotData --------------------------------------------------------------
@@ -196,4 +202,13 @@ export interface CreateFormeResultData {
 export interface GetFormeResultData {
   Status: string;
   forms: FormeData[];
+}
+//---------------------------------------------------- lien Protype Atelier --------------------------------------------
+export interface GetLienProTypeAteliersResultData {
+  Status: string;
+  lienProTypeAtelier: LienProTypeAteliersData[];
+}
+export interface LienProTypeAteliersData {
+  ProtypCod: string;
+  Liecod: string;
 }

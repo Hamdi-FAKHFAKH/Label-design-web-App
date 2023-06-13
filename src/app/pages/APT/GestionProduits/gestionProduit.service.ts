@@ -5,6 +5,7 @@ import {
   GetLotResponseData,
   GetOneLotResponseData,
 } from "./GestionProduit.data";
+import Swal from "sweetalert2";
 @Injectable()
 export class GestionProduitService {
   formes: { id: string; name: string; path: string; clicked: boolean }[];
@@ -127,8 +128,9 @@ export class GestionProduitService {
       .getSerialNumber()
       .toPromise();
     for (const i in res.serialNumber) {
-      if (res.serialNumber[i].format.localeCompare(format) == 0) {
-        return res.serialNumber[i].idSN;
+      if (res.serialNumber[i].format?.localeCompare(format) == 0) {
+        // return res.serialNumber[i].idSN;
+        return null;
       }
     }
     const SN = await this.gestionProduitHttpService

@@ -5,7 +5,7 @@ import {
   GetHistoriqueProduitResponseResultData,
   HistoriqueProduitData,
 } from "./HistoriqueHttp.data";
-import { environment } from "./../../environments/environment.development";
+import { environment } from "./../../environments/environment";
 
 @Injectable()
 export class HistoriqueService {

@@ -5,6 +5,7 @@ import { AuthService } from "../../auth/authService.service";
 import { UtilisateurData } from "../GestionUtilisateursHttp.data";
 import Swal from "sweetalert2";
 import { HistoriqueService } from "../HistoriqueHttp.service";
+import { Utils } from "../formatDate";
 
 @Component({
   selector: "ngx-profil",
@@ -55,7 +56,8 @@ export class ProfilComponent implements OnInit {
   constructor(
     private gestionUtilisateursHttpService: GestionUtilisateursHttpService,
     private authService: AuthService,
-    private historiqueService: HistoriqueService
+    private historiqueService: HistoriqueService,
+    private utils: Utils
   ) {}
 
   //
@@ -71,11 +73,16 @@ export class ProfilComponent implements OnInit {
       this.authService.avatarColor?.foregroundColor,
       this.authService.avatarColor?.backgroundColor
     );
-    this.atelierName = (
-      await this.gestionUtilisateursHttpService
-        .getAtelierName(this.user.atelierLiecod)
-        .toPromise()
-    ).Atelier.Libelle_Atelier;
+    if (this.user.atelierLiecod) {
+      this.atelierName = (
+        await this.gestionUtilisateursHttpService
+          .getAtelierName(this.user.atelierLiecod)
+          .toPromise()
+      ).Atelier.Libelle_Atelier;
+    } else {
+      this.atelierName = " Tous les ateliers";
+    }
+
     const historique = (
       await this.historiqueService
         .getHistoriqueProduit(this.authService.user.getValue().matricule)
@@ -83,28 +90,7 @@ export class ProfilComponent implements OnInit {
     ).historiqueProduit;
     this.source.load(
       historique.map((val) => {
-        let d = new Date(val.updatedAt);
-        let ye = new Intl.DateTimeFormat("en", {
-          year: "numeric",
-        }).format(d);
-        let mo = new Intl.DateTimeFormat("en", {
-          month: "2-digit",
-        }).format(d);
-        let da = new Intl.DateTimeFormat("en", {
-          day: "2-digit",
-        }).format(d);
-        let h = new Intl.DateTimeFormat("fr", {
-          hour: "2-digit",
-        })
-          .format(d)
-          .replace(" h", "");
-        let mm = new Intl.DateTimeFormat("en", {
-          minute: "2-digit",
-        }).format(d);
-        let ss = new Intl.DateTimeFormat("en", {
-          second: "2-digit",
-        }).format(d);
-        return { ...val, updatedAt: `${da}/${mo}/${ye} ${h}:${mm}:${ss}` };
+        return { ...val, updatedAt: this.utils.formatDate(val.updatedAt) };
       })
     );
   }
@@ -144,9 +130,10 @@ export class ProfilComponent implements OnInit {
                 "La sauvegarde du mot de passe a été effectuée avec succès.",
               showConfirmButton: false,
               timer: 1500,
+            }).then(() => {
+              this.authService.logOut();
+              this.isnewMotdePasse = false;
             });
-            this.isnewMotdePasse = false;
-            this.authService.logOut();
           }
         }
       } else {

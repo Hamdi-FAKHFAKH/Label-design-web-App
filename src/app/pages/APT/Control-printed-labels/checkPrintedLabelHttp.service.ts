@@ -4,7 +4,7 @@ import {
   GetOneHistoriqueVérificationEtiquetteResultData,
   HistoriqueVérificationEtiquette,
 } from "./checkPrintedLabelHttp.data";
-import { environment } from "../../../../environments/environment.development";
+import { environment } from "../../../../environments/environment";
 
 @Injectable()
 export class CheckPrintedLabelHttp {

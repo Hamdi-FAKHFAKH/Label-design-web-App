@@ -26,7 +26,7 @@
   font-weight: 600;
 }
 #subProfil div:nth-child(3) {
-  font-size: 17px;
+  font-size: 14px;
 }
 .profil-item {
   display: flex;
@@ -36,6 +36,13 @@
 }
 .profil-item div:first-child {
   font-weight: 600;
+}
+
+div.row > div.col > div:nth-child(4) > div {
+  justify-content: flex-start;
+}
+div.row > div.col > div:nth-child(4) > div > div:first-child {
+  margin-right: 13%;
 }
 fa-icon {
   position: absolute;
@@ -87,4 +94,13 @@ span {
 }
 #subProfil > div {
   margin-left: 10px;
+}
+.col-3 > div > div {
+  margin: auto;
+  width: fit-content;
+}
+#nom {
+  margin-bottom: 10px;
+  font-size: 1.3vw;
+  font-weight: 600;
 }

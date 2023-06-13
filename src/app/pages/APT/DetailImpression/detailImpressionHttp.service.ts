@@ -7,7 +7,7 @@ import {
   GetPrintDetailResultData,
   UpdateEtiquetteImprimeeResultData,
 } from "./detailImpressionHttp.data";
-import { environment } from "../../../../environments/environment.development";
+import { environment } from "../../../../environments/environment";
 
 @Injectable()
 export class DetailImpressionHttpService {

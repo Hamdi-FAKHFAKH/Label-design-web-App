@@ -1,17 +1,20 @@
 import { Injectable } from "@angular/core";
-import { user } from "./user";
+import { User } from "./user";
 import { HttpClient } from "@angular/common/http";
 import { catchError, tap } from "rxjs/operators";
 import { BehaviorSubject, Subject, throwError } from "rxjs";
 import { Router } from "@angular/router";
 
-import { environment } from "./../../environments/environment.development";
+import { environment } from "./../../environments/environment";
 interface authData {
   Status: string;
   msg: string;
   token: string;
   matricule: string;
   tokenExpiration: number;
+  role: string;
+  atelier: string;
+  UAP: string;
 }
 @Injectable()
 export class AuthService {
@@ -20,7 +23,7 @@ export class AuthService {
       this.colorsAvatarProfil[this.between(0, this.colorsAvatarProfil.length)];
   }
   // observateur sur le user
-  user = new BehaviorSubject<user>(null);
+  user = new BehaviorSubject<User>(null);
   TokenExpirationTimer: NodeJS.Timeout;
   avatarColor: {
     backgroundColor: string;
@@ -28,23 +31,34 @@ export class AuthService {
   };
 
   logIn(matricule, password) {
-    return this.http
-      .post<authData>(`${environment.apiUrl}/api/v1/SignIn`, {
-        matricule: matricule,
-        motDePasse: password,
-      })
-      .pipe(
-        tap((resData: authData) => {
-          const expireDate = new Date(
-            new Date().getTime() + resData.tokenExpiration * 60 * 60 * 1000
-          );
-
-          const u = new user(matricule, resData.token, expireDate);
-          this.user.next(u);
-          this.autoLogOut(resData.tokenExpiration * 60 * 60 * 1000);
-          localStorage.setItem("userData", JSON.stringify(u));
+    try {
+      return this.http
+        .post<authData>(`${environment.apiUrl}/api/v1/SignIn`, {
+          matricule: matricule,
+          motDePasse: password,
         })
-      );
+        .pipe(
+          tap((resData: authData) => {
+            const expireDate = new Date(
+              new Date().getTime() + resData.tokenExpiration * 60 * 60 * 1000
+            );
+
+            const u = new User(
+              matricule,
+              resData.role,
+              resData.atelier,
+              resData.UAP,
+              resData.token,
+              expireDate
+            );
+            this.user.next(u);
+            this.autoLogOut(resData.tokenExpiration * 60 * 60 * 1000);
+            localStorage.setItem("userData", JSON.stringify(u));
+          })
+        );
+    } catch (e) {
+      console.log(e);
+    }
   }
   logOut() {
     this.user.next(null);
@@ -58,14 +72,22 @@ export class AuthService {
       matricule: string;
       _token: string;
       _tokenExpiration: Date;
+      role: string;
+      atelier: string;
+      UAP: string;
     } = JSON.parse(localStorage.getItem("userData"));
-
-    const loggedUser = new user(
-      userData.matricule,
-      userData._token,
-      userData._tokenExpiration
-    );
-    if (!loggedUser.token) {
+    let loggedUser;
+    if (userData) {
+      loggedUser = new User(
+        userData?.matricule,
+        userData?.role,
+        userData?.atelier,
+        userData?.UAP,
+        userData?._token,
+        userData?._tokenExpiration
+      );
+    }
+    if (!loggedUser || !loggedUser.token) {
       return;
     }
     this.user.next(loggedUser);
@@ -141,7 +163,7 @@ export class AuthService {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw text
-    context.font = "bold 100px Assistant";
+    context.font = "bold 100px Open Sans";
     context.fillStyle = foregroundColor;
     context.textAlign = "center";
     context.textBaseline = "middle";

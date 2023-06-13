@@ -1,0 +1,47 @@
+<nb-layout>
+  <nb-layout-column>
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page">
+            Gestion des Ateliers
+          </li>
+        </ol>
+      </nav>
+      <input
+        class="form-control me-2 ps-4"
+        type="search"
+        placeholder="&#xF002;  Recherche par Code d'atelier, Libelle ou date d'ajout "
+        style="font-family: Arial, FontAwesome; border-radius: 6px"
+        aria-label="Search"
+        #search
+        (input)="onSearch(search.value)"
+      />
+      <br />
+      <button
+        type="button"
+        class="btn btn-success"
+        style="float: right; font-family: Arial, FontAwesome"
+        (click)="openAddAtelierWindow()"
+      >
+        &#xf055; Créer un Nouveau Atelier
+      </button>
+      <br /><br />
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="col-md-12" style="overflow-x: scroll; position: relative">
+            <div class="smart-table-container" style="min-width: 1000px">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="source"
+                (delete)="onDeleteAtelier($event)"
+                (edit)="openUpdateAtelierWindow($event)"
+              >
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nb-layout-column>
+</nb-layout>

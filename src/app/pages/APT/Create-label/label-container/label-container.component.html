@@ -369,6 +369,6 @@
   <div *ngIf="item.type === 'container-1'" [attr.data-id]="item.id"></div>
 </ng-template>
 <!--  Label View -->
-<ng-template #template style="width: fit-content; height: fit-content">
-  <img [src]="imgSrc" alt="" style="border: 1px solid" />
+<ng-template #template style="max-width: 400px">
+  <img [src]="imgSrc" />
 </ng-template>

@@ -17,30 +17,34 @@
           </li>
         </ol>
       </nav>
-      <br />
-      <input
-        class="form-control me-2 ps-4"
-        type="search"
-        placeholder="&#xF002;  Recherche par référence produit ou par Nom Produit ou par Référence1 ou par Référence2 "
-        style="font-family: Arial, FontAwesome; border-radius: 6px"
-        aria-label="Search"
-        #search
-        (input)="onSearch(search.value)"
-      />
-      <br />
-      <button
-        type="button"
-        class="btn btn-success"
-        style="float: right; font-family: Arial, FontAwesome"
-        (click)="openCreateProductWindow()"
-      >
-        &#xf055; Créer un Nouveau Produit
-      </button>
-      <br /><br /><br />
+      <div class="row">
+        <div class="col-9">
+          <input
+            class="form-control me-2 ps-4"
+            type="search"
+            placeholder="&#xF002;  Recherche par Référence Produit, Nom Produit, Référence1 ou Référence2 "
+            style="font-family: Arial, FontAwesome; border-radius: 6px"
+            aria-label="Search"
+            #search
+            (input)="onSearch(search.value)"
+          />
+        </div>
+        <div class="col">
+          <button
+            type="button"
+            class="btn btn-success"
+            style="float: right; font-family: Arial, FontAwesome"
+            (click)="openCreateProductWindow()"
+          >
+            &#xf055; Créer un Nouveau Produit
+          </button>
+        </div>
+      </div>
+      <br /><br />
       <div class="card">
         <div class="card-body">
           <div class="col-md-12" style="overflow-x: scroll; position: relative">
-            <div class="smart-table-container" style="width: 3000px">
+            <div class="smart-table-container" style="min-width: 3000px">
               <ng2-smart-table
                 [settings]="settings"
                 [source]="source"

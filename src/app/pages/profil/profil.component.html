@@ -7,9 +7,20 @@
             <div class="row" style="align-items: start">
               <div
                 class="col-3"
-                style="display: flex; justify-content: flex-start"
+                style="
+                  display: flex;
+                  justify-content: flex-start;
+                  max-width: 26%;
+                "
               >
-                <div style="display: flex; flex-direction: column">
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    border-right: 1.5px solid rgba(0, 0, 0, 0.2);
+                    padding-right: 30px;
+                  "
+                >
                   <input
                     #formeInput
                     type="file"
@@ -31,19 +42,20 @@
                     width="150"
                     height="150"
                   />
-                  <div id="subProfil">
-                    <div>{{ user && user.nom }}</div>
-                    <div>{{ user && user.prenom }}</div>
-                    <div>{{ user && user.roles }}</div>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      style="margin-top: 15px; margin-left: 10px"
-                      (click)="isnewMotdePasse = true"
-                    >
-                      Change Mot de Passe
-                    </button>
+                  <div id="nom">
+                    {{ user && user.nom | uppercase }}
+                    {{ user && user.prenom }}
                   </div>
+
+                  <div>{{ user && user.role }}</div>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    style="margin-top: 15px; margin-left: 10px"
+                    (click)="isnewMotdePasse = true"
+                  >
+                    Change Mot de Passe
+                  </button>
                 </div>
                 <fa-icon
                   icon="camera"
@@ -52,23 +64,11 @@
                   (click)="formeInput.click()"
                 ></fa-icon>
               </div>
-              <div class="col">
+              <div class="col" style="padding-left: 0px">
                 <div class="row" style="margin-top: 30px">
                   <div class="profil-item col-4">
                     <div>Matricule</div>
                     <div>{{ user && user.matricule }}</div>
-                  </div>
-                  <div class="profil-item col">
-                    <div>SuperUser</div>
-                    <div>{{ user && user.superUser }}</div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="profil-item col-4">
-                    <div>Statut</div>
-                    <div>
-                      {{ user && user.statut ? "Active" : "Déactiver" }}
-                    </div>
                   </div>
                   <div class="profil-item col">
                     <div>Ancien Mot de Passe</div>
@@ -93,8 +93,10 @@
                 </div>
                 <div class="row">
                   <div class="profil-item col-4">
-                    <div>Nom de PC</div>
-                    <div>{{ user && user.nomPC }}</div>
+                    <div>Statut</div>
+                    <div>
+                      {{ user && user.statut ? "Active" : "Déactiver" }}
+                    </div>
                   </div>
                   <div class="profil-item col" *ngIf="isnewMotdePasse">
                     <div>Nouveau Mot de Passe</div>
@@ -137,8 +139,8 @@
                 </div>
                 <div class="row">
                   <div class="profil-item col-4">
-                    <div>Atelier</div>
-                    <div>{{ atelierName }}</div>
+                    <div>Nom de PC</div>
+                    <div>{{ user && user.nomPC }}</div>
                   </div>
                   <div class="profil-item col" *ngIf="isnewMotdePasse">
                     <div>Confirmation Mot de Passe</div>
@@ -163,6 +165,12 @@
                         >confirmation de mot de passe incorrect</span
                       >
                     </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="profil-item col">
+                    <div>Atelier</div>
+                    <div>{{ atelierName }}</div>
                   </div>
                 </div>
               </div>

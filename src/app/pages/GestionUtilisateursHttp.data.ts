@@ -2,11 +2,13 @@ export interface UtilisateurData {
   matricule: string;
   nom: string;
   prenom: string;
-  roles: string;
+  role: string;
   nomPC: string;
-  superUser: string;
   atelierLiecod: string;
   statut: boolean;
+  créateur?: string;
+  modificateur?: string;
+  UAP: string;
 }
 export interface GetOneUtilisateurResultResponseData {
   Status: string;

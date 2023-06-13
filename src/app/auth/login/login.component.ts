@@ -16,8 +16,13 @@ export class LoginComponent {
   Matricule: number;
   ErrorMsg: String;
   submited = false;
-
   constructor(private router: Router, private authService: AuthService) {}
+  matriculeFormat: boolean = true;
+  checkFormat(data: string) {
+    console.log(data);
+
+    this.matriculeFormat = !!data.match(/[0-9]{4}/gm);
+  }
   onSubmit(form: NgForm) {
     this.submited = true;
     this.Matricule = form.value.matricule;
@@ -30,6 +35,7 @@ export class LoginComponent {
         catchError((error) => {
           // Here you can handle the error (bad request) and retrieve the HTTP status code
           const statusCode = error.status;
+          console.log(error);
 
           if (statusCode == 400) {
             this.ErrorMsg = error.error.message;

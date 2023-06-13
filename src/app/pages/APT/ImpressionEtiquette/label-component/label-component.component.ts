@@ -24,6 +24,8 @@ import Swal from "sweetalert2";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
 import { Router } from "@angular/router";
+import { AuthService } from "../../../../auth/authService.service";
+import { roles } from "../../../../auth/user";
 
 @Component({
   selector: "ngx-label-component",
@@ -67,7 +69,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
     private labelHttpService: LabeltHttpService,
     public dragDropService: DragDropService,
     private detailImpressionHttpService: DetailImpressionHttpService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
   ngOnInit(): void {
     this.changeSN.subscribe(() => {
@@ -116,7 +119,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         icon: "error",
         title: "Oops...",
         text: "Produit n'existe Pas!",
-        showConfirmButton: true,
+        showConfirmButton:
+          this.authService.user.getValue().role !== roles.agentSaisie,
         confirmButtonColor: "#3374B5",
         confirmButtonText: "Créer un produit pour cet OF",
         showCancelButton: true,
@@ -141,7 +145,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         icon: "error",
         title: "Oops...",
         text: "Aucune Etiquette crée pour ce produit",
-        showConfirmButton: true,
+        showConfirmButton:
+          this.authService.user.getValue().role !== roles.agentSaisie,
         confirmButtonColor: "#3374B5",
         confirmButtonText: "Créer une Etiquette pour ce Produit",
         showCancelButton: true,

@@ -197,6 +197,8 @@ export class ProductMangementComponent {
           const { value: motif } = await Swal.fire({
             title: "Entrez votre motif de suppression",
             input: "text",
+            confirmButtonColor: "#d33",
+            confirmButtonText: "Supprimer",
             inputLabel: "Motif de Suppression",
             showCancelButton: true,
             inputValidator: (value) => {

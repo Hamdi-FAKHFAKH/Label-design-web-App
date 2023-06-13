@@ -33,7 +33,12 @@ export class UpdateProduitComponent implements OnInit {
   //
   async ngOnInit() {
     await this.getFormes();
-    this.gestionProduitHttpService.getSDTPRA().subscribe((res) => {
+    const protypCod = (
+      await this.gestionProduitHttpService
+        .getProdTypesFromAtelierCode(this.authService.user.getValue().atelier)
+        .toPromise()
+    ).lienProTypeAtelier.map((val) => val.ProtypCod);
+    this.gestionProduitHttpService.getSDTPRA(protypCod).subscribe((res) => {
       this.produits = res.SDTPRA;
     });
     this.gestionProduitHttpService.getLots().subscribe((res) => {

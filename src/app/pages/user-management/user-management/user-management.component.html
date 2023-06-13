@@ -1,0 +1,47 @@
+<nb-layout>
+  <nb-layout-column>
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active" aria-current="page">
+            Gestion des Utilisateurs
+          </li>
+        </ol>
+      </nav>
+      <input
+        class="form-control me-2 ps-4"
+        type="search"
+        placeholder="&#xF002;  Recherche par Matricule, Nom ou Prénom "
+        style="font-family: Arial, FontAwesome; border-radius: 6px"
+        aria-label="Search"
+        #search
+        (input)="onSearch(search.value)"
+      />
+      <br />
+      <button
+        type="button"
+        class="btn btn-success"
+        style="float: right; font-family: Arial, FontAwesome"
+        (click)="openAddUserWindow()"
+      >
+        &#xf055; Créer un Nouveau Utilisateur
+      </button>
+      <br /><br />
+      <div class="card mt-2">
+        <div class="card-body">
+          <div class="col-md-12" style="overflow-x: scroll; position: relative">
+            <div class="smart-table-container" style="min-width: 1300px">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="source"
+                (delete)="onDeleteUser($event)"
+                (edit)="openUpdateUserWindow($event)"
+              >
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nb-layout-column>
+</nb-layout>

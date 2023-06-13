@@ -7,7 +7,7 @@ import {
   authData,
   updateUtilisateurResultData,
 } from "./GestionUtilisateursHttp.data";
-import { environment } from "../../environments/environment.development";
+import { environment } from "../../environments/environment";
 
 @Injectable()
 export class GestionUtilisateursHttpService {

@@ -27,9 +27,10 @@
                 id=""
                 ngModel
                 #ref="ngModel"
+                required
               >
-                <option *ngFor="let item of produits" value="{{ item.ProRef }}">
-                  {{ item.ProRef }}
+                <option *ngFor="let item of produits" value="{{ item.proRef }}">
+                  {{ item.proRef }}
                 </option>
               </select>
             </div>

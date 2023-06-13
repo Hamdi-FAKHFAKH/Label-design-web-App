@@ -1,0 +1,234 @@
+<form
+  (ngSubmit)="onSubmit(f)"
+  #f="ngForm"
+  class="form"
+  data-bs-spy="scroll"
+  style="overflow-y: auto; width: 100%; overflow-x: hidden; padding-right: 15px"
+>
+  <div class="row row-cols-1 row-cols-md-1 g-1">
+    <div class="col-2" style="max-width: 12%">
+      <div class="title">Statut</div>
+      <div class="form-check" style="margin-top: 15.5px">
+        <label class="form-check-label">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="active"
+            id=""
+            [ngModel]="userdata.statut === 'active' ? true : false"
+          />
+          Active
+        </label>
+      </div>
+    </div>
+    <div class="col">
+      <label for="" class="title"
+        >Matricule <span style="color: red">*</span></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="matricule"
+        id=""
+        aria-describedby="helpId"
+        placeholder="Saisie votre Matricule"
+        [ngModel]="userdata.matricule"
+      />
+    </div>
+    <div class="col">
+      <label for="" class="title">Nom <span style="color: red">*</span></label>
+      <input
+        type="text"
+        class="form-control"
+        name="nom"
+        id=""
+        aria-describedby="helpId"
+        placeholder="Saisie votre Nom"
+        [ngModel]="userdata.nom"
+      />
+    </div>
+    <div class="col">
+      <label for="" class="title"
+        >Prénom <span style="color: red">*</span></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="prenom"
+        id=""
+        aria-describedby="helpId"
+        placeholder="Saisie votre Prénom"
+        [ngModel]="userdata.prenom"
+      />
+    </div>
+  </div>
+  <br />
+  <div class="row row-cols-1 row-cols-md-1" id="roles">
+    <div class="col-3">
+      <div class="title">Roles</div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="role"
+          id="flexRadioDefault1"
+          [value]="roles.admin"
+          [(ngModel)]="role"
+        />
+        <label class="form-check-label" for="flexRadioDefault1">
+          Administrator
+        </label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="role"
+          [(ngModel)]="role"
+          [value]="roles.directeur"
+          id="flexRadioDefault2"
+        />
+        <label class="form-check-label" for="flexRadioDefault2">
+          Directeur
+        </label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="role"
+          [(ngModel)]="role"
+          id="responsableUAP"
+          [value]="roles.responsableUAP"
+        />
+        <label class="form-check-label" for="responsableUAP">
+          Responsable UAP
+        </label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="role"
+          [(ngModel)]="role"
+          id="agentMethode"
+          [value]="roles.agentMethod"
+        />
+        <label class="form-check-label" for="agentMethode">
+          Agent Méthode
+        </label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="role"
+          [(ngModel)]="role"
+          id="agentSaisie"
+          [value]="roles.agentSaisie"
+        />
+        <label class="form-check-label" for="agentSaisie">
+          Agent de saisie
+        </label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="role"
+          [(ngModel)]="role"
+          id="consultation"
+          [value]="roles.visitor"
+        />
+        <label class="form-check-label" for="consultation">
+          Consultation
+        </label>
+      </div>
+    </div>
+    <div class="col-3" id="UAP">
+      <div class="title">UAP</div>
+      <div
+        class="form-check"
+        *ngIf="
+          ![
+            roles.agentMethod,
+            roles.agentSaisie,
+            roles.responsableUAP
+          ].includes(role)
+        "
+      >
+        <label class="form-check-label ateliers">
+          <input type="radio" class="form-check-input" disabled />
+          tous les UAPs
+        </label>
+      </div>
+      <div
+        *ngIf="
+          [roles.agentMethod, roles.agentSaisie, roles.responsableUAP].includes(
+            role
+          )
+        "
+      >
+        <div class="form-check" *ngFor="let item of uaps">
+          <label class="form-check-label">
+            <input
+              type="radio"
+              class="form-check-input"
+              name="uap"
+              [id]="item"
+              [value]="item"
+              [(ngModel)]="userdata.UAP"
+              (change)="onUAPselect()"
+            />
+            {{ item }}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="title">Ateliers</div>
+      <div
+        class="form-check"
+        *ngIf="![roles.agentMethod, roles.agentSaisie].includes(role)"
+      >
+        <label class="form-check-label ateliers">
+          <input type="radio" class="form-check-input" disabled />
+          tous les ateliers
+        </label>
+      </div>
+      <div *ngIf="[roles.agentMethod, roles.agentSaisie].includes(role)">
+        <div class="form-check" *ngFor="let item of ateliers">
+          <label class="form-check-label ateliers">
+            <input
+              type="radio"
+              class="form-check-input"
+              name="atelier"
+              [id]="item.Liecod"
+              [value]="item.Liecod"
+              [(ngModel)]="atelier"
+            />
+            {{ item.Libelle_Atelier }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row my-1">
+    <div class="col" style="text-align: end">
+      <button
+        type="submit"
+        class="btn btn-success"
+        style="margin-right: 15px"
+        [disabled]="!f.valid"
+      >
+        Enregistrer Modification
+      </button>
+      <button type="button" class="btn btn-danger ms-3" (click)="close()">
+        Annuler
+      </button>
+    </div>
+  </div>
+</form>
+<span style="color: red">* champs obligatoires</span>
+<!-- [disabled]="!f.valid" -->

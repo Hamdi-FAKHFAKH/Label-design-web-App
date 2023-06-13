@@ -9,7 +9,7 @@ import {
   GetEtiquetteResponseData,
   GetOneComposentResultData,
 } from "./labelHttp.data";
-import { environment } from "../../../../environments/environment.development";
+import { environment } from "../../../../environments/environment";
 @Injectable()
 export class LabeltHttpService {
   constructor(private http: HttpClient) {}

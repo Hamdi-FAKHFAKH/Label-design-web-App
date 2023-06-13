@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
   ClientData,
@@ -20,8 +20,9 @@ import {
   GetFormeResultData,
   GetOneLotResponseData,
   GetAllProduitDataResponseData,
+  GetLienProTypeAteliersResultData,
 } from "./GestionProduit.data";
-import { environment } from "../../../../environments/environment.development";
+import { environment } from "../../../../environments/environment";
 
 @Injectable()
 export class GestionProduitHttpService {
@@ -57,9 +58,14 @@ export class GestionProduitHttpService {
     );
   }
   /****************************************************** SDTPRA ***************************************************************/
-  getSDTPRA() {
+  getSDTPRA(protypCod: string[]) {
+    let params = new HttpParams();
+    protypCod.forEach((val) => {
+      params = params.append("protypCod", val);
+    });
     return this.http.get<GetSDTPRAResponseData>(
-      `${environment.apiUrl}/api/v1/SDTPRAs`
+      `${environment.apiUrl}/api/v1/SDTPRAs`,
+      { params: params }
     );
   }
   /***************************************************** Lot ******************************************************************/
@@ -167,6 +173,15 @@ export class GestionProduitHttpService {
   getOneForm(id: string) {
     return this.http.get<CreateFormeResultData>(
       `${environment.apiUrl}/api/v1/forms/${id}`
+    );
+  }
+  //---------------------------------------------------- lien Protype Atelier --------------------------------------------
+  getProdTypesFromAtelierCode(Liecod: string) {
+    return this.http.get<GetLienProTypeAteliersResultData>(
+      `${environment.apiUrl}/api/v1/LienProTypeAteliers`,
+      {
+        params: new HttpParams().set("Liecod", Liecod),
+      }
     );
   }
 }

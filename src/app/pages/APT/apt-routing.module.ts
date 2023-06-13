@@ -6,7 +6,8 @@ import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-e
 import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-OF.component";
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
 import { ControlPrintedLabelsComponent } from "./Control-printed-labels/control-printed-labels/control-printed-labels.component";
-
+import { AptGuard } from "../../auth/apt-guard.service";
+import { ConfirmNavigationGuard } from "./Create-label/CanDeactivate";
 const routes: Routes = [
   {
     path: "",
@@ -15,6 +16,7 @@ const routes: Routes = [
       {
         path: "gestionProduits",
         component: ProductMangementComponent,
+        canActivate: [AptGuard],
       },
       {
         path: "ImpressionEtiquettes",
@@ -27,6 +29,7 @@ const routes: Routes = [
           import("./Create-label/CreationEtiquette.module").then(
             (m) => m.CreattionEtiquetteModule
           ),
+        canActivate: [AptGuard],
       },
       {
         path: "HistoriqueOF",
@@ -39,10 +42,11 @@ const routes: Routes = [
       {
         path: "ControlEtiquette",
         component: ControlPrintedLabelsComponent,
+        canActivate: [AptGuard],
       },
       {
         path: "",
-        redirectTo: "gestionProduits",
+        redirectTo: "ImpressionEtiquettes",
         pathMatch: "full",
       },
     ],

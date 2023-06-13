@@ -12,16 +12,15 @@
           (!matricule.valid && matricule.touched) ||
           (ErrorMsg && ErrorMsg.includes('Login incorrect'))
       }"
-      type="number"
+      type="text"
       ngModel
-      min="1000"
       fullWidth
       id="matricule"
       placeholder="Matricule"
       required
       name="matricule"
       #matricule="ngModel"
-      max="9999"
+      (input)="checkFormat(matricule.value)"
     />
     <span>
       <p
@@ -30,10 +29,7 @@
       >
         Veuillez remplir le champs Matricule !
       </p>
-      <p
-        class="caption status-danger"
-        *ngIf="matricule.errors?.min || matricule.errors?.max"
-      >
+      <p class="caption status-danger" *ngIf="!matriculeFormat">
         le champs Matricule doit comporter 4 caractères !
       </p>
       <p
@@ -73,6 +69,12 @@
       <p
         class="caption status-danger"
         *ngIf="ErrorMsg && ErrorMsg.includes('Mot de passe incorrect')"
+      >
+        {{ ErrorMsg }}
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="ErrorMsg && ErrorMsg.includes('Compte déactivé')"
       >
         {{ ErrorMsg }}
       </p>
