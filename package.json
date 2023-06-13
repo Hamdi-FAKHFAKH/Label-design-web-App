@@ -1,14 +1,7 @@
 {
-  "name": "ngx-admin",
+  "name": "gestion-etiquettes",
   "version": "10.0.0",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/akveo/ngx-admin.git"
-  },
-  "bugs": {
-    "url": "https://github.com/akveo/ngx-admin/issues"
-  },
   "scripts": {
     "ng": "ng",
     "conventional-changelog": "conventional-changelog",
@@ -18,7 +11,6 @@
     "test": "ng test",
     "test:coverage": "rimraf coverage && npm run test -- --code-coverage",
     "lint": "ng lint",
-    "lint:fix": "ng lint ngx-admin-demo --fix",
     "lint:styles": "stylelint ./src/**/*.scss",
     "lint:ci": "npm run lint && npm run lint:styles",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
