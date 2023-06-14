@@ -358,6 +358,16 @@ export class EtiquetteTabComponent implements OnInit {
         this.minPadding = this.labelInfo.padding;
       }
     }
+    this.dragDropService.listOfDragItems =
+      this.dragDropService.listOfDragItems.filter((val) => {
+        return !this.findItem(
+          this.dragDropService.listOfLabelElements,
+          val.refItem
+        );
+      });
+    console.log(this.dragDropService.listOfLabelElements);
+
+    console.log(this.dragDropService.listOfDragItems);
   }
   // convert component data imported from database to object
   ComponentToInsert(
@@ -401,6 +411,7 @@ export class EtiquetteTabComponent implements OnInit {
         "border-style": obj["border-style"],
         "border-width": obj["border-width"],
         "font-weight": obj.bold ? "bold" : "normal",
+        bold: obj.bold,
         "font-family": obj["font-family"],
         "font-size": obj["font-size"],
         "font-style": obj.italic ? "italic" : obj["font-style"],
@@ -512,5 +523,22 @@ export class EtiquetteTabComponent implements OnInit {
         }
       });
     });
+  }
+  // search item in list of item in the label
+  findItem(data: LabelItem[], refItem) {
+    const res = data.find((val) => val.refItem == refItem && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children && val.children.length > 0) {
+          return this.findItem(val.children, refItem);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res || resarray.find((val) => val && val.refItem == refItem && val.data)
+    );
   }
 }

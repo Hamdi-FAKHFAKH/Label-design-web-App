@@ -38,7 +38,7 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import { NbDateFnsDateModule } from "@nebular/date-fns";
 import { NbMomentDateModule } from "@nebular/moment";
-import { HistoriqueService } from "./pages/HistoriqueHttp.service";
+import { ProductHistoriqueService } from "./pages/HistoriqueHttp.service";
 @NgModule({
   declarations: [AppComponent, LoginComponent],
   imports: [
@@ -80,7 +80,7 @@ import { HistoriqueService } from "./pages/HistoriqueHttp.service";
     AuthService,
     GestionProduitHttpService,
     GestionProduitService,
-    HistoriqueService,
+    ProductHistoriqueService,
 
     {
       provide: HTTP_INTERCEPTORS,

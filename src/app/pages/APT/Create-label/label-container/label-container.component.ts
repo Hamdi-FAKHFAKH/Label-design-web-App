@@ -81,7 +81,23 @@ export class SidebarComponent implements OnInit {
       this.labelInfo = info;
     });
   }
-
+  // search item in list of item in the label
+  findItem(data: LabelItem[], refItem) {
+    const res = data.find((val) => val.refItem == refItem && val.data);
+    let resarray;
+    if (!res) {
+      resarray = data.map((val) => {
+        if (val.children && val.children.length > 0) {
+          return this.findItem(val.children, refItem);
+        } else {
+          return null;
+        }
+      });
+    }
+    return (
+      res || resarray.find((val) => val && val.refItem == refItem && val.data)
+    );
+  }
   // zoomIn / ZoomOut the label
   zoomIn() {
     this.labelStyle = {
@@ -176,7 +192,7 @@ export class SidebarComponent implements OnInit {
     } else if (refProdWithEtiquette.includes(this.labelInfo.refProd)) {
       Swal.fire({
         title:
-          "vous voulez écraser les données de l'etiquette avec la référence produit " +
+          "vous voulez écraser les données de l'étiquette associée à la référence produite" +
           this.labelInfo.refProd +
           " ?",
         showDenyButton: true,
@@ -186,12 +202,24 @@ export class SidebarComponent implements OnInit {
         denyButtonText: `Non`,
       }).then(async (result) => {
         if (result.isConfirmed) {
-          if (
-            produit.withDataMatrix &&
-            !this.dragDropService.listOfLabelElements.some(
-              (val) => val.type == "QRcode"
-            )
-          ) {
+          let datamatrix = this.findItem(
+            this.dragDropService.listOfLabelElements,
+            "datamatrixData"
+          );
+          let SN = this.findItem(
+            this.dragDropService.listOfLabelElements,
+            "idSN"
+          );
+          let lot = this.findItem(
+            this.dragDropService.listOfLabelElements,
+            "format"
+          );
+          let OF = this.findItem(
+            this.dragDropService.listOfLabelElements,
+            "of"
+          );
+
+          if (produit.withDataMatrix && !datamatrix) {
             Swal.fire(
               "DataMatrix introuvable?",
               "Veuillez inclure un DataMatrix sur l'étiquette",
@@ -199,9 +227,9 @@ export class SidebarComponent implements OnInit {
             );
             return;
           }
-          const datamatrix = this.dragDropService.listOfLabelElements.find(
-            (val) => val.type == "QRcode"
-          );
+          // const datamatrix = this.dragDropService.listOfLabelElements.find(
+          //   (val) => val.type == "QRcode"
+          // );
           if (
             produit.withDataMatrix &&
             (datamatrix.data ==
@@ -209,18 +237,13 @@ export class SidebarComponent implements OnInit {
               !datamatrix.data)
           ) {
             Swal.fire(
-              "Les données contenues dans la DataMatrix sont inexistantes ou nulles.?",
+              "Les données contenues dans la DataMatrix sont inexistantes ou nulles.",
               "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.",
               "info"
             );
             return;
           }
-          if (
-            produit.withSN &&
-            !this.dragDropService.listOfLabelElements.some(
-              (val) => val.title == ComponentTitle.SN
-            )
-          ) {
+          if (produit.withSN && !SN) {
             Swal.fire(
               "Numéro de Série introuvable?",
               "Veuillez inclure le Numéro de Série sur l'étiquette",
@@ -228,12 +251,7 @@ export class SidebarComponent implements OnInit {
             );
             return;
           }
-          if (
-            produit.withOF &&
-            !this.dragDropService.listOfLabelElements.some(
-              (val) => val.title == ComponentTitle.OF
-            )
-          ) {
+          if (produit.withOF && !OF) {
             Swal.fire(
               "Ordre de Fabrication(OF) introuvable?",
               "Veuillez inclure l'Ordre de Fabrication(OF) sur l'étiquette",
@@ -241,12 +259,7 @@ export class SidebarComponent implements OnInit {
             );
             return;
           }
-          if (
-            produit.numLot &&
-            !this.dragDropService.listOfLabelElements.some(
-              (val) => val.title == ComponentTitle.formatLot
-            )
-          ) {
+          if (produit.numLot && !lot) {
             Swal.fire(
               "Format de LOT introuvable?",
               "Veuillez inclure le format de LOT sur l'étiquette",
@@ -532,11 +545,18 @@ export class SidebarComponent implements OnInit {
       buttons: { minimize: true, fullScreen: false, maximize: false },
     });
   }
-  //
+  //get id of selected item
   setTabPropertyActive(itemId) {
     // this.sidebarService.toggle(false, "creationEtiquette");
     this.dragDropService.propertyTabActive = true;
     this.dragDropService.selectedItem = itemId;
+    this.itemId = itemId;
+    console.log(this.dragDropService.items);
+    Object.keys(this.dragDropService.items).forEach((key) => {
+      if (this.dragDropService.items[key].style) {
+        this.dragDropService.items[key].style.border = "none";
+      }
+    });
   }
   //
   textStyle(item: LabelItem) {
@@ -546,19 +566,19 @@ export class SidebarComponent implements OnInit {
     });
     return style;
   }
-  //get id of selected item
-  setItemId(data) {
-    this.itemId = data;
-    Object.keys(this.dragDropService.items).forEach(
-      (key) => (this.dragDropService.items[key].style.border = "none")
-    );
-  }
   //delete the selected element in the label
   remove(id: string) {
+    this.dragDropService.propertyTabActive = false;
+    this.dragDropService.designTabActive = true;
     const index = this.dragDropService.listOfLabelElements.findIndex((obj) => {
       return obj.id == id;
     });
-    if (index != -1) {
+    if (
+      index != -1 &&
+      !["container-2", "container-3"].includes(
+        this.dragDropService.listOfLabelElements[index].type
+      )
+    ) {
       this.dragDropService.listOfLabelElements[index].style = Object.assign(
         {},
         this.dragDropService.defaultTextStyle
@@ -566,6 +586,9 @@ export class SidebarComponent implements OnInit {
       this.dragDropService.listOfDragItems.push(
         this.dragDropService.listOfLabelElements[index]
       );
+      this.dragDropService.nodeLookup2[
+        this.dragDropService.listOfLabelElements[index].id
+      ] = this.dragDropService.listOfLabelElements[index];
       this.dragDropService.listOfLabelElements.splice(index, 1);
     } else {
       this.dragDropService.listOfLabelElements.forEach((obj, index) => {
@@ -577,6 +600,12 @@ export class SidebarComponent implements OnInit {
             this.dragDropService.listOfDragItems.push(
               this.dragDropService.listOfLabelElements[index].children[index1]
             );
+            this.dragDropService.nodeLookup2[
+              this.dragDropService.listOfLabelElements[index].children[
+                index1
+              ].id
+            ] =
+              this.dragDropService.listOfLabelElements[index].children[index1];
             this.dragDropService.listOfLabelElements[index].children.splice(
               index1,
               1
@@ -597,6 +626,14 @@ export class SidebarComponent implements OnInit {
                     index1
                   ].children[index2]
                 );
+                this.dragDropService.nodeLookup2[
+                  this.dragDropService.listOfLabelElements[index].children[
+                    index1
+                  ].children[index2].id
+                ] =
+                  this.dragDropService.listOfLabelElements[index].children[
+                    index1
+                  ].children[index2];
                 this.dragDropService.listOfLabelElements[index].children[
                   index1
                 ].children.splice(index2, 1);
@@ -604,6 +641,13 @@ export class SidebarComponent implements OnInit {
             });
         });
       });
+    }
+    if (
+      ["container-2", "container-3", "container"].includes(
+        this.dragDropService.listOfLabelElements[index].type
+      )
+    ) {
+      this.dragDropService.listOfLabelElements.splice(index, 1);
     }
   }
   //detect keybord event

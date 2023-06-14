@@ -173,17 +173,7 @@
           </div>
         </div>
       </nb-accordion-item-header>
-      <nb-accordion-item-body
-        *ngIf="
-          !['container', 'container-2', 'container-3', 'img'].includes(
-            item.type
-          )
-        "
-      >
-        A nebula is an interstellar cloud of dust, hydrogen, helium and other
-        ionized gases. Originally, nebula was a name for any diffuse
-        astronomical object, including galaxies beyond the Milky Way.
-      </nb-accordion-item-body>
+
       <nb-accordion-item-header *ngIf="item.type === 'container'">
         <div class="item-header">
           <div>Container</div>
@@ -200,12 +190,12 @@
         </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'container'">
-        <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
           <nb-accordion *ngFor="let item1 of item.children">
             <nb-accordion-item
               *ngIf="item1.type === 'text'"
               [attr.data-id]="item1.refItem"
+              disabled
             >
               <nb-accordion-item-header>
                 <div class="item-header">
@@ -222,15 +212,11 @@
                   </div>
                 </div>
               </nb-accordion-item-header>
-              <nb-accordion-item-body>
-                <ngx-field-style-form
-                  [itemId]="item1.id"
-                ></ngx-field-style-form>
-              </nb-accordion-item-body>
             </nb-accordion-item>
             <nb-accordion-item
               *ngIf="item1.type === 'forme'"
               [attr.data-id]="item1.refItem"
+              disabled
             >
               <nb-accordion-item-header>
                 <div class="item-header">
@@ -247,18 +233,13 @@
                   </div>
                 </div>
               </nb-accordion-item-header>
-              <nb-accordion-item-body>
-                <ngx-field-style-form
-                  [itemId]="item1.id"
-                ></ngx-field-style-form>
-              </nb-accordion-item-body>
             </nb-accordion-item>
             <nb-accordion-item
               *ngIf="item1.type === 'vide'"
               [attr.data-id]="item1.refItem"
+              disabled
             >
               <nb-accordion-item-header>Vide </nb-accordion-item-header>
-              <nb-accordion-item-body> </nb-accordion-item-body>
             </nb-accordion-item>
           </nb-accordion>
         </div>
@@ -290,6 +271,7 @@
               <nb-accordion-item
                 *ngIf="item2.type === 'text'"
                 [attr.data-id]="item2.refItem"
+                disabled
               >
                 <nb-accordion-item-header>
                   <div class="item-header">
@@ -306,15 +288,11 @@
                     </div>
                   </div>
                 </nb-accordion-item-header>
-                <nb-accordion-item-body>
-                  <ngx-field-style-form
-                    [itemId]="item2.id"
-                  ></ngx-field-style-form>
-                </nb-accordion-item-body>
               </nb-accordion-item>
               <nb-accordion-item
                 *ngIf="item2.type === 'forme'"
                 [attr.data-id]="item2.refItem"
+                disabled
               >
                 <nb-accordion-item-header>
                   <div class="item-header">
@@ -331,13 +309,8 @@
                     </div>
                   </div>
                 </nb-accordion-item-header>
-                <nb-accordion-item-body>
-                  <ngx-forme-style-form
-                    [itemId]="item.id"
-                  ></ngx-forme-style-form>
-                </nb-accordion-item-body>
               </nb-accordion-item>
-              <nb-accordion-item *ngIf="item2.type === 'QRcode'">
+              <nb-accordion-item *ngIf="item2.type === 'QRcode'" disabled>
                 [attr.data-id]="item2.refItem" >
                 <nb-accordion-item-header>
                   <div class="item-header">
@@ -354,20 +327,14 @@
                     </div>
                   </div>
                 </nb-accordion-item-header>
-                <nb-accordion-item-body>
-                  <ngx-data-matrix-style-form
-                    [itemId]="item2.id"
-                  ></ngx-data-matrix-style-form>
-                </nb-accordion-item-body>
               </nb-accordion-item>
-              <nb-accordion-item>
+              <nb-accordion-item disabled>
                 <nb-accordion-item-header
                   *ngIf="item2.type === 'vide'"
                   [attr.data-id]="item2.refItem"
                 >
                   Vide
                 </nb-accordion-item-header>
-                <nb-accordion-item-body> </nb-accordion-item-body>
               </nb-accordion-item>
             </nb-accordion>
           </div>
@@ -390,14 +357,13 @@
         </div>
       </nb-accordion-item-header>
       <nb-accordion-item-body *ngIf="item.type === 'container-3'">
-        <ngx-container-style-form [itemId]="item.id"></ngx-container-style-form>
         <div *ngIf="item.children.length">
           <div *ngFor="let item1 of item.children; let i = index">
             <fieldset>
               <legend>Container {{ i }}</legend>
             </fieldset>
             <nb-accordion *ngFor="let item2 of item1.children">
-              <nb-accordion-item *ngIf="item2.type === 'text'">
+              <nb-accordion-item *ngIf="item2.type === 'text'" disabled>
                 <nb-accordion-item-header>
                   <div class="item-header">
                     <div>{{ item2.title }}</div>
@@ -413,13 +379,9 @@
                     </div>
                   </div>
                 </nb-accordion-item-header>
-                <nb-accordion-item-body>
-                  <ngx-field-style-form
-                    [itemId]="item2.id"
-                  ></ngx-field-style-form>
-                </nb-accordion-item-body>
+                <nb-accordion-item-body></nb-accordion-item-body>
               </nb-accordion-item>
-              <nb-accordion-item *ngIf="item2.type === 'forme'">
+              <nb-accordion-item *ngIf="item2.type === 'forme'" disabled>
                 <nb-accordion-item-header>
                   <div class="item-header">
                     <div>{{ item2.title }}</div>
@@ -435,13 +397,9 @@
                     </div>
                   </div>
                 </nb-accordion-item-header>
-                <nb-accordion-item-body>
-                  <ngx-forme-style-form
-                    [itemId]="item.id"
-                  ></ngx-forme-style-form>
-                </nb-accordion-item-body>
+                <nb-accordion-item-body> </nb-accordion-item-body>
               </nb-accordion-item>
-              <nb-accordion-item *ngIf="item2.type === 'QRcode'">
+              <nb-accordion-item *ngIf="item2.type === 'QRcode'" disabled>
                 [attr.data-id]="item2.refItem" >
                 <nb-accordion-item-header>
                   <div class="item-header">
@@ -458,33 +416,10 @@
                     </div>
                   </div>
                 </nb-accordion-item-header>
-                <nb-accordion-item-body>
-                  <ngx-data-matrix-style-form
-                    [itemId]="item2.id"
-                  ></ngx-data-matrix-style-form>
-                </nb-accordion-item-body>
-              </nb-accordion-item>
-              <nb-accordion-item>
-                <nb-accordion-item-header
-                  *ngIf="item2.type === 'vide'"
-                  [attr.data-id]="item2.refItem"
-                >
-                  Vide
-                </nb-accordion-item-header>
-                <nb-accordion-item-body> </nb-accordion-item-body>
               </nb-accordion-item>
             </nb-accordion>
           </div>
         </div>
-      </nb-accordion-item-body>
-
-      <nb-accordion-item-header *ngIf="item.type === 'img'">
-        Image
-      </nb-accordion-item-header>
-      <nb-accordion-item-body *ngIf="item.type === 'img'">
-        A nebula is an interstellar cloud of dust, hydrogen, helium and other
-        ionized gases. Originally, nebula was a name for any diffuse
-        astronomical object, including galaxies beyond the Milky Way.
       </nb-accordion-item-body>
     </nb-accordion-item>
   </nb-accordion>

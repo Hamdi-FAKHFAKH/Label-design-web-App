@@ -5,7 +5,11 @@
         <nb-tab
           tabTitle="Etiquette"
           tabId="label"
-          [active]="!dragDropService.propertyTabActive && labelTabActive"
+          [active]="
+            !dragDropService.propertyTabActive &&
+            !dragDropService.designTabActive &&
+            labelTabActive
+          "
         >
           <ngx-etiquette-tab></ngx-etiquette-tab>
         </nb-tab>
@@ -13,12 +17,15 @@
           tabTitle="Design"
           tabId="design"
           [disabled]="!canDesign"
-          [active]="!dragDropService.propertyTabActive && designTabActive"
+          [active]="
+            !dragDropService.propertyTabActive &&
+            dragDropService.designTabActive
+          "
           ><ngx-design-tab></ngx-design-tab>
         </nb-tab>
         <nb-tab
           tabId="property"
-          tabTitle="Propriété"
+          tabTitle="Propriétés"
           style="margin-right: 0px 10px"
           [active]="dragDropService.propertyTabActive"
         >

@@ -7,7 +7,7 @@ import { SerialNumberData } from "../GestionProduit.data";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
 import { AuthService } from "../../../../auth/authService.service";
-import { HistoriqueService } from "../../../HistoriqueHttp.service";
+import { ProductHistoriqueService } from "../../../HistoriqueHttp.service";
 @Component({
   templateUrl: "./product-creation-window.component.html",
   styleUrls: ["./product-creation-window.component.scss"],
@@ -29,7 +29,7 @@ export class ProductCreationWindowComponent implements OnInit {
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService,
     private authService: AuthService,
-    private historiqueService: HistoriqueService
+    private historiqueService: ProductHistoriqueService
   ) {}
   //
   async ngOnInit() {

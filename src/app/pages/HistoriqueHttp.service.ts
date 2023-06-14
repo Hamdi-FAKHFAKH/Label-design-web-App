@@ -8,7 +8,7 @@ import {
 import { environment } from "./../../environments/environment";
 
 @Injectable()
-export class HistoriqueService {
+export class ProductHistoriqueService {
   constructor(private http: HttpClient) {}
   getHistoriqueProduit(userMatricule: string) {
     return this.http.get<GetHistoriqueProduitResponseResultData>(

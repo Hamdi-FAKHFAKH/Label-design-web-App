@@ -29,7 +29,7 @@ import { HistoriqueOFComponent } from "./HistoriqueOF/historique-of/historique-O
 import { DetailImpressionComponent } from "./DetailImpression/detail-impression/detail-impression.component";
 import { DetailImpressionHttpService } from "./DetailImpression/detailImpressionHttp.service";
 
-import { HistoriqueService } from "../HistoriqueHttp.service";
+import { ProductHistoriqueService } from "../HistoriqueHttp.service";
 import { ControlPrintedLabelsComponent } from "./Control-printed-labels/control-printed-labels/control-printed-labels.component";
 import { CheckPrintedLabelHttp } from "./Control-printed-labels/checkPrintedLabelHttp.service";
 import { ImpressionEtiquetteComponent } from "./ImpressionEtiquette/impression-etiquette/impression-etiquette.component";
@@ -84,7 +84,7 @@ import { AptGuard } from "./../../auth/apt-guard.service";
     LabelService,
     DetailImpressionHttpService,
     CheckPrintedLabelHttp,
-    HistoriqueService,
+    ProductHistoriqueService,
     AptGuard,
   ],
 })

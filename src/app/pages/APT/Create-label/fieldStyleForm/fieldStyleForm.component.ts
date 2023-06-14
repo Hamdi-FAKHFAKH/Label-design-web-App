@@ -20,7 +20,7 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
   @Input() itemId;
   math = Math;
   produit: ProduitData;
-  listOfLabelElementsCopy: LabelItem[];
+  listOfLabelElementsCopy: LabelItem[] = [];
   componentstyle: ComponentStyle = {};
   // specify which padding selected
   paddingClicked: string;
@@ -74,17 +74,13 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
         this.dragDropService.items[this.itemId].style[key] =
           this.componentstyle[key];
     });
-    this.listOfLabelElementsCopy =
-      this.dragDropService.listOfLabelElements.slice();
-    this.listOfLabelElementsCopy.splice(
-      this.dragDropService.listOfLabelElements.findIndex(
-        (obj) => obj.id == this.itemId
-      ),
-      1
-    );
+    this.listOfLabelElementsCopy.length = 0;
+    this.findDiplicatedStyle(this.dragDropService.listOfLabelElements);
+    // this.listOfLabelElementsCopy = this.dragDropService.listOfLabelElements
+    //   .slice()
+    //   .filter((obj) => obj.type == "text");
     this.defaultSelectedStyle = this.stylesDuplicated[this.itemId] || null;
   }
-
   //change the style of the text element
   changeStyle(itemName: string, itemValue: string | number | boolean) {
     console.log();
@@ -147,5 +143,12 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
         this.dragDropService.items[data].style
       );
     this.stylesDuplicated[this.itemId] = data;
+  }
+  findDiplicatedStyle(list: LabelItem[]) {
+    list.forEach((val) => {
+      val.type == "text" && val.id != this.itemId
+        ? this.listOfLabelElementsCopy.push(val)
+        : val.children && this.findDiplicatedStyle(val.children);
+    });
   }
 }

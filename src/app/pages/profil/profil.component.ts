@@ -4,7 +4,7 @@ import { LocalDataSource } from "ng2-smart-table";
 import { AuthService } from "../../auth/authService.service";
 import { UtilisateurData } from "../GestionUtilisateursHttp.data";
 import Swal from "sweetalert2";
-import { HistoriqueService } from "../HistoriqueHttp.service";
+import { ProductHistoriqueService } from "../HistoriqueHttp.service";
 import { Utils } from "../formatDate";
 
 @Component({
@@ -56,7 +56,7 @@ export class ProfilComponent implements OnInit {
   constructor(
     private gestionUtilisateursHttpService: GestionUtilisateursHttpService,
     private authService: AuthService,
-    private historiqueService: HistoriqueService,
+    private historiqueService: ProductHistoriqueService,
     private utils: Utils
   ) {}
 

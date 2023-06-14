@@ -29,10 +29,10 @@ export class TabsComponent implements OnInit {
     }
     if (e.tabId == "label") {
       this.labelTabActive = true;
-      this.designTabActive = false;
+      this.dragDropService.designTabActive = false;
     }
     if (e.tabId == "design") {
-      this.designTabActive = true;
+      this.dragDropService.designTabActive = true;
       this.labelTabActive = false;
     }
   }

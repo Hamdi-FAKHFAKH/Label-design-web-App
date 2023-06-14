@@ -8,7 +8,7 @@ import { exhaustMap } from "rxjs/operators";
 import { GestionProduitService } from "../GestionProduit.service";
 import { UpdateProduitComponent } from "../update-product/update-produit.component";
 import Swal from "sweetalert2";
-import { HistoriqueService } from "../../../HistoriqueHttp.service";
+import { ProductHistoriqueService } from "../../../HistoriqueHttp.service";
 import { AuthService } from "../../../../auth/authService.service";
 @Component({
   selector: "ngx-smart-table",
@@ -144,7 +144,7 @@ export class ProductMangementComponent {
     private windowService: NbWindowService,
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService,
-    private historiqueService: HistoriqueService,
+    private historiqueService: ProductHistoriqueService,
     private authService: AuthService
   ) {
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {

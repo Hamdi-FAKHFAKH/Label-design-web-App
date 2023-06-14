@@ -28,3 +28,15 @@
     [itemId]="dragDropService.selectedItem"
   ></ngx-field-style-form>
 </div>
+<div
+  *ngIf="
+    dragDropService.items[dragDropService.selectedItem] &&
+    ['container-2', 'container-3'].includes(
+      dragDropService.items[dragDropService.selectedItem].type
+    )
+  "
+>
+  <ngx-container-style-form
+    [itemId]="dragDropService.selectedItem"
+  ></ngx-container-style-form>
+</div>

@@ -37,6 +37,7 @@ export class DragDropService {
   dragPosition = {};
   //to activate property Tab
   propertyTabActive = false;
+  designTabActive = false;
   // id of the selected item in the label
   selectedItem: string;
   //default Text Style
@@ -52,6 +53,17 @@ export class DragDropService {
     "background-color": "#FF000000",
     underline: false,
   };
+  getcontainer1(id) {
+    return {
+      id: id,
+      type: "container-1",
+      children: [],
+      data: "",
+      refItem: null,
+      title: "",
+      style: null,
+    };
+  }
   // boxClass list
   boxClassList = {};
   //fill dropTargetIds list and nodeLookup2 object
@@ -75,28 +87,13 @@ export class DragDropService {
           {
             id: uuidv4(),
             type: "container-2",
+            style: {},
             data: "",
             refItem: null,
             title: "",
             children: [
-              {
-                id: uuidv4(),
-                type: "container-1",
-                children: [],
-                data: "",
-                refItem: null,
-                title: "",
-                style: null,
-              },
-              {
-                id: uuidv4(),
-                type: "container-1",
-                children: [],
-                data: "",
-                title: "",
-                refItem: null,
-                style: null,
-              },
+              this.getcontainer1(uuidv4()),
+              this.getcontainer1(uuidv4()),
             ],
           },
           {
@@ -106,49 +103,15 @@ export class DragDropService {
             refItem: null,
             title: "",
             children: [
-              {
-                id: uuidv4(),
-                type: "container-1",
-                children: [],
-                data: "",
-                refItem: null,
-                style: null,
-                title: "",
-              },
-              {
-                id: uuidv4(),
-                type: "container-1",
-                children: [],
-                data: "",
-                refItem: null,
-                title: "",
-                style: null,
-              },
-              {
-                id: uuidv4(),
-                type: "container-1",
-                style: null,
-                children: [],
-                data: "",
-                refItem: null,
-                title: "",
-              },
+              this.getcontainer1(uuidv4()),
+              this.getcontainer1(uuidv4()),
+              this.getcontainer1(uuidv4()),
             ],
           },
           {
             id: uuidv4(),
             type: "container",
-            children: [
-              {
-                id: uuidv4(),
-                type: "container-1",
-                children: [],
-                data: "",
-                style: null,
-                refItem: null,
-                title: "",
-              },
-            ],
+            children: [this.getcontainer1(uuidv4())],
             data: "",
             refItem: null,
             title: "",
@@ -324,8 +287,8 @@ export class DragDropService {
                       "font-size": "12pt",
                       color: "#000000",
                       underline: false,
-                      height: item == "withDataMatrix" ? "110" : "fit-content",
-                      width: item == "withDataMatrix" ? "110" : "fit-content",
+                      height: item == "withDataMatrix" && "110",
+                      width: item == "withDataMatrix" && "110",
                       "background-color": "#FF000000",
                     },
                     dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
@@ -340,28 +303,11 @@ export class DragDropService {
       {
         id: uuidv4(),
         type: "container-2",
+        style: {},
         data: "",
         refItem: null,
         title: "",
-        children: [
-          {
-            id: uuidv4(),
-            type: "container-1",
-            children: [],
-            data: "",
-            refItem: null,
-            title: "",
-            style: null,
-          },
-          {
-            id: uuidv4(),
-            type: "container-1",
-            children: [],
-            data: "",
-            title: "",
-            refItem: null,
-          },
-        ],
+        children: [this.getcontainer1(uuidv4()), this.getcontainer1(uuidv4())],
       },
       {
         id: uuidv4(),
@@ -370,62 +316,20 @@ export class DragDropService {
         refItem: null,
         title: "",
         children: [
-          {
-            id: uuidv4(),
-            type: "text",
-            children: [],
-            data: "",
-            refItem: null,
-            title: "",
-          },
-          {
-            id: uuidv4(),
-            type: "container-1",
-
-            children: [],
-            data: "",
-            refItem: null,
-            title: "",
-            style: null,
-          },
-          {
-            id: uuidv4(),
-            type: "container-1",
-            children: [],
-            data: "",
-            refItem: null,
-            title: "",
-            style: null,
-          },
+          this.getcontainer1(uuidv4()),
+          this.getcontainer1(uuidv4()),
+          this.getcontainer1(uuidv4()),
         ],
       },
       {
         id: uuidv4(),
         type: "container",
-        children: [
-          {
-            id: uuidv4(),
-            type: "container-1",
-            children: [],
-            data: "",
-            refItem: null,
-            title: "",
-            style: null,
-          },
-        ],
+        children: [this.getcontainer1(uuidv4())],
         data: "",
         refItem: null,
         title: "",
       },
-      {
-        id: uuidv4(),
-        type: "container-1",
-        data: "",
-        refItem: null,
-        title: "",
-        children: [],
-        style: null,
-      },
+      this.getcontainer1(uuidv4()),
     ];
     this.showDragPlaceholder = true;
   }
@@ -483,6 +387,9 @@ export class DragDropService {
     const draggedItemId = event.item.data; //draggebel
     //get object of the dragged item
     const draggedItem = this.nodeLookup2[draggedItemId];
+    let index = this.listOfDragItems.findIndex(
+      (val) => val.id == draggedItem.id
+    );
     //insert dragged item inside a container or inside the label
     if (
       this.dropActionTodo.action == "insideLeft" &&
@@ -493,6 +400,7 @@ export class DragDropService {
         ...draggedItem,
         id: uuidv4(),
       });
+      this.listOfDragItems.splice(index, 1);
     } else if (
       (this.dropActionTodo.action == "insideMiddle" &&
         draggedItem &&
@@ -508,6 +416,7 @@ export class DragDropService {
         ...draggedItem,
         id: uuidv4(),
       });
+      this.listOfDragItems.splice(index, 1);
     } else if (
       this.dropActionTodo.action == "insideRight" &&
       draggedItem &&
@@ -518,6 +427,7 @@ export class DragDropService {
         ...draggedItem,
         id: uuidv4(),
       });
+      this.listOfDragItems.splice(index, 1);
     } else if (
       this.dropActionTodo.action == "inside" &&
       draggedItem &&
@@ -530,6 +440,7 @@ export class DragDropService {
         ...draggedItem,
         id: uuidv4(),
       });
+      this.listOfDragItems.splice(index, 1);
     } else {
       if (event.previousContainer === event.container) {
         // Handle drop within the same container
@@ -548,18 +459,8 @@ export class DragDropService {
               {
                 ...draggedItem,
                 children: [
-                  {
-                    id: uuidv4(),
-                    type: "container-1",
-                    children: [],
-                    style: null,
-                  },
-                  {
-                    id: uuidv4(),
-                    type: "container-1",
-                    children: [],
-                    style: null,
-                  },
+                  this.getcontainer1(uuidv4()),
+                  this.getcontainer1(uuidv4()),
                 ],
                 id: uuidv4(),
               }
@@ -574,24 +475,9 @@ export class DragDropService {
               {
                 ...draggedItem,
                 children: [
-                  {
-                    id: uuidv4(),
-                    type: "container-1",
-                    children: [],
-                    style: null,
-                  },
-                  {
-                    id: uuidv4(),
-                    type: "container-1",
-                    children: [],
-                    style: null,
-                  },
-                  {
-                    id: uuidv4(),
-                    type: "container-1",
-                    children: [],
-                    style: null,
-                  },
+                  this.getcontainer1(uuidv4()),
+                  this.getcontainer1(uuidv4()),
+                  this.getcontainer1(uuidv4()),
                 ],
                 id: uuidv4(),
               }
@@ -605,13 +491,7 @@ export class DragDropService {
               {},
               {
                 ...draggedItem,
-                children: [
-                  {
-                    id: uuidv4(),
-                    type: "container-1",
-                    children: [],
-                  },
-                ],
+                children: [this.getcontainer1(uuidv4())],
                 id: uuidv4(),
               }
             )
@@ -640,10 +520,9 @@ export class DragDropService {
         if (!this.selectedItem) {
           this.selectedItem = this.listOfLabelElements[0].id;
         }
-        console.log(this.listOfLabelElements);
-        console.log(this.dragPosition);
       }
     }
+
     this.getAllItems(this.listOfLabelElements);
   }
   // fill items object with all elements in listOfLabelElements

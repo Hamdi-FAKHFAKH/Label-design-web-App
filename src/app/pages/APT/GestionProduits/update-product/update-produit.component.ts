@@ -7,7 +7,7 @@ import { AllProduitData, SerialNumberData } from "../GestionProduit.data";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import { AuthService } from "../../../../auth/authService.service";
-import { HistoriqueService } from "../../../HistoriqueHttp.service";
+import { ProductHistoriqueService } from "../../../HistoriqueHttp.service";
 @Component({
   selector: "ngx-update-produit",
   templateUrl: "./update-produit.component.html",
@@ -28,7 +28,7 @@ export class UpdateProduitComponent implements OnInit {
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService,
     private authService: AuthService,
-    private historiqueService: HistoriqueService
+    private historiqueService: ProductHistoriqueService
   ) {}
   //
   async ngOnInit() {
