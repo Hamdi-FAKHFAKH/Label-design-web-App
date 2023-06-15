@@ -94,7 +94,7 @@ export class AuthService {
     const remainingExpirationTime =
       new Date(userData._tokenExpiration).getTime() - new Date().getTime();
     this.autoLogOut(remainingExpirationTime);
-    this.router.navigate(["/home"]);
+    this.router.navigate(["/pages/Home"]);
   }
   autoLogOut(expirationTime: number) {
     this.TokenExpirationTimer = setTimeout(() => this.logOut(), expirationTime);

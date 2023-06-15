@@ -9,12 +9,17 @@ import { AssComponent } from "./ASS/ass/ass.component";
 import { AisComponent } from "./AIS/ais/ais.component";
 import { UserManagementComponent } from "./user-management/user-management/user-management.component";
 import { AtelierMangementComponent } from "./atelier-mangement/atelier-mangement.component";
+import { HomeComponent } from "./home/home.component";
 
 const routes: Routes = [
   {
     path: "",
     component: PagesComponent,
     children: [
+      {
+        path: "Home",
+        component: HomeComponent,
+      },
       {
         path: "profil",
         component: ProfilComponent,

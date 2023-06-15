@@ -47,7 +47,7 @@ export class LoginComponent {
         })
       )
       .subscribe((res) => {
-        this.router.navigate(["/home"]);
+        this.router.navigate(["/pages/Home"]);
       });
   }
 }

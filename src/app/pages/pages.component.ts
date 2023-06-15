@@ -10,7 +10,6 @@ import { Ateliers, roles, UAP, User } from "../auth/user";
   template: `
     <ngx-one-column-layout>
       <nb-menu [items]="menu"></nb-menu>
-      <!-- <ngx-menu></ngx-menu> -->
       <router-outlet></router-outlet>
     </ngx-one-column-layout>
   `,
@@ -35,7 +34,7 @@ export class PagesComponent implements OnInit {
       {
         title: "Acceuil",
         icon: "home",
-        link: "/home",
+        link: "/pages/Home",
         home: true,
       },
       {
@@ -47,13 +46,15 @@ export class PagesComponent implements OnInit {
             title: "S500 - Atelier Protection Thermique",
             expanded: true,
             hidden:
-              this.user.atelier !== Ateliers.APT &&
-              this.user.UAP !== UAP.UAP1 &&
-              ![
-                roles.admin.toString(),
-                roles.directeur.toString(),
-                roles.visitor.toString(),
-              ].includes(this.user.role),
+              (this.user.atelier !== Ateliers.APT &&
+                ![
+                  roles.admin.toString(),
+                  roles.directeur.toString(),
+                  roles.visitor.toString(),
+                  roles.responsableUAP.toString(),
+                ].includes(this.user.role)) ||
+              (this.user.UAP !== UAP.UAP1 &&
+                this.user.role == roles.responsableUAP),
             children: [
               {
                 title: "Gestion Produits",
@@ -101,13 +102,15 @@ export class PagesComponent implements OnInit {
             title: "S900 - Atelier Isolants Souples",
             expanded: true,
             hidden:
-              this.user.atelier !== Ateliers.AIS &&
-              this.user.UAP !== UAP.UAP1 &&
-              ![
-                roles.admin.toString(),
-                roles.directeur.toString(),
-                roles.visitor.toString(),
-              ].includes(this.user.role),
+              (this.user.atelier !== Ateliers.AIS &&
+                ![
+                  roles.admin.toString(),
+                  roles.directeur.toString(),
+                  roles.visitor.toString(),
+                  roles.responsableUAP.toString(),
+                ].includes(this.user.role)) ||
+              (this.user.UAP !== UAP.UAP1 &&
+                this.user.role == roles.responsableUAP),
             link: "/pages/ais",
           },
         ],
@@ -128,29 +131,6 @@ export class PagesComponent implements OnInit {
           roles.visitor.toString(),
         ].includes(this.user.role),
       },
-
-      // {
-      //   title: "Importation des données",
-      //   icon: { icon: "database", pack: "fa" },
-      //   expanded: true,
-      //   children: [
-      //     {
-      //       title: "Import Données a partir de CSV",
-      //       link: "/pages/forms/inputs",
-      //       icon: { icon: "file-csv", pack: "fa" },
-      //     },
-      //     {
-      //       title: "Import Données a partir de DB",
-      //       link: "/pages/forms/layouts",
-      //       icon: { icon: "download", pack: "fa" },
-      //     },
-      //     {
-      //       title: "Ajout Nouveau Table",
-      //       link: "/pages/forms/buttons",
-      //       icon: { icon: "table", pack: "fa" },
-      //     },
-      //   ],
-      // },
     ];
   }
 }

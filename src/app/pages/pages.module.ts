@@ -21,6 +21,7 @@ import { UpdateUserWindowComponent } from "./user-management/update-user-window/
 import { AtelierMangementComponent } from "./atelier-mangement/atelier-mangement.component";
 import { CreateAtelierWindowComponent } from "./atelier-mangement/create-atelier-window/create-atelier-window.component";
 import { UpdateAtelierWindowComponent } from "./atelier-mangement/update-atelier-window/update-atelier-window.component";
+import { HomeComponent } from './home/home.component';
 @NgModule({
   imports: [
     FormsModule,
@@ -46,6 +47,7 @@ import { UpdateAtelierWindowComponent } from "./atelier-mangement/update-atelier
     AtelierMangementComponent,
     CreateAtelierWindowComponent,
     UpdateAtelierWindowComponent,
+    HomeComponent,
   ],
 })
 export class PagesModule {}

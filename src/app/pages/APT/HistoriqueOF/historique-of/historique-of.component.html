@@ -17,15 +17,29 @@
           </li>
         </ol>
       </nav>
-      <input
-        class="form-control me-2 ps-4"
-        type="search"
-        placeholder="&#xF002;  Recherche par N°OF ou par Référence Produit ou par Date d'impression ou par Matricule de l'utilisateur ou par Numéro de Série"
-        style="font-family: Arial, FontAwesome; border-radius: 6px"
-        aria-label="Search"
-        #search
-        (input)="onSearch(search.value)"
-      />
+      <div style="display: flex; justify-content: space-between">
+        <div style="width: -webkit-fill-available; margin-right: 30px">
+          <input
+            class="form-control me-2 ps-4"
+            type="search"
+            placeholder="&#xF002;  Recherche par N°OF ou par Référence Produit ou par Date d'impression ou par Matricule de l'utilisateur ou par Numéro de Série"
+            style="font-family: Arial, FontAwesome; border-radius: 6px"
+            aria-label="Search"
+            #search
+            (input)="onSearch(search.value)"
+          />
+        </div>
+        <div style="width: fit-content">
+          <button
+            style="width: max-content"
+            type="button"
+            class="btn btn-primary"
+            (click)="exportToCsv(etiquettesImprimees)"
+          >
+            Exporter vers CSV
+          </button>
+        </div>
+      </div>
       <br />
       <div class="card mt-2">
         <div class="card-body">
@@ -35,23 +49,6 @@
               </ng2-smart-table>
             </div>
           </div>
-          <!-- <nav aria-label="Page navigation example" style="margin-top: 30px">
-            <ul class="pagination">
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" routerLink="/pages/apt/HistoriqueOF?">1</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </nav> -->
         </div>
       </div>
     </div>

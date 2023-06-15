@@ -3,7 +3,7 @@ import { LocalDataSource } from "ng2-smart-table";
 import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
 import { DetailImpressionHttpService } from "../../DetailImpression/detailImpressionHttp.service";
 import { Utils } from "../../../formatDate";
-
+import * as Papa from "papaparse";
 @Component({
   selector: "ngx-historique-of",
   templateUrl: "./historique-of.component.html",
@@ -11,6 +11,7 @@ import { Utils } from "../../../formatDate";
 })
 export class HistoriqueOFComponent implements OnInit {
   etiquettes: EtiquetteImprimeeData[];
+  etiquettesImprimees;
   settings = {
     hideSubHeader: true,
     pager: { display: true },
@@ -81,11 +82,10 @@ export class HistoriqueOFComponent implements OnInit {
     this.etiquettes = (
       await this.detailImpressionHttp.GetALLEtiquettesImprimees().toPromise()
     ).etiquettesImprimees;
-    this.source.load(
-      this.etiquettes.map((val) => {
-        return { ...val, date: this.utils.formatDate(val.date) };
-      })
-    );
+    this.etiquettesImprimees = this.etiquettes.map((val) => {
+      return { ...val, date: this.utils.formatDate(val.date) };
+    });
+    this.source.load(this.etiquettesImprimees);
   }
   onSearch(query: string = "") {
     if (query == "") {
@@ -118,5 +118,34 @@ export class HistoriqueOFComponent implements OnInit {
         false
       );
     }
+  }
+  exportToCsv(data: any[]) {
+    const csv = Papa.unparse(data, {
+      delimiter: ";",
+      quotes: [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+      ],
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.setAttribute("hidden", "");
+    a.setAttribute("href", url);
+    a.setAttribute("download", "data.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 }

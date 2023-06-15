@@ -6,11 +6,11 @@
   justify-content: center;
 }
 #label {
-  min-width: 670px;
-  min-height: 360px;
-  background-color: #f0eeeda8;
+  min-width: 100px;
+  min-height: 300px;
+  background-color: #c6c6c6a8;
   border-radius: 15px;
-  margin-top: 32px;
+  // margin-top: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,6 +23,9 @@ ol {
   flex-wrap: wrap;
   margin-right: -15px;
   margin-left: -15px;
-  align-content: flex-start;
+  align-content: center;
   align-items: center;
+}
+.col-xl-4 {
+  padding: 0px;
 }
