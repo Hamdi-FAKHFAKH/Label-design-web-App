@@ -169,8 +169,8 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       if (this.labelInfo) {
         this.labelStyle = {
           "background-color": this.labelInfo.color,
-          width: this.labelInfo.largeur + "mm",
-          height: this.labelInfo.longueur + "mm",
+          height: this.labelInfo.largeur + "mm",
+          width: this.labelInfo.longueur + "mm",
           padding: this.labelInfo.padding + "mm",
         };
         if (this.labelInfo.format == "cercle") {
@@ -351,7 +351,6 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       resarray.find((val) => val && val.refItem == "dataMatrixData" && val.data)
     );
   }
-  navigate() {}
   // parcourir les element a partir de BD et les insérer dans list ( utiliser dans le drag & drop avec container)
   uploadData(listFromDB, produit, client, fournisseur, form, lot, SN) {
     listFromDB.map((item) => {

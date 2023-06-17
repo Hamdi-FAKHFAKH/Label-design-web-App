@@ -59,7 +59,7 @@
         (click)="router.navigate(['/pages/profil'])"
         [onlyPicture]="false"
         [name]="user?.nom + ' ' + user?.prenom"
-        [picture]="avatarSrc"
+        [picture]="imgdata || avatarSrc"
       >
       </nb-user>
     </nb-action>

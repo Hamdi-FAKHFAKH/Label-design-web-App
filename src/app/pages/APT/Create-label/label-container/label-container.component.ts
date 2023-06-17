@@ -406,10 +406,10 @@ export class SidebarComponent implements OnInit {
           await this.lablHttpService
             .CreateComponent({
               x: this.dragDropService.dragDropLibre
-                ? this.dragDropService.dragPosition[obj.id].x
+                ? Math.round(this.dragDropService.dragPosition[obj.id].x)
                 : null,
               y: this.dragDropService.dragDropLibre
-                ? this.dragDropService.dragPosition[obj.id].y
+                ? Math.round(this.dragDropService.dragPosition[obj.id].y)
                 : null,
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
@@ -461,10 +461,10 @@ export class SidebarComponent implements OnInit {
           await this.lablHttpService
             .CreateComponent({
               x: this.dragDropService.dragDropLibre
-                ? this.dragDropService.dragPosition[obj.id].x
+                ? Math.round(this.dragDropService.dragPosition[obj.id].x)
                 : null,
               y: this.dragDropService.dragDropLibre
-                ? this.dragDropService.dragPosition[obj.id].y
+                ? Math.round(this.dragDropService.dragPosition[obj.id].y)
                 : null,
               ordre: index,
               "background-color": obj.style && obj.style["background-color"],
@@ -714,10 +714,3 @@ export class SidebarComponent implements OnInit {
   //   console.log(e.target.getAttribute("cdkDragBoundary"));
   // }
 }
-
-//TODO: ajout la régle dans l'etiquette
-//TODO: affiche la grille
-//TODO: ajoute les formes
-//TODO: verifier les champs des produits similaire
-//TODO: supprimer placeHolder de draggebl elements and disable list order
-// TODO: supprimer les style css contient des valeur null

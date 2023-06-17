@@ -9,6 +9,7 @@ export interface UtilisateurData {
   créateur?: string;
   modificateur?: string;
   UAP: string;
+  imgData: string;
 }
 export interface GetOneUtilisateurResultResponseData {
   Status: string;

@@ -68,6 +68,7 @@ export class ProfilComponent implements OnInit {
         .getOneUtilisateur(this.authService.user.getValue().matricule)
         .toPromise()
     ).utilisateur;
+    this.imgdata = this.user.imgData;
     this.avatarSrc = this.authService.generateAvatar(
       this.user?.nom.slice(0, 1) + this.user?.prenom.slice(0, 1),
       this.authService.avatarColor?.foregroundColor,
@@ -105,41 +106,66 @@ export class ProfilComponent implements OnInit {
     };
     reader.onerror = function (error) {};
   };
+
   async changeMotPasse() {
-    try {
-      const res = await this.gestionUtilisateursHttpService
-        .checkPassword(this.authService.user.getValue().matricule, this.oldPass)
-        .toPromise();
-      if (res.Status == "Success") {
-        this.passwordIncorrect = true;
-        if (
-          this.newPass == this.confirNewPass &&
-          this.newPass !== this.oldPass
-        ) {
-          const result = await this.gestionUtilisateursHttpService
-            .updateUtilisateur(
-              this.authService.user.getValue().matricule,
-              this.newPass,
-              this.imgdata
-            )
-            .toPromise();
-          if (result.UtilisateurUpdated) {
-            Swal.fire({
-              icon: "success",
-              title:
-                "La sauvegarde du mot de passe a été effectuée avec succès.",
-              showConfirmButton: false,
-              timer: 1500,
-            }).then(() => {
-              this.authService.logOut();
-              this.isnewMotdePasse = false;
-            });
+    if (this.newPass && this.oldPass && this.confirNewPass) {
+      try {
+        const res = await this.gestionUtilisateursHttpService
+          .checkPassword(
+            this.authService.user.getValue().matricule,
+            this.oldPass
+          )
+          .toPromise();
+        if (res.Status == "Success") {
+          this.passwordIncorrect = true;
+          if (
+            this.newPass == this.confirNewPass &&
+            this.newPass !== this.oldPass
+          ) {
+            const result = await this.gestionUtilisateursHttpService
+              .updateUtilisateur(this.authService.user.getValue().matricule, {
+                password: this.newPass,
+              })
+              .toPromise();
+            if (result.UtilisateurUpdated) {
+              Swal.fire({
+                icon: "success",
+                title:
+                  "La sauvegarde du mot de passe a été effectuée avec succès.",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                this.authService.logOut();
+                this.isnewMotdePasse = false;
+              });
+            }
           }
+        } else {
+          this.passwordIncorrect = false;
         }
-      } else {
-        this.passwordIncorrect = false;
+      } catch (error) {}
+    }
+  }
+  async saveImg() {
+    try {
+      if (this.imgdata) {
+        await this.gestionUtilisateursHttpService
+          .updateUtilisateur(this.authService.user.getValue().matricule, {
+            imgData: this.imgdata,
+          })
+          .toPromise();
+        Swal.fire({
+          icon: "success",
+          title: "La sauvegarde du mot de passe a été effectuée avec succès.",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          this.authService.logOut();
+        });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
   //
   onchangePassword() {

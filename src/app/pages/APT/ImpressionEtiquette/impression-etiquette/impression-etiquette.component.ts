@@ -143,26 +143,29 @@ export class ImpressionEtiquetteComponent implements OnInit {
       ).slice(0, 20);
       const of = (
         await this.impressionHttpService.GetRefProduitByOF(ofnum).toPromise()
-      ).of;
-      this.numOF = ofnum;
-      this.refProd = of.proref;
-      this.OF = of.ofnum;
+      )?.of;
+      if (of) {
+        this.numOF = ofnum;
+        this.refProd = of?.proref || "";
+        this.OF = of?.ofnum;
 
-      try {
-        this.produit = (
-          await this.gestionProduitHttpService
-            .getOneProduit(this.refProd)
-            .toPromise()
-        ).produit;
-        this.idEtiquette = this.produit.idEtiquette;
-      } catch (e) {}
-      this.impressionDetail = {
-        ...this.impressionDetail,
-        OF: of.ofnum,
-        refProduit: of.proref,
-      };
+        try {
+          this.produit = (
+            await this.gestionProduitHttpService
+              .getOneProduit(this.refProd)
+              .toPromise()
+          ).produit;
+          this.idEtiquette = this.produit.idEtiquette;
+        } catch (e) {}
+        this.impressionDetail = {
+          ...this.impressionDetail,
+          OF: of.ofnum,
+          refProduit: of.proref,
+        };
+      }
     } else {
       this.OfList = this.OfListData.slice(0, 20);
+      this.refProd = "";
     }
   }
   async loadList1Data(data: LabelItem[]) {

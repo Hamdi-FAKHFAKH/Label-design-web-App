@@ -25,6 +25,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private userSub: Subscription;
   authenticated: boolean;
   avatarColor;
+  imgdata;
   generateAvatar;
   themes = [
     {
@@ -70,6 +71,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         .getOneUtilisateur(this.authService.user.getValue().matricule)
         .toPromise()
     ).utilisateur;
+    this.imgdata = this.user.imgData;
     this.avatarSrc = this.generateAvatar(
       this.user?.nom.slice(0, 1) + this.user?.prenom.slice(0, 1),
       this.avatarColor?.foregroundColor,

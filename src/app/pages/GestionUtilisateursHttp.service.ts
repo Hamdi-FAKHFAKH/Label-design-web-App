@@ -31,13 +31,10 @@ export class GestionUtilisateursHttpService {
       }
     );
   }
-  updateUtilisateur(matricule, password, imgData: string) {
+  updateUtilisateur(matricule, obj) {
     return this.http.put<updateUtilisateurResultData>(
       `${environment.apiUrl}/api/v1/utilisateurs/${matricule}`,
-      {
-        motDePasse: password,
-        imgData: imgData,
-      }
+      obj
     );
   }
 }

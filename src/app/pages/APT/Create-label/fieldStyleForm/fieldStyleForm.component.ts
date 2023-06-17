@@ -43,6 +43,9 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
   //
   ngOnInit(): void {
     this.produit = this.dragDropService.produit;
+    this.componentstyle.bold == false;
+    this.componentstyle.italic == false;
+    this.componentstyle.underline == false;
   }
   // executed when changing item ID (when changing selected item)
   ngOnChanges(changes: SimpleChanges): void {
@@ -68,20 +71,16 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
       : this.dragDropService.items[this.itemId].style["margin-bottom"]
       ? "margin-bottom"
       : "margin";
-
     Object.keys(this.componentstyle).forEach((key) => {
       if (!this.dragDropService.items[this.itemId].style[key])
         this.dragDropService.items[this.itemId].style[key] =
           this.componentstyle[key];
-      this.componentstyle.bold == false;
-      this.componentstyle.italic == false;
-      this.componentstyle.underline == false;
     });
+    this.componentstyle.bold == false;
+    this.componentstyle.italic == false;
+    this.componentstyle.underline == false;
     this.listOfLabelElementsCopy.length = 0;
     this.findDiplicatedStyle(this.dragDropService.listOfLabelElements);
-    // this.listOfLabelElementsCopy = this.dragDropService.listOfLabelElements
-    //   .slice()
-    //   .filter((obj) => obj.type == "text");
     this.defaultSelectedStyle = this.stylesDuplicated[this.itemId] || null;
   }
   //change the style of the text element
