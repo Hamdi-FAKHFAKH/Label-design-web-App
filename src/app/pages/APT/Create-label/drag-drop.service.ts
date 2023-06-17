@@ -6,6 +6,7 @@ import { GestionProduitHttpService } from "../GestionProduits/GestionProduitHttp
 import { LabelService } from "./label.service";
 import { ComponentTitle, LabelItem } from "./ComposentData";
 import { ProduitData } from "../GestionProduits/GestionProduit.data";
+import { BehaviorSubject, Subject } from "rxjs";
 export interface DropInfo {
   targetId: string;
   action?: string;
@@ -52,7 +53,11 @@ export class DragDropService {
     color: "#000000",
     "background-color": "#FF000000",
     underline: false,
+    height: "fit-content",
+    width: "fit-content",
   };
+  // label saved
+  savedLabel = new BehaviorSubject<boolean>(true);
   getcontainer1(id) {
     return {
       id: id,
@@ -162,6 +167,7 @@ export class DragDropService {
                     data: "OF Number",
                     style: Object.assign({}, this.defaultTextStyle),
                   });
+                  this.prepareDragDrop(this.listOfDragItems);
                 } else if (item === "formes" && resProduit.produit.formes) {
                   resProduit.produit.formes.split(";").forEach((val, index) => {
                     if (val) {
@@ -191,24 +197,14 @@ export class DragDropService {
                     .getOneLot(resProduit.produit.numLot)
                     .toPromise()
                     .then((lot) => {
-                      this.listOfDragItems.push(
-                        {
-                          id: uuidv4(),
-                          type: "text",
-                          refItem: item,
-                          title: ComponentTitle.numLot,
-                          data: resProduit.produit.numLot,
-                          style: Object.assign({}, this.defaultTextStyle),
-                        },
-                        {
-                          id: uuidv4(),
-                          type: "text",
-                          title: ComponentTitle.formatLot,
-                          refItem: "format",
-                          data: lot.lot.format,
-                          style: Object.assign({}, this.defaultTextStyle),
-                        }
-                      );
+                      this.listOfDragItems.push({
+                        id: uuidv4(),
+                        type: "text",
+                        title: ComponentTitle.formatLot,
+                        refItem: "format",
+                        data: lot.lot.format,
+                        style: Object.assign({}, this.defaultTextStyle),
+                      });
                       this.prepareDragDrop(this.listOfDragItems);
                     });
                 } else if (
@@ -219,24 +215,24 @@ export class DragDropService {
                     .getClient(resProduit.produit.codeClient)
                     .toPromise()
                     .then((client) => {
-                      this.listOfDragItems.push(
-                        {
+                      resProduit.produit.codeClient &&
+                        this.listOfDragItems.push({
                           id: uuidv4(),
                           type: "text",
                           refItem: item,
                           title: ComponentTitle.codeClient,
                           data: resProduit.produit.codeClient,
                           style: Object.assign({}, this.defaultTextStyle),
-                        },
-                        {
+                        });
+                      client.body.client.desClient &&
+                        this.listOfDragItems.push({
                           id: uuidv4(),
                           type: "text",
                           title: ComponentTitle.desClient,
                           refItem: "desClient",
                           data: client.body.client.desClient,
                           style: Object.assign({}, this.defaultTextStyle),
-                        }
-                      );
+                        });
                       this.prepareDragDrop(this.listOfDragItems);
                     });
                 } else if (
@@ -247,24 +243,23 @@ export class DragDropService {
                     .getFournisseur(resProduit.produit.codeFournisseur)
                     .toPromise()
                     .then((fournisseur) => {
-                      this.listOfDragItems.push(
-                        {
-                          id: uuidv4(),
-                          type: "text",
-                          refItem: item,
-                          title: ComponentTitle.codeFournisseur,
-                          data: resProduit.produit.codeFournisseur,
-                          style: Object.assign({}, this.defaultTextStyle),
-                        },
-                        {
+                      this.listOfDragItems.push({
+                        id: uuidv4(),
+                        type: "text",
+                        refItem: item,
+                        title: ComponentTitle.codeFournisseur,
+                        data: resProduit.produit.codeFournisseur,
+                        style: Object.assign({}, this.defaultTextStyle),
+                      });
+                      fournisseur.body.fournisseur.desFournisseur &&
+                        this.listOfDragItems.push({
                           id: uuidv4(),
                           type: "text",
                           title: ComponentTitle.desFournisseur,
-                          refItem: "desClient",
+                          refItem: "desFournisseur",
                           data: fournisseur.body.fournisseur.desFournisseur,
                           style: Object.assign({}, this.defaultTextStyle),
-                        }
-                      );
+                        });
                       this.prepareDragDrop(this.listOfDragItems);
                     });
                 } else {
@@ -293,6 +288,7 @@ export class DragDropService {
                     },
                     dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
                   });
+                  this.prepareDragDrop(this.listOfDragItems);
                 }
               }
             });
@@ -383,6 +379,7 @@ export class DragDropService {
   }
   //called when element dropped
   drop(event: CdkDragDrop<string[]>) {
+    this.savedLabel.next(false);
     if (!this.dropActionTodo) return;
     const draggedItemId = event.item.data; //draggebel
     //get object of the dragged item

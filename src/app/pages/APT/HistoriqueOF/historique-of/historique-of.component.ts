@@ -122,27 +122,13 @@ export class HistoriqueOFComponent implements OnInit {
   exportToCsv(data: any[]) {
     const csv = Papa.unparse(data, {
       delimiter: ";",
-      quotes: [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-      ],
     });
     const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.setAttribute("hidden", "");
     a.setAttribute("href", url);
-    a.setAttribute("download", "data.csv");
+    a.setAttribute("download", "HistoriqueOF.csv");
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

@@ -23,6 +23,7 @@ import { DetailImpressionHttpService } from "../../DetailImpression/detailImpres
 import { AuthService } from "../../../../auth/authService.service";
 import { getcanvas } from "dom-to-pdf";
 import { Renderer } from "leaflet";
+import { environment } from "../../../../../environments/environment";
 
 class RegexFormatLot {
   public static readonly "date" =
@@ -305,7 +306,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
           await this.impressionHttpService
             .PrintLabel({
               copies: nbrcopie,
-              filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
+              filePath: `${environment.pdfPath}/label-${this.refProd}.pdf`,
               printerName: printerName,
             })
             .toPromise()
@@ -316,7 +317,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
           await this.impressionHttpService
             .PrintLabel({
               copies: nbrcopie,
-              filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`,
+              filePath: `${environment.pdfPath}/label-${this.refProd}.pdf`,
               printerName: printerName,
             })
             .toPromise()
@@ -330,7 +331,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
         ).etiquettesImprimees.find((val) => val.refProd == this.refProd);
         await this.createPrintedLabel(
           printedLabel ? +printedLabel.nbrCopie + nbrcopie : nbrcopie,
-          `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${this.refProd}.pdf`
+          `${environment.pdfPath}/label-${this.refProd}.pdf`
         );
         this.changeSn.emit();
       }
@@ -365,9 +366,9 @@ export class ImpressionEtiquetteComponent implements OnInit {
             await this.impressionHttpService
               .PrintLabel({
                 copies: 1,
-                filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
-                  this.refProd
-                }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`,
+                filePath: `${environment.pdfPath}/label-${this.refProd}-${
+                  this.sn ? this.sn.prefix + this.sn.suffix : ""
+                }.pdf`,
                 printerName: printerName,
               })
               .toPromise()
@@ -380,9 +381,9 @@ export class ImpressionEtiquetteComponent implements OnInit {
             await this.impressionHttpService
               .PrintLabel({
                 copies: 1,
-                filePath: `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
-                  this.refProd
-                }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`,
+                filePath: `${environment.pdfPath}/label-${this.refProd}-${
+                  this.sn ? this.sn.prefix + this.sn.suffix : ""
+                }.pdf`,
                 printerName: printerName,
               })
               .toPromise()
@@ -391,9 +392,9 @@ export class ImpressionEtiquetteComponent implements OnInit {
         if (fileexist && printStatus == 200) {
           await this.createPrintedLabel(
             1,
-            `C:/Users/hamdi/OneDrive/Bureau/stage/App de gestion Etiquette Back-end/PdfFiles/label-${
-              this.refProd
-            }-${this.sn ? this.sn.prefix + this.sn.suffix : ""}.pdf`
+            `${environment.pdfPath}/label-${this.refProd}-${
+              this.sn ? this.sn.prefix + this.sn.suffix : ""
+            }.pdf`
           );
           this.changeSn.emit();
           await timeout(1000);

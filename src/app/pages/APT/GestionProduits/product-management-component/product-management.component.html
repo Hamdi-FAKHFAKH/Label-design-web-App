@@ -18,7 +18,7 @@
         </ol>
       </nav>
       <div class="row">
-        <div class="col-9">
+        <div class="col-8">
           <input
             class="form-control me-2 ps-4"
             type="search"
@@ -29,14 +29,31 @@
             (input)="onSearch(search.value)"
           />
         </div>
-        <div class="col">
+        <div class="col-4" style="display: flex; justify-content: flex-end">
           <button
             type="button"
             class="btn btn-success"
-            style="float: right; font-family: Arial, FontAwesome"
+            style="
+              float: right;
+              font-family: Arial, FontAwesome;
+              width: 237px;
+              margin-right: 25px;
+            "
             (click)="openCreateProductWindow()"
           >
             &#xf055; Créer un Nouveau Produit
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              float: right;
+              font-family: Arial, FontAwesome;
+              margin-right: 5px;
+            "
+            (click)="exportToCsv()"
+          >
+            <i class="fa-solid fa-file-csv"></i>
           </button>
         </div>
       </div>

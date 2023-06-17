@@ -149,6 +149,20 @@ export class ProductCreationWindowComponent implements OnInit {
         (await this.gestionProduitService.AddFournisseur(form.value)) &&
         success;
     }
+    //check SerialNumber data
+    if (form.value.withSN && this.addNewSerialNumber) {
+      const regex = new RegExp(`^[0-9]{${+form.value.nbrCaractere}}$`);
+      console.log(regex);
+
+      if (!form.value.suffix.match(regex)) {
+        Swal.fire({
+          icon: "info",
+          title: "Oops...",
+          text: "Suffix  non valide !",
+        });
+        return;
+      }
+    }
     // create SerialNumber
     if (
       form.value.withSN &&
@@ -219,7 +233,6 @@ export class ProductCreationWindowComponent implements OnInit {
         });
     }
   }
-
   SelectSn(val) {
     this.selectedSerialNumber = this.SerialNumberData[val];
   }

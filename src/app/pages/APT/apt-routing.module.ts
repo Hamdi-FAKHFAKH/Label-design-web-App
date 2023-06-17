@@ -30,6 +30,7 @@ const routes: Routes = [
             (m) => m.CreattionEtiquetteModule
           ),
         canActivate: [AptGuard],
+        canDeactivate: [ConfirmNavigationGuard],
       },
       {
         path: "HistoriqueOF",
@@ -42,7 +43,6 @@ const routes: Routes = [
       {
         path: "ControlEtiquette",
         component: ControlPrintedLabelsComponent,
-        canActivate: [AptGuard],
       },
       {
         path: "",

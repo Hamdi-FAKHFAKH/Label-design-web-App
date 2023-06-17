@@ -25,7 +25,7 @@ import { NbSidebarService, NbWindowService } from "@nebular/theme";
 import { te } from "date-fns/locale";
 import { infoLabel } from "../label.service";
 import { NavigationStart, Route, Router } from "@angular/router";
-import { CanComponentDeactivate } from "../CanDeactivate";
+
 import { Observable } from "rxjs";
 @Component({
   selector: "ngx-sidebar",
@@ -60,6 +60,9 @@ export class SidebarComponent implements OnInit {
     private router: Router
   ) {}
   ngOnInit(): void {
+    this.dragDropService.listOfLabelElements.length = 0;
+    this.dragDropService.propertyTabActive = false;
+    this.dragDropService.designTabActive = false;
     this.containerNotVide = false;
     this.container2NotVide = false;
     this.container3NotVide = false;
@@ -67,8 +70,8 @@ export class SidebarComponent implements OnInit {
       if (info) {
         this.labelStyle = {
           "background-color": info.color,
-          width: info.largeur + "mm",
-          height: info.longueur + "mm",
+          height: info.largeur + "mm",
+          width: info.longueur + "mm",
           padding: info.padding + "mm",
         };
         if (info.format == "cercle") {
@@ -124,8 +127,8 @@ export class SidebarComponent implements OnInit {
   zoomOut() {
     //TODO : add zomm in and zoom out pour cercle
     if (
-      +this.labelStyle.width.split("mm")[0] > +this.labelInfo.largeur &&
-      +this.labelStyle.height.split("mm")[0] > +this.labelInfo.longueur
+      +this.labelStyle.height.split("mm")[0] > +this.labelInfo.largeur &&
+      +this.labelStyle.width.split("mm")[0] > +this.labelInfo.longueur
     ) {
       this.labelStyle = {
         ...this.labelStyle,
@@ -152,8 +155,8 @@ export class SidebarComponent implements OnInit {
   initZoom(): void {
     this.labelStyle = {
       ...this.labelStyle,
-      width: this.labelInfo.largeur + "mm",
-      height: this.labelInfo.longueur + "mm",
+      height: this.labelInfo.largeur + "mm",
+      width: this.labelInfo.longueur + "mm",
     };
     if (this.labelInfo.format == "cercle") {
       this.labelStyle = {
@@ -171,7 +174,10 @@ export class SidebarComponent implements OnInit {
       };
     }
   }
-  async saveToPdf() {
+  // save label in DB
+  async saveLabel() {
+    this.dragDropService.propertyTabActive = false;
+    this.dragDropService.designTabActive = true;
     const produitsWithEtiquette = (
       await this.lablHttpService.getAllProduitWithEtiquette().toPromise()
     ).produits;
@@ -189,172 +195,182 @@ export class SidebarComponent implements OnInit {
     ).produit;
     if (!this.labelInfo.refProd) {
       Swal.fire("Selectionner la référence Produit", "", "info");
-    } else if (refProdWithEtiquette.includes(this.labelInfo.refProd)) {
-      Swal.fire({
-        title:
-          "vous voulez écraser les données de l'étiquette associée à la référence produite" +
-          this.labelInfo.refProd +
-          " ?",
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: "Oui",
-        confirmButtonColor: "#007BFF",
-        denyButtonText: `Non`,
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          let datamatrix = this.findItem(
-            this.dragDropService.listOfLabelElements,
-            "datamatrixData"
-          );
-          let SN = this.findItem(
-            this.dragDropService.listOfLabelElements,
-            "idSN"
-          );
-          let lot = this.findItem(
-            this.dragDropService.listOfLabelElements,
-            "format"
-          );
-          let OF = this.findItem(
-            this.dragDropService.listOfLabelElements,
-            "of"
-          );
+      return;
+    }
+    Swal.fire({
+      title:
+        "vous voulez écraser les données de l'étiquette associée à la référence produite" +
+        this.labelInfo.refProd +
+        " ?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Oui",
+      confirmButtonColor: "#007BFF",
+      denyButtonText: `Non`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        //********************************************************* check components in label ************************ */
+        let datamatrix = this.findItem(
+          this.dragDropService.listOfLabelElements,
+          "datamatrixData"
+        );
+        let SN = this.findItem(
+          this.dragDropService.listOfLabelElements,
+          "idSN"
+        );
+        let lot = this.findItem(
+          this.dragDropService.listOfLabelElements,
+          "format"
+        );
+        let OF = this.findItem(this.dragDropService.listOfLabelElements, "of");
 
-          if (produit.withDataMatrix && !datamatrix) {
-            Swal.fire(
-              "DataMatrix introuvable?",
-              "Veuillez inclure un DataMatrix sur l'étiquette",
-              "info"
-            );
-            return;
-          }
-          // const datamatrix = this.dragDropService.listOfLabelElements.find(
-          //   (val) => val.type == "QRcode"
-          // );
-          if (
-            produit.withDataMatrix &&
-            (datamatrix.data ==
-              "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix." ||
-              !datamatrix.data)
-          ) {
-            Swal.fire(
-              "Les données contenues dans la DataMatrix sont inexistantes ou nulles.",
-              "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.",
-              "info"
-            );
-            return;
-          }
-          if (produit.withSN && !SN) {
-            Swal.fire(
-              "Numéro de Série introuvable?",
-              "Veuillez inclure le Numéro de Série sur l'étiquette",
-              "info"
-            );
-            return;
-          }
-          if (produit.withOF && !OF) {
-            Swal.fire(
-              "Ordre de Fabrication(OF) introuvable?",
-              "Veuillez inclure l'Ordre de Fabrication(OF) sur l'étiquette",
-              "info"
-            );
-            return;
-          }
-          if (produit.numLot && !lot) {
-            Swal.fire(
-              "Format de LOT introuvable?",
-              "Veuillez inclure le format de LOT sur l'étiquette",
-              "info"
-            );
-            return;
-          }
-          const res = await this.lablHttpService
-            .UpdateEtiquette(this.idEtiquette, {
-              couleur: this.labelInfo.color,
-              format: this.labelInfo.format,
-              id: this.idEtiquette,
-              createur: null,
-              id1: this.labelInfo.id,
-              largeur: this.labelInfo.largeur,
-              longeur: this.labelInfo.longueur,
-              padding: this.labelInfo.padding,
-              modificateur: null,
-            })
-            .toPromise();
-          if (this.labelInfo.refProd) {
+        if (produit.withDataMatrix && !datamatrix) {
+          Swal.fire(
+            "DataMatrix introuvable?",
+            "Veuillez inclure un DataMatrix sur l'étiquette",
+            "info"
+          );
+          return;
+        }
+        if (
+          produit.withDataMatrix &&
+          (datamatrix.data ==
+            "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix." ||
+            !datamatrix.data)
+        ) {
+          Swal.fire(
+            "Les données contenues dans la DataMatrix sont inexistantes ou nulles.",
+            "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.",
+            "info"
+          );
+          return;
+        }
+        if (produit.withSN && !SN) {
+          Swal.fire(
+            "Numéro de Série introuvable?",
+            "Veuillez inclure le Numéro de Série sur l'étiquette",
+            "info"
+          );
+          return;
+        }
+        if (produit.withOF && !OF) {
+          Swal.fire(
+            "Ordre de Fabrication(OF) introuvable?",
+            "Veuillez inclure l'Ordre de Fabrication(OF) sur l'étiquette",
+            "info"
+          );
+          return;
+        }
+        if (produit.numLot && !lot) {
+          Swal.fire(
+            "Format de LOT introuvable?",
+            "Veuillez inclure le format de LOT sur l'étiquette",
+            "info"
+          );
+          return;
+        }
+        //********************************************************************* save data ****************************** */
+        // update label
+        if (
+          refProdWithEtiquette.includes(this.labelInfo.refProd) &&
+          this.idEtiquette
+        ) {
+          //update etiquette
+          try {
+            await this.lablHttpService
+              .UpdateEtiquette(this.idEtiquette, {
+                couleur: this.labelInfo.color,
+                format: this.labelInfo.format,
+                createur: null,
+                id1: this.labelInfo.id,
+                largeur: this.labelInfo.largeur,
+                longeur: this.labelInfo.longueur,
+                padding: this.labelInfo.padding,
+                modificateur: null,
+              })
+              .toPromise();
             //remove all components of this label
             await this.lablHttpService
               .deleteComponentsByEtiquette(this.idEtiquette)
-              .toPromise()
-              .catch((err) => {});
-
-            this.FillList1WithNewID(
-              this.dragDropService.listOfLabelElements,
-              this.ListWithNewID
-            );
+              .toPromise();
+            // create all Components
             await this.createComponent(
               this.dragDropService.listOfLabelElements,
               this.idEtiquette
             );
+            Swal.fire({
+              icon: "success",
+              title: "L'étiquette a été enregistrée",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            console.log("update label");
+            console.log(this.dragDropService.listOfLabelElements);
+          } catch (error) {
+            Swal.fire({
+              icon: "error",
+              title: "Les modifications ne sont pas enregistrées",
+              text: error.message,
+              showConfirmButton: false,
+              timer: 1500,
+            });
           }
-          Swal.fire({
-            icon: "success",
-            title: "L'étiquette a été enregistrée",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        } else if (result.isDenied) {
-          Swal.fire("Les modifications ne sont pas enregistrées", "", "info");
         }
-      });
-    } else {
-      const id: string = uuidv4();
-      const res = await this.lablHttpService
-        .CreateEtiquette({
-          couleur: this.labelInfo.color,
-          format: this.labelInfo.format,
-          id: id,
-          createur: null,
-          id1: this.labelInfo.id,
-          largeur: this.labelInfo.largeur,
-          longeur: this.labelInfo.longueur,
-          padding: this.labelInfo.padding,
-          modificateur: null,
-        })
-        .toPromise();
-      const res2 = await this.gestionProduitHttpService
-        .updateProduit(
-          { ref: this.labelInfo.refProd, idEtiquette: id },
-          this.labelInfo.refProd
-        )
-        .toPromise();
-      this.idEtiquette = id;
-      if (this.labelInfo.refProd) {
-        //remove all components of this label
-        await this.lablHttpService
-          .deleteComponentsByEtiquette(this.idEtiquette)
-          .toPromise()
-          .catch((err) => {});
-        this.FillList1WithNewID(
-          this.dragDropService.listOfLabelElements,
-          this.ListWithNewID
-        );
-        try {
-          await this.createComponent(
-            this.dragDropService.listOfLabelElements,
-            this.idEtiquette
-          );
-          Swal.fire({
-            icon: "success",
-            title: "L'étiquette a été enregistrée",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        } catch (e) {}
+        // create new label
+        else {
+          const id: string = uuidv4();
+          this.idEtiquette = id;
+          try {
+            //create Components
+            await this.lablHttpService
+              .CreateEtiquette({
+                couleur: this.labelInfo.color,
+                format: this.labelInfo.format,
+                id: id,
+                createur: null,
+                id1: this.labelInfo.id,
+                largeur: this.labelInfo.largeur,
+                longeur: this.labelInfo.longueur,
+                padding: this.labelInfo.padding,
+                modificateur: null,
+              })
+              .toPromise();
+            await this.gestionProduitHttpService
+              .updateProduit(
+                { ref: this.labelInfo.refProd, idEtiquette: id },
+                this.labelInfo.refProd
+              )
+              .toPromise();
+            let listOfElementsWithNewId = [];
+            this.FillListOfLabelComponentsWithNewID(
+              this.dragDropService.listOfLabelElements,
+              listOfElementsWithNewId
+            );
+            console.log("list with new id");
+            console.log(listOfElementsWithNewId);
+            console.log(this.dragDropService.dragPosition);
+            await this.createComponent(
+              listOfElementsWithNewId,
+              this.idEtiquette
+            );
+            Swal.fire({
+              icon: "success",
+              title: "L'étiquette a été enregistrée",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      } else if (result.isDenied) {
+        Swal.fire("Les modifications ne sont pas enregistrées", "", "info");
       }
-    }
+    });
   }
 
   onDrop(event) {
+    this.setTabPropertyActive(event.item.data);
     this.dragDropService.drop(event);
     this.containerNotVide = this.dragDropService.listOfLabelElements.some(
       (item) =>
@@ -421,8 +437,8 @@ export class SidebarComponent implements OnInit {
               color: (obj.style && obj.style["color"]) || "#000000",
               italic: obj.style && obj.style["italic"],
               underline: obj.style && obj.style["underline"],
-              width: (obj.style && obj.style["width"]) || "50",
-              height: (obj.style && obj.style["height"]) || "50",
+              width: (obj.style && obj.style["width"]) || "null",
+              height: (obj.style && obj.style["height"]) || "null",
               "text-decoration": obj.style && obj.style["text-decoration"],
               transform: obj.style && obj.style["transform"],
               type: obj.type,
@@ -476,8 +492,8 @@ export class SidebarComponent implements OnInit {
               color: (obj.style && obj.style["color"]) || "#000000",
               italic: obj.style && obj.style["italic"],
               underline: obj.style && obj.style["underline"],
-              width: (obj.style && obj.style["width"]) || "50",
-              height: (obj.style && obj.style["height"]) || "50",
+              width: (obj.style && obj.style["width"]) || "null",
+              height: (obj.style && obj.style["height"]) || "null",
               "text-decoration": obj.style && obj.style["text-decoration"],
               transform: obj.style && obj.style["transform"],
               type: obj.style && obj.type,
@@ -515,14 +531,20 @@ export class SidebarComponent implements OnInit {
     );
   }
   // fill list Of Label Elements with new id;
-  FillList1WithNewID(list: LabelItem[], ListWithNewID: LabelItem[]) {
+  FillListOfLabelComponentsWithNewID(
+    list: LabelItem[],
+    ListWithNewID: LabelItem[]
+  ) {
     list.forEach((item, index) => {
       const id = uuidv4();
       ListWithNewID.push(Object.assign({}, { ...item, id: id, children: [] }));
       this.dragDropService.dragPosition[id] =
         this.dragDropService.dragPosition[item.id];
       if (item.children) {
-        this.FillList1WithNewID(item.children, ListWithNewID[index].children);
+        this.FillListOfLabelComponentsWithNewID(
+          item.children,
+          ListWithNewID[index].children
+        );
       }
     });
   }
@@ -538,7 +560,6 @@ export class SidebarComponent implements OnInit {
     // canva.height = 300;
     // canva.width = 00;
     this.imgSrc = canva.toDataURL("image/jpeg", 1.0);
-    console.log(canva.height);
     const window = this.windowService.open(this.templateRef, {
       title: `Nouveau Produit`,
       windowClass: "col-6",
@@ -551,10 +572,9 @@ export class SidebarComponent implements OnInit {
     this.dragDropService.propertyTabActive = true;
     this.dragDropService.selectedItem = itemId;
     this.itemId = itemId;
-    console.log(this.dragDropService.items);
     Object.keys(this.dragDropService.items).forEach((key) => {
       if (this.dragDropService.items[key].style) {
-        this.dragDropService.items[key].style.border = "none";
+        this.dragDropService.items[key].style.border = "none"; // TODO:cannot set preoerty of undifined
       }
     });
   }
@@ -586,6 +606,9 @@ export class SidebarComponent implements OnInit {
       this.dragDropService.listOfDragItems.push(
         this.dragDropService.listOfLabelElements[index]
       );
+      this.dragDropService.nodeLookup2[
+        this.dragDropService.listOfLabelElements[index].id
+      ] = this.dragDropService.listOfLabelElements[index];
       this.dragDropService.nodeLookup2[
         this.dragDropService.listOfLabelElements[index].id
       ] = this.dragDropService.listOfLabelElements[index];
@@ -655,7 +678,7 @@ export class SidebarComponent implements OnInit {
   handleKeyboardEvent(event: KeyboardEvent) {
     let focusedElement: Element;
     focusedElement = document.activeElement;
-    if (focusedElement && focusedElement.tagName === "BODY") {
+    if (focusedElement && focusedElement.tagName === "BODY" && this.itemId) {
       if (event.code === "ArrowUp") {
         this.dragDropService.dragPosition[this.itemId] = {
           x: +this.dragDropService.dragPosition[this.itemId].x,
@@ -685,6 +708,11 @@ export class SidebarComponent implements OnInit {
       }
     }
   }
+  // @HostListener("click", ["$event"])
+  // handleMouseEvent(e) {
+  //   console.log(e.target.classList.contains("draggeditem"));
+  //   console.log(e.target.getAttribute("cdkDragBoundary"));
+  // }
 }
 
 //TODO: ajout la régle dans l'etiquette

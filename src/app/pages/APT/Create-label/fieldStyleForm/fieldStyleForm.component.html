@@ -199,7 +199,7 @@
         type="number"
         class="form-control"
         (input)="changePosition(+$event.target.value, null)"
-        [ngModel]="math.round(+dragDropService.dragPosition[itemId].x * 0.26)"
+        [ngModel]="math.round(+dragDropService.dragPosition[itemId]?.x * 0.26)"
       />
     </div>
     <div
@@ -213,7 +213,7 @@
         type="number"
         class="form-control"
         (input)="changePosition(null, +$event.target.value)"
-        [ngModel]="math.round(+dragDropService.dragPosition[itemId].y * 0.26)"
+        [ngModel]="math.round(+dragDropService.dragPosition[itemId]?.y * 0.26)"
       />
     </div>
     <div class="col" style="padding-left: 0px; padding-right: 7px">

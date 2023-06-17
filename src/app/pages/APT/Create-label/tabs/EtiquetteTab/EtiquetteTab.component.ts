@@ -119,8 +119,8 @@ export class EtiquetteTabComponent implements OnInit {
               refProd: elemValue,
               color: "#ffffff",
               format: "rectangle",
-              largeur: 150,
-              longueur: 50,
+              largeur: 50,
+              longueur: 150,
               refProdSimlaire: null,
               withGrid: false,
               withRule: false,
@@ -300,6 +300,7 @@ export class EtiquetteTabComponent implements OnInit {
       this.dragDropService.listOfLabelElements.length = 0;
       this.listFromDB = [...composents];
       this.list = [];
+      //get all formes
       const forme = await Promise.all(
         this.productToBeCreated.formes.split(";").map((val) => {
           if (val) {
@@ -307,7 +308,7 @@ export class EtiquetteTabComponent implements OnInit {
           }
         })
       );
-
+      // set position of label elements
       if (!composents.some((val) => val.x == null || val.y == null)) {
         this.dragDropService.dragDropLibre = true;
         this.dragDropService.dragPosition = {};
@@ -327,11 +328,12 @@ export class EtiquetteTabComponent implements OnInit {
             x: +comp.x,
             y: +comp.y,
           };
+          // push id of components into nodeLookup2
           this.dragDropService.nodeLookup2[comp.id] =
             this.dragDropService.listOfDragItems.find(
               (val) => val.refItem == comp.refItem
             );
-
+          // remove insered components from listOfDragItems
           this.dragDropService.listOfDragItems.splice(
             this.dragDropService.listOfDragItems.findIndex(
               (val) => val.refItem == comp.refItem
@@ -339,6 +341,9 @@ export class EtiquetteTabComponent implements OnInit {
             1
           );
         });
+        console.log("imported list");
+        console.log(this.dragDropService.listOfLabelElements);
+        console.log(this.dragDropService.dragPosition);
       } else {
         this.dragDropService.dragDropLibre = false;
         const list: LabelItem[] = [];
@@ -365,9 +370,6 @@ export class EtiquetteTabComponent implements OnInit {
           val.refItem
         );
       });
-    console.log(this.dragDropService.listOfLabelElements);
-
-    console.log(this.dragDropService.listOfDragItems);
   }
   // convert component data imported from database to object
   ComponentToInsert(
@@ -393,7 +395,7 @@ export class EtiquetteTabComponent implements OnInit {
           : (obj.refItem && obj.refItem.includes("formes") ? form : null)
           ? form[+obj.refItem.split("-")[1]].form.path
           : obj.refItem == "of"
-          ? "num OF"
+          ? "OF Number"
           : this.productToBeCreated[obj.refItem],
       refItem: obj.refItem,
       title: obj.title,

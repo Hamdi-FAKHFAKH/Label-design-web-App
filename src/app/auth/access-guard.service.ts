@@ -26,9 +26,6 @@ export class AccessGuard implements CanActivate {
     return this.authService.user.pipe(
       take(1),
       map((user) => {
-        console.log(user.role);
-        console.log(user.atelier);
-
         return user.atelier == Ateliers.APT ||
           user.role == roles.admin ||
           (user.role == roles.responsableUAP && user.UAP === UAP.UAP1) ||

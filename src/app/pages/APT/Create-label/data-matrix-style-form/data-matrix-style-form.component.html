@@ -71,7 +71,7 @@
             class="form-control"
             (input)="changePosition(+$event.target.value, null)"
             [ngModel]="
-              math.round(dragDropService.dragPosition[itemId].x * 0.26)
+              math.round(dragDropService.dragPosition[itemId]?.x * 0.26)
             "
           />
         </div>
@@ -87,7 +87,7 @@
             class="form-control"
             (input)="changePosition(null, +$event.target.value)"
             [ngModel]="
-              math.round(dragDropService.dragPosition[itemId].y * 0.26)
+              math.round(dragDropService.dragPosition[itemId]?.y * 0.26)
             "
           />
         </div>

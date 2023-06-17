@@ -25,7 +25,7 @@ export class AptGuard implements CanActivate {
     return this.authService.user.pipe(
       take(1),
       map((user) => {
-        return user.role !== roles.agentSaisie && true;
+        return user.role !== roles.agentSaisie;
       })
     );
   }

@@ -97,37 +97,17 @@ export class DataMatrixStyleFormComponent implements OnInit {
     }
   }
   // add data to the dataMatrix
-  addItem(tag: string, val: string) {
+  addItem(tag: string = "", val: string = "") {
     if (tag == "|)>") {
       this.xmlForm = "|)>" + this.xmlForm;
     }
-    let listItem;
-    if (tag !== "|)>") {
-      listItem = [{ [tag]: val }];
-    }
-    const config = {
-      indent: "    ",
-      attributeReplacements: {
-        "<": "<",
-        ">": ">",
-        "&": "&",
-        '"': "'",
-      },
-      contentReplacements: {
-        "<": "<",
-        ">": ">",
-        "&": "&",
-        '"': "'",
-      },
-    };
-    const res = toXML(listItem, config);
     if (
       this.xmlForm ==
       "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix."
     ) {
       this.xmlForm = "";
     }
-    this.xmlForm = this.xmlForm + res;
+    this.xmlForm = this.xmlForm + tag + val;
     this.change("data", this.xmlForm);
   }
   //

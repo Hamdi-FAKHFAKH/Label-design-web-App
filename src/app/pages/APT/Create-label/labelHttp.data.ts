@@ -1,5 +1,5 @@
 export interface EtiquetteData {
-  id: string;
+  id?: string;
   id1: string;
   longeur: number;
   largeur: number;

@@ -199,7 +199,7 @@
       aria-label="Basic example"
       style="position: relative; top: 20px"
     >
-      <button type="button" class="btn btn-primary" (click)="saveToPdf()">
+      <button type="button" class="btn btn-primary" (click)="saveLabel()">
         <nb-icon icon="save-outline" pack="eva"></nb-icon>
       </button>
       <button type="button" class="btn btn-primary" (click)="openLabelView()">
@@ -240,7 +240,7 @@
     alt=""
     height="20"
     width="20"
-    class="draggedText"
+    class="draggeditem"
     (click)="setTabPropertyActive(item.id)"
     [ngClass]="{ outline: itemId === item.id }"
   />

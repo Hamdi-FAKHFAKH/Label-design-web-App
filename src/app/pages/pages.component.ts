@@ -89,12 +89,12 @@ export class PagesComponent implements OnInit {
                 link: "/pages/apt/ControlEtiquette",
                 icon: "checkmark-circle-outline",
                 hidden:
-                  ([
+                  [
                     roles.agentMethod.toString(),
                     roles.responsableUAP.toString(),
+                    roles.agentSaisie.toString(),
                   ].includes(this.user.role) &&
-                    this.user.atelier !== Ateliers.APT) ||
-                  this.user.role == roles.agentSaisie,
+                  this.user.atelier !== Ateliers.APT,
               },
             ],
           },

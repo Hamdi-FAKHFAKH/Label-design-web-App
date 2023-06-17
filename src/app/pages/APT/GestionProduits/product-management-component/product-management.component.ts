@@ -10,6 +10,9 @@ import { UpdateProduitComponent } from "../update-product/update-produit.compone
 import Swal from "sweetalert2";
 import { ProductHistoriqueService } from "../../../HistoriqueHttp.service";
 import { AuthService } from "../../../../auth/authService.service";
+import { LabeltHttpService } from "../../Create-label/labelHTTP.service";
+import * as Papa from "papaparse";
+import { AllProduitData } from "../GestionProduit.data";
 @Component({
   selector: "ngx-smart-table",
   templateUrl: "./product-management.component.html",
@@ -31,6 +34,11 @@ export class ProductMangementComponent {
       },
       nomProduit: {
         title: "Nom produit",
+        type: "string",
+        filter: false,
+      },
+      withEtiquette: {
+        title: "Avec étiquette",
         type: "string",
         filter: false,
       },
@@ -137,7 +145,7 @@ export class ProductMangementComponent {
       confirmDelete: true,
     },
   };
-
+  produitsData: AllProduitData[];
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
@@ -145,14 +153,22 @@ export class ProductMangementComponent {
     private gestionProduitHttpService: GestionProduitHttpService,
     private gestionProduitService: GestionProduitService,
     private historiqueService: ProductHistoriqueService,
-    private authService: AuthService
+    private authService: AuthService,
+    private labelHttpService: LabeltHttpService
   ) {
     this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
-      const tableData = [];
-      res.produits.forEach((val) => {
-        tableData.push(val);
-      });
-      this.source.load(tableData);
+      this.produitsData = res.produits;
+      // res.produits.forEach((val) => {
+      //   tableData.push(val);
+      // });
+      this.source.load(
+        this.produitsData.map((val) => {
+          return {
+            ...val,
+            withEtiquette: val.idEtiquette ? "Oui" : "Non",
+          };
+        })
+      );
     });
   }
   async onEdit(event) {
@@ -218,7 +234,17 @@ export class ProductMangementComponent {
                 userMatricule: this.authService.user.getValue().matricule,
               })
               .toPromise();
+            if (!!event.data.idEtiquette) {
+              this.labelHttpService
+                .deleteComponentsByEtiquette(event.data.idEtiquette)
+                .toPromise();
+              await this.labelHttpService
+                .DeleteEtiquette(event.data.idEtiquette)
+                .toPromise();
+            }
             await this.gestionProduitService.deleteProduit(event.data.ref);
+
+            // TODO : delete Etiquette avec le produit
             Swal.fire({
               title: "Supprimer!",
               text: "Produit supprimé!",
@@ -228,12 +254,20 @@ export class ProductMangementComponent {
               this.gestionProduitHttpService
                 .getAllProduits()
                 .subscribe((res) => {
-                  this.source.load(res.produits);
+                  this.source.load(
+                    res.produits.map((val) => {
+                      return {
+                        ...val,
+                        withEtiquette: val.idEtiquette ? "Oui" : "Non",
+                      };
+                    })
+                  );
                 });
               this.source.refresh();
             });
           }
         } catch (e) {
+          console.log(e);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -259,7 +293,14 @@ export class ProductMangementComponent {
     });
     window.onClose.subscribe((res) => {
       this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
-        this.source.load(res.produits);
+        this.source.load(
+          res.produits.map((val) => {
+            return {
+              ...val,
+              withEtiquette: val.idEtiquette ? "Oui" : "Non",
+            };
+          })
+        );
       });
     });
   }
@@ -274,7 +315,14 @@ export class ProductMangementComponent {
     });
     window.onClose.subscribe((res) => {
       this.gestionProduitHttpService.getAllProduits().subscribe((res) => {
-        this.source.load(res.produits);
+        this.source.load(
+          res.produits.map((val) => {
+            return {
+              ...val,
+              withEtiquette: val.idEtiquette ? "Oui" : "Non",
+            };
+          })
+        );
       });
     });
   }
@@ -310,5 +358,21 @@ export class ProductMangementComponent {
     // second parameter specifying whether to perform 'AND' or 'OR' search
     // (meaning all columns should contain search query or at least one)
     // 'AND' by default, so changing to 'OR' by setting false here
+  }
+  //EXPORT TO CSV
+  exportToCsv() {
+    const csv = Papa.unparse(this.produitsData, {
+      delimiter: ";",
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.setAttribute("hidden", "");
+    a.setAttribute("href", url);
+    a.setAttribute("download", "Produits.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 }

@@ -19,7 +19,7 @@
           <div class="col gx-1">
             <div class="row-md-3 mt-2">
               <label for="ref" class="form-label"
-                >Référence Produit <span style="color: red">*</span>
+                >Référence Produit <span style="color: red"> *</span>
               </label>
               <select
                 class="form-control"
@@ -203,7 +203,7 @@
                     </div>
                   </div>
                   <label for="desLot"
-                    >Format de Lot <span style="color: red">*</span></label
+                    >Format de Lot <span style="color: red"> *</span></label
                   >
                   <input
                     ngModel
@@ -437,15 +437,17 @@
               <br />
 
               <div class="input-group mb-3">
-                <span class="input-group-text" id="Préfix">Format SN</span>
+                <span class="input-group-text" id="Préfix"
+                  >Format SN <span style="color: red"> *</span></span
+                >
                 <select
+                  required
                   ngModel
                   name="FormatSN"
                   #snFormat
                   class="form-control"
                   (change)="SelectSn(snFormat.value)"
                   [disabled]="addNewSerialNumber"
-                  [ngModel]="addNewSN.checked && ''"
                 >
                   <option
                     *ngFor="let item of SerialNumberData; let i = index"
@@ -457,8 +459,11 @@
                 </select>
               </div>
               <div class="input-group mb-3">
-                <span class="input-group-text" id="Préfix">Préfix</span>
+                <span class="input-group-text" id="Préfix"
+                  >Préfix <span style="color: red"> *</span></span
+                >
                 <input
+                  required
                   [ngModel]="
                     selectedSerialNumber && selectedSerialNumber.prefix
                   "
@@ -485,8 +490,11 @@
                 />
               </div>
               <div class="input-group mb-3">
-                <span class="input-group-text" id="Suffix">Suffix</span>
+                <span class="input-group-text" id="Suffix"
+                  >Suffix <span style="color: red"> *</span></span
+                >
                 <input
+                  required
                   [ngModel]="
                     selectedSerialNumber && selectedSerialNumber.suffix
                   "
@@ -502,12 +510,15 @@
               </div>
             </div>
             <div class="col">
-              <label for="text5" class="form-label">Compteur</label><br />
+              <label for="text5" class="form-label"
+                >Compteur <span style="color: red"> *</span></label
+              ><br />
               <div class="input-group mb-3">
                 <label class="input-group-text" for="inputGroupSelect01"
-                  >Nbr de Caractére
+                  >Nbr de Caractére <span style="color: red"> *</span>
                 </label>
                 <select
+                  required
                   class="form-control"
                   id="inputGroupSelect01"
                   [ngModel]="
@@ -520,7 +531,6 @@
                     selectedSerialNumber && selectedSerialNumber.nbrCaractere
                   "
                 >
-                  <option>Choose...</option>
                   <option
                     *ngFor="let item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
                     value="{{ item }}"
@@ -534,6 +544,7 @@
                   >Type</label
                 >
                 <select
+                  required
                   class="form-control"
                   id="inputGroupSelect01"
                   [ngModel]="
@@ -546,9 +557,8 @@
                     selectedSerialNumber && selectedSerialNumber.typeCompteur
                   "
                 >
-                  <option selected>Choose...</option>
                   <option value="N">Numérique</option>
-                  <option value="AN">Alphanumérique</option>
+                  <option value="AN" selected>Alphanumérique</option>
                 </select>
               </div>
               <div class="input-group mb-3">
@@ -556,6 +566,7 @@
                   Pas
                 </label>
                 <select
+                  required
                   class="form-control"
                   id="inputGroupSelect01"
                   [ngModel]="selectedSerialNumber && selectedSerialNumber.pas"
@@ -600,5 +611,5 @@
     </div>
   </div>
 </form>
-<span style="color: red">* champs obligatoires</span>
+<span style="color: red"> * champs obligatoires</span>
 <!-- [disabled]="!f.valid" -->

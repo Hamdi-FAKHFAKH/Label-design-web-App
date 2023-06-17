@@ -30,6 +30,11 @@ export class LabeltHttpService {
       `${environment.apiUrl}/api/v1/etiquettes/${id}`
     );
   }
+  DeleteEtiquette(id: string) {
+    return this.http.delete<GetEtiquetteResponseData>(
+      `${environment.apiUrl}/api/v1/etiquettes/${id}`
+    );
+  }
   UpdateEtiquette(id: string, obj: EtiquetteData) {
     return this.http.put(`${environment.apiUrl}/api/v1/etiquettes/${id}`, obj);
   }

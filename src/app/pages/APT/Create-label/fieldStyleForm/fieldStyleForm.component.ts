@@ -73,6 +73,9 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
       if (!this.dragDropService.items[this.itemId].style[key])
         this.dragDropService.items[this.itemId].style[key] =
           this.componentstyle[key];
+      this.componentstyle.bold == false;
+      this.componentstyle.italic == false;
+      this.componentstyle.underline == false;
     });
     this.listOfLabelElementsCopy.length = 0;
     this.findDiplicatedStyle(this.dragDropService.listOfLabelElements);
@@ -90,10 +93,12 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
         ? (this.dragDropService.items[this.itemId].style = {
             ...this.dragDropService.items[this.itemId].style,
             "font-weight": "bold",
+            bold: true,
           })
         : (this.dragDropService.items[this.itemId].style = {
             ...this.dragDropService.items[this.itemId].style,
             "font-weight": "normal",
+            bold: false,
           });
     }
     if (itemName == "italic") {
@@ -101,10 +106,12 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
         ? (this.dragDropService.items[this.itemId].style = {
             ...this.dragDropService.items[this.itemId].style,
             "font-style": "italic",
+            italic: true,
           })
         : (this.dragDropService.items[this.itemId].style = {
             ...this.dragDropService.items[this.itemId].style,
             "font-style": "normal",
+            italic: false,
           });
     }
     if (itemName == "underline") {
@@ -112,10 +119,12 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
         ? (this.dragDropService.items[this.itemId].style = {
             ...this.dragDropService.items[this.itemId].style,
             "text-decoration": "underline",
+            underline: true,
           })
         : (this.dragDropService.items[this.itemId].style = {
             ...this.dragDropService.items[this.itemId].style,
             "text-decoration": "none",
+            underline: false,
           });
     }
     this.dragDropService.items[this.itemId].style = {
