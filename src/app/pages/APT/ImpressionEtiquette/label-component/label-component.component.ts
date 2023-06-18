@@ -166,19 +166,17 @@ export class LabelComponentComponent implements OnChanges, OnInit {
         largeur: etiquette.largeur,
         padding: etiquette.padding,
       };
-      if (this.labelInfo) {
+      this.labelStyle = {
+        "background-color": this.labelInfo.color,
+        height: this.labelInfo.largeur + "mm",
+        width: this.labelInfo.longueur + "mm",
+        padding: this.labelInfo.padding + "mm",
+      };
+      if (this.labelInfo.format == "cercle") {
         this.labelStyle = {
-          "background-color": this.labelInfo.color,
-          height: this.labelInfo.largeur + "mm",
-          width: this.labelInfo.longueur + "mm",
-          padding: this.labelInfo.padding + "mm",
+          ...this.labelStyle,
+          "border-radius": this.labelInfo.largeur + "mm",
         };
-        if (this.labelInfo.format == "cercle") {
-          this.labelStyle = {
-            ...this.labelStyle,
-            "border-radius": this.labelInfo.largeur + "mm",
-          };
-        }
       }
       // download all components of label from DB
       const { composents } = await this.labelHttpService
@@ -514,18 +512,19 @@ export class LabelComponentComponent implements OnChanges, OnInit {
   }
   // changer le Numéro de Série dans l'étiquette
   changeSn = () => {
-    const lastSn = this.SN.prefix + this.SN.suffix;
-    const suff = parseInt(this.SN.suffix) + +this.SN.pas;
-    this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");
-    this.snComp.data = this.SN.prefix + this.SN.suffix;
-    if (this.dataMatrixComp) {
-      this.dataMatrixComp.data = this.produit.datamatrixData.replace(
-        "<<SN>>",
-        this.snComp.data
-      );
-      this.dataMatrixComp.data = this.dataMatrixComp.data
-        .replace("<<FormatLot>>", this.lotdata)
-        .replace("<<OF>>", this.OF);
+    if (this.SN) {
+      const suff = parseInt(this.SN.suffix) + +this.SN.pas;
+      this.SN.suffix = suff.toString().padStart(+this.SN.nbrCaractere, "0");
+      this.snComp.data = this.SN.prefix + this.SN.suffix;
+      if (this.dataMatrixComp) {
+        this.dataMatrixComp.data = this.produit.datamatrixData.replace(
+          "<<SN>>",
+          this.snComp.data
+        );
+        this.dataMatrixComp.data = this.dataMatrixComp.data
+          .replace("<<FormatLot>>", this.lotdata)
+          .replace("<<OF>>", this.OF);
+      }
     }
   };
 }

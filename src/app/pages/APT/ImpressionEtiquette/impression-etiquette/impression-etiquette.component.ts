@@ -283,6 +283,7 @@ export class ImpressionEtiquetteComponent implements OnInit {
   IswithDataMatrix(data: boolean) {
     this.impressionDetail.codeQR = data ? "Oui" : "Non";
   }
+  // print label
   async print(nbrcopie, printerName) {
     const timeout = (ms) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
