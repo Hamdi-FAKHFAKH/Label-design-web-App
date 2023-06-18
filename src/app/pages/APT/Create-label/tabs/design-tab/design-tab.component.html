@@ -119,6 +119,7 @@
               class="formes"
             >
               <img
+                id="icon"
                 src="{{ item1.data }}"
                 alt=""
                 style="height: 30px; width: 30px"
@@ -160,7 +161,17 @@
         "
       >
         <div class="item-header">
-          <div>{{ item.title }}</div>
+          <div>
+            <div *ngIf="item.title !== 'Icon'">{{ item.title }}</div>
+            <div *ngIf="item.title === 'Icon'">
+              Icône
+              <img
+                src="{{ item.data }}"
+                alt=""
+                style="height: 20px; width: 20px"
+              />
+            </div>
+          </div>
           <div
             (click)="remove(item.id)"
             style="margin-right: 25px; margin-bottom: -10px"

@@ -106,7 +106,9 @@
           type="number"
           class="form-control"
           (input)="changePosition(+$event.target.value, null)"
-          [ngModel]="math.round(+dragDropService.dragPosition[itemId].x * 0.26)"
+          [ngModel]="
+            math.round(+dragDropService.dragPosition[itemId]?.x * 0.26)
+          "
         />
         <span class="input-group-text" id="basic-addon2">mm</span>
       </div>
@@ -119,7 +121,9 @@
           type="number"
           class="form-control"
           (input)="changePosition(null, +$event.target.value)"
-          [ngModel]="math.round(+dragDropService.dragPosition[itemId].y * 0.26)"
+          [ngModel]="
+            math.round(+dragDropService.dragPosition[itemId]?.y * 0.26)
+          "
         />
         <span class="input-group-text" id="basic-addon2">mm</span>
       </div>

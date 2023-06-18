@@ -273,18 +273,9 @@ export class DragDropService {
                         ? "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix."
                         : resProduit.produit[item],
                     style: {
-                      "font-weight": "normal",
-                      bold: false,
-                      italic: false,
-                      "font-style": "normal",
-                      "text-decoration": "none",
-                      "font-family": "Times New Roman",
-                      "font-size": "12pt",
-                      color: "#000000",
-                      underline: false,
+                      ...this.defaultTextStyle,
                       height: item == "withDataMatrix" && "110",
                       width: item == "withDataMatrix" && "110",
-                      "background-color": "#FF000000",
                     },
                     dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
                   });
@@ -494,6 +485,12 @@ export class DragDropService {
             )
           );
         } else {
+          if (draggedItem.title == ComponentTitle.forms) {
+            this.listOfDragItems.splice(
+              event.previousIndex - this.listOfDragItems.length,
+              1
+            );
+          }
           this.listOfDragItems.splice(event.previousIndex, 1);
           this.listOfLabelElements.splice(
             event.currentIndex,
@@ -531,5 +528,168 @@ export class DragDropService {
         this.getAllItems(item.children);
       }
     });
+  }
+  remove(id: string) {
+    this.propertyTabActive = false;
+    this.designTabActive = true;
+    const index = this.listOfLabelElements.findIndex((obj) => {
+      return obj.id == id;
+    });
+    if (
+      index != -1 &&
+      !["container-2", "container-3", "container"].includes(
+        this.listOfLabelElements[index].type
+      )
+    ) {
+      // reset the style of deleted item
+      if (this.listOfLabelElements[index].type == "text") {
+        this.listOfLabelElements[index].style = Object.assign(
+          {},
+          this.defaultTextStyle
+        );
+      }
+      if (this.listOfLabelElements[index].type == "QRcode") {
+        this.listOfLabelElements[index].style = Object.assign(
+          {},
+          { ...this.defaultTextStyle, height: "110", width: "110" }
+        );
+      }
+      if (this.listOfLabelElements[index].title == ComponentTitle.forms) {
+        this.listOfLabelElements[index].style = {};
+      }
+      //reset data of dataMatrix
+      if (this.listOfLabelElements[index].type == "QRcode") {
+        this.listOfLabelElements[index].data =
+          "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.";
+      }
+      // push to listOfDragItems
+      this.listOfDragItems.push(this.listOfLabelElements[index]);
+      // insert in nodeLookup2
+      this.nodeLookup2[this.listOfLabelElements[index].id] =
+        this.listOfLabelElements[index];
+      // remove from listOfLabelElements
+      this.listOfLabelElements.splice(index, 1);
+    } else {
+      this.listOfLabelElements.forEach((obj, index) => {
+        obj.children.forEach((obj1, index1) => {
+          if (obj1.id == id) {
+            // reset the style of deleted item
+            if (
+              this.listOfLabelElements[index].children[index1].type == "text"
+            ) {
+              this.listOfLabelElements[index].children[index1].style =
+                Object.assign({}, this.defaultTextStyle);
+            }
+            if (
+              this.listOfLabelElements[index].children[index1].type == "QRcode"
+            ) {
+              this.listOfLabelElements[index].children[index1].style =
+                Object.assign(
+                  {},
+                  { ...this.defaultTextStyle, height: "110", width: "110" }
+                );
+            }
+            if (
+              this.listOfLabelElements[index].children[index1].title ==
+              ComponentTitle.forms
+            ) {
+              this.listOfLabelElements[index].children[index1].style = {};
+            }
+            // reset the data of datamatrix
+            if (
+              this.listOfLabelElements[index].children[index1].type == "QRcode"
+            ) {
+              this.listOfLabelElements[index].children[index1].data =
+                "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.";
+            }
+            // push to listOfDragItems
+            this.listOfDragItems.push(
+              this.listOfLabelElements[index].children[index1]
+            );
+            // insert in nodeLookup2
+            this.nodeLookup2[
+              this.listOfLabelElements[index].children[index1].id
+            ] = this.listOfLabelElements[index].children[index1];
+            // remove from listOfLabelElements
+            this.listOfLabelElements[index].children.splice(index1, 1);
+            return;
+          }
+          obj1.children &&
+            obj1.children.forEach((obj2, index2) => {
+              if (obj2.id == id) {
+                // reset the style of deleted item
+                if (
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].type == "text"
+                ) {
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].style = Object.assign({}, this.defaultTextStyle);
+                }
+                if (
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].type == "QRcode"
+                ) {
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].style = Object.assign(
+                    {},
+                    { ...this.defaultTextStyle, height: "110", width: "110" }
+                  );
+                }
+                if (
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].title == ComponentTitle.forms
+                ) {
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].style = {};
+                }
+                // reset the data of dataMatrix
+                if (
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].type == "QRcode"
+                ) {
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].data =
+                    "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.";
+                }
+                // push to listOfDragItems
+                this.listOfDragItems.push(
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ]
+                );
+                // insert in nodeLookup2
+                this.nodeLookup2[
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ].id
+                ] =
+                  this.listOfLabelElements[index].children[index1].children[
+                    index2
+                  ];
+
+                // remove from listOfLabelElements
+                this.listOfLabelElements[index].children[
+                  index1
+                ].children.splice(index2, 1);
+              }
+            });
+        });
+      });
+    }
+    if (
+      ["container-2", "container-3", "container"].includes(
+        this.listOfLabelElements[index].type
+      )
+    ) {
+      this.listOfLabelElements.splice(index, 1);
+    }
   }
 }

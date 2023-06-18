@@ -14,7 +14,7 @@ import {
   LotData,
   ProduitData,
 } from "../../../GestionProduits/GestionProduit.data";
-import { LabelItem } from "../../ComposentData";
+import { ComponentTitle, LabelItem } from "../../ComposentData";
 import Swal from "sweetalert2";
 @Component({
   selector: "ngx-etiquette-tab",
@@ -324,6 +324,7 @@ export class EtiquetteTabComponent implements OnInit {
               SN
             )
           );
+          // set position of label components
           this.dragDropService.dragPosition[comp.id] = {
             x: +comp.x,
             y: +comp.y,
@@ -334,24 +335,27 @@ export class EtiquetteTabComponent implements OnInit {
               (val) => val.refItem == comp.refItem
             );
           // remove insered components from listOfDragItems
-          this.dragDropService.listOfDragItems.splice(
-            this.dragDropService.listOfDragItems.findIndex(
-              (val) => val.refItem == comp.refItem
-            ),
-            1
+          const compIndex = this.dragDropService.listOfDragItems.findIndex(
+            (val) => val.refItem == comp.refItem
           );
+          compIndex != -1 &&
+            this.dragDropService.listOfDragItems.splice(compIndex, 1);
         });
-        console.log("imported list");
-        console.log(this.dragDropService.listOfLabelElements);
-        console.log(this.dragDropService.dragPosition);
       } else {
         this.dragDropService.dragDropLibre = false;
         const list: LabelItem[] = [];
         this.uploadData(produit, client, fournisseur, forme, lot, SN);
         this.fillList1(composents, this.list, list);
         this.dragDropService.listOfLabelElements = [...list];
+        this.dragDropService.listOfDragItems =
+          this.dragDropService.listOfDragItems.filter((val) => {
+            return !this.findItem(
+              this.dragDropService.listOfLabelElements,
+              val.refItem
+            );
+          });
       }
-      // save all items in list1 into object
+      // save all items in list1 into items object
       this.dragDropService.getAllItems(
         this.dragDropService.listOfLabelElements
       );
@@ -363,13 +367,7 @@ export class EtiquetteTabComponent implements OnInit {
         this.minPadding = this.labelInfo.padding;
       }
     }
-    this.dragDropService.listOfDragItems =
-      this.dragDropService.listOfDragItems.filter((val) => {
-        return !this.findItem(
-          this.dragDropService.listOfLabelElements,
-          val.refItem
-        );
-      });
+    console.log(this.dragDropService.listOfDragItems);
   }
   // convert component data imported from database to object
   ComponentToInsert(

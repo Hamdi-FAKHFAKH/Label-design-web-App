@@ -28,53 +28,7 @@ export class DesignTabComponent {
   }
   //delete the selected element in the label
   remove(id: string) {
-    const index = this.dragDropService.listOfLabelElements.findIndex((obj) => {
-      return obj.id == id;
-    });
-    if (index != -1) {
-      this.dragDropService.listOfLabelElements[index].style = Object.assign(
-        {},
-        this.dragDropService.defaultTextStyle
-      );
-      this.dragDropService.listOfDragItems.push(
-        this.dragDropService.listOfLabelElements[index]
-      );
-      if (this.dragDropService.dragDropLibre) {
-        this.dragDropService.dragPosition[
-          this.dragDropService.listOfLabelElements[index].id
-        ] = this.dragDropService.listOfLabelElements[index];
-      }
-
-      this.dragDropService.listOfLabelElements.splice(index, 1);
-    } else {
-      this.dragDropService.listOfLabelElements.forEach((obj, index) => {
-        obj.children.forEach((obj1, index1) => {
-          if (obj1.id == id) {
-            this.dragDropService.listOfDragItems.push(
-              this.dragDropService.listOfLabelElements[index].children[index1]
-            );
-            this.dragDropService.listOfLabelElements[index].children.splice(
-              index1,
-              1
-            );
-            return;
-          }
-          obj1.children &&
-            obj1.children.forEach((obj2, index2) => {
-              if (obj2.id == id) {
-                this.dragDropService.listOfDragItems.push(
-                  this.dragDropService.listOfLabelElements[index].children[
-                    index1
-                  ].children[index2]
-                );
-                this.dragDropService.listOfLabelElements[index].children[
-                  index1
-                ].children.splice(index2, 1);
-              }
-            });
-        });
-      });
-    }
+    this.dragDropService.remove(id);
   }
   findIdToDelete(searchedid: string, list: LabelItem[], parentId) {
     list.forEach((obj) => {

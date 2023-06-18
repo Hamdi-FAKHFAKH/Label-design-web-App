@@ -98,14 +98,14 @@ export class DataMatrixStyleFormComponent implements OnInit {
   }
   // add data to the dataMatrix
   addItem(tag: string = "", val: string = "") {
-    if (tag == "|)>") {
-      this.xmlForm = "|)>" + this.xmlForm;
-    }
     if (
       this.xmlForm ==
       "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix."
     ) {
       this.xmlForm = "";
+    }
+    if (tag == "|)>") {
+      this.xmlForm = "|)>" + this.xmlForm;
     }
     this.xmlForm = this.xmlForm + tag + val;
     this.change("data", this.xmlForm);
