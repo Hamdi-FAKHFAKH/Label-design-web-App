@@ -328,13 +328,8 @@ export class ImpressionEtiquetteComponent implements OnInit {
         ).status;
       }
       if (fileexist && printStatus == 200) {
-        const printedLabel = (
-          await this.detailImpressionHttpService
-            .GetALLEtiquettesImprimees()
-            .toPromise()
-        ).etiquettesImprimees.find((val) => val.refProd == this.refProd);
         await this.createPrintedLabel(
-          printedLabel ? +printedLabel.nbrCopie + nbrcopie : nbrcopie,
+          nbrcopie,
           `${environment.pdfPath}/label-${this.refProd}.pdf`
         );
         this.changeSn.emit();
