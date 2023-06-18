@@ -104,9 +104,9 @@ export class ControlPrintedLabelsComponent implements OnInit {
             (val) => val.dataMatrixData == data
           )
         ) {
-          const notFoundEtiquetteMsg = this.listOfLabelsWithProblem.find(
-            (val) => val.problem == "not Found"
-          );
+          // const notFoundEtiquetteMsg = this.listOfLabelsWithProblem.find(
+          //   (val) => val.problem == "not Found"
+          // );
           await this.checkPrintedLabelHttp
             .createVerificationEtiquette({
               dataMatrixData: data,
@@ -114,13 +114,12 @@ export class ControlPrintedLabelsComponent implements OnInit {
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
-          if (!notFoundEtiquetteMsg) {
-            this.listOfLabelsWithProblem.push({ problem: "not Found", nbr: 1 });
-            this.nbrOfProblem++;
-          } else {
-            notFoundEtiquetteMsg.nbr++;
-            this.nbrOfProblem++;
-          }
+          this.listOfLabelsWithProblem.push({
+            problem: "not Found",
+            nbr: 1,
+            title: data,
+          });
+          this.nbrOfProblem++;
         } else {
           etiquettesByQrcode[0].checked = true;
           this.listOfCheckedLabel.push(etiquettesByQrcode[0]);
@@ -130,6 +129,13 @@ export class ControlPrintedLabelsComponent implements OnInit {
             ),
             1
           );
+          await this.checkPrintedLabelHttp
+            .createVerificationEtiquette({
+              dataMatrixData: data,
+              problemId: null,
+              userMatricule: this.authService.user.getValue().matricule,
+            })
+            .toPromise();
         }
       }
     }

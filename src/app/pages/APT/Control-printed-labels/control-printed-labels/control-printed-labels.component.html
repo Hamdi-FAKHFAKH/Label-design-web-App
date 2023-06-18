@@ -242,8 +242,15 @@
                     >
                       {{ item.nbrDuplication }}
                     </span>
-                    <div *ngIf="item.problem === 'not Found'">
+                    <div
+                      *ngIf="item.problem === 'not Found'"
+                      [title]="item.title"
+                    >
                       Produit non trouvé
+                      <i
+                        class="fa-solid fa-circle-info"
+                        style="margin-left: 3px; height: 5px; width: 5px"
+                      ></i>
                     </div>
                     <span
                       class="badge bg-info probBadge"
