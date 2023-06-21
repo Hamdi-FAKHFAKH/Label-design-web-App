@@ -25,7 +25,7 @@ export class ProfilComponent implements OnInit {
     foregroundColor: string;
   };
   passwordnotValid: boolean = true;
-  passwordIncorrect: boolean = true;
+  passwordcorrect: boolean = true;
   ConfirmpasswordnotValid: boolean = true;
   avatarSrc: string;
   // smart table settings
@@ -117,21 +117,22 @@ export class ProfilComponent implements OnInit {
           )
           .toPromise();
         if (res.Status == "Success") {
-          this.passwordIncorrect = true;
+          this.passwordcorrect = true;
           if (
             this.newPass == this.confirNewPass &&
             this.newPass !== this.oldPass
           ) {
             const result = await this.gestionUtilisateursHttpService
               .updateUtilisateur(this.authService.user.getValue().matricule, {
-                password: this.newPass,
+                motDePasse: this.newPass,
               })
               .toPromise();
             if (result.UtilisateurUpdated) {
+              console.log(result);
               Swal.fire({
                 icon: "success",
                 title:
-                  "La sauvegarde du mot de passe a été effectuée avec succès.",
+                  "La sauvegarde des informations de profil a été accomplie avec succès.",
                 showConfirmButton: false,
                 timer: 1500,
               }).then(() => {
@@ -141,9 +142,11 @@ export class ProfilComponent implements OnInit {
             }
           }
         } else {
-          this.passwordIncorrect = false;
+          this.passwordcorrect = false;
         }
-      } catch (error) {}
+      } catch (error) {
+        this.passwordcorrect = false;
+      }
     }
   }
   async saveImg() {
@@ -154,14 +157,16 @@ export class ProfilComponent implements OnInit {
             imgData: this.imgdata,
           })
           .toPromise();
-        Swal.fire({
-          icon: "success",
-          title: "La sauvegarde du mot de passe a été effectuée avec succès.",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(() => {
-          this.authService.logOut();
-        });
+        !(this.newPass && this.oldPass && this.confirNewPass) &&
+          Swal.fire({
+            icon: "success",
+            title:
+              "La sauvegarde des informations de profil a été accomplie avec succès.",
+            showConfirmButton: false,
+            timer: 1500,
+          }).then(() => {
+            this.authService.logOut();
+          });
       }
     } catch (error) {
       console.log(error);

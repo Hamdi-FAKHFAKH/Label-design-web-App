@@ -82,6 +82,7 @@ export class ControlPrintedLabelsComponent implements OnInit {
             .createVerificationEtiquette({
               dataMatrixData: data,
               problemId: 1,
+              statut: "échec",
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
@@ -95,6 +96,7 @@ export class ControlPrintedLabelsComponent implements OnInit {
             .createVerificationEtiquette({
               dataMatrixData: data,
               problemId: 1,
+              statut: "échec",
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
@@ -111,6 +113,7 @@ export class ControlPrintedLabelsComponent implements OnInit {
             .createVerificationEtiquette({
               dataMatrixData: data,
               problemId: 2,
+              statut: "échec",
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
@@ -133,6 +136,7 @@ export class ControlPrintedLabelsComponent implements OnInit {
             .createVerificationEtiquette({
               dataMatrixData: data,
               problemId: null,
+              statut: "valide",
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
