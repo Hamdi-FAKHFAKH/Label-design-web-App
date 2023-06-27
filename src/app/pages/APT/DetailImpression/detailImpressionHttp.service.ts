@@ -5,6 +5,9 @@ import {
   EtiquetteImprimeeResultData,
   GetEtiquetteImprimeeResultData,
   GetPrintDetailResultData,
+  GetTotalNumberEtiquetteImprimeeByDayResultData,
+  GetTotalNumberEtiquetteImprimeeByMonthResultData,
+  GetTotalNumberEtiquetteImprimeeResultData,
   UpdateEtiquetteImprimeeResultData,
 } from "./detailImpressionHttp.data";
 import { environment } from "../../../../environments/environment";
@@ -27,6 +30,67 @@ export class DetailImpressionHttpService {
   GetALLEtiquettesImprimees() {
     return this.http.get<GetEtiquetteImprimeeResultData>(
       `${environment.apiUrl}/api/v1/etiquetteImprimees`
+    );
+  }
+  GetEtiquettesImprimeesByMonthYear(month, year) {
+    return this.http.get<GetTotalNumberEtiquetteImprimeeResultData>(
+      `${environment.apiUrl}/api/v1/etiquetteImprimees`,
+      {
+        params: new HttpParams().set("year", year).set("month", month),
+      }
+    );
+  }
+  GetEtiquettesImprimeesByMonth(year) {
+    return this.http.get<GetTotalNumberEtiquetteImprimeeByMonthResultData>(
+      `${environment.apiUrl}/api/v1/etiquetteImprimees`,
+      {
+        params: new HttpParams()
+          .set("year", year)
+          .set("month", true)
+          // .set("action", "Réimpression"),
+          .set("action", "impression"),
+      }
+    );
+  }
+  GetEtiquettesImprimeesByDay(year) {
+    return this.http.get<GetTotalNumberEtiquetteImprimeeByDayResultData>(
+      `${environment.apiUrl}/api/v1/etiquetteImprimees`,
+      {
+        params: new HttpParams()
+          .set("year", year)
+          .set("day", "true")
+          // .set("action", "Réimpression"),
+          .set("action", "impression"),
+      }
+    );
+  }
+  GetTotalEtiquettesImprimees() {
+    return this.http.get<GetTotalNumberEtiquetteImprimeeByDayResultData>(
+      `${environment.apiUrl}/api/v1/etiquetteImprimees`,
+      {
+        params: new HttpParams().set("count", true),
+      }
+    );
+  }
+  GetTotalEtiquettesRéimprimees() {
+    return this.http.get<GetTotalNumberEtiquetteImprimeeByDayResultData>(
+      `${environment.apiUrl}/api/v1/etiquetteImprimees`,
+      {
+        params: new HttpParams()
+          .set("count", true)
+          .set("action", "Réimpression"),
+      }
+    );
+  }
+  GetTotalEtiquettesRéimprimeesWithSN() {
+    return this.http.get<GetTotalNumberEtiquetteImprimeeByDayResultData>(
+      `${environment.apiUrl}/api/v1/etiquetteImprimees`,
+      {
+        params: new HttpParams()
+          .set("count", true)
+          .set("action", "Réimpression")
+          .set("SN", true),
+      }
     );
   }
   GetALLEtiquettesByOF(ofnum: string) {

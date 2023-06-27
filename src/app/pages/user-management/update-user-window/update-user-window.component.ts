@@ -73,7 +73,7 @@ export class UpdateUserWindowComponent implements OnInit {
         .toPromise();
       Swal.fire({
         icon: "success",
-        title: "Utilisateur est modifié avec succès",
+        title: "utilisateur modifié avec succès",
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {

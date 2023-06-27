@@ -123,7 +123,7 @@ export class PagesComponent implements OnInit {
       },
       {
         title: "Gestion des Ateliers",
-        icon: { icon: "square-plus", pack: "fa" },
+        icon: { icon: "archive-outline", pack: "eva" },
         link: "/pages/ateliers",
         hidden: ![
           roles.admin.toString(),

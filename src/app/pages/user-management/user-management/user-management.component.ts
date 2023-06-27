@@ -170,7 +170,7 @@ export class UserManagementComponent implements OnInit {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Oui, supprimez-le !",
+      confirmButtonText: "Oui, supprimez-le!",
       cancelButtonText: "Annuler",
     }).then(async (result) => {
       try {

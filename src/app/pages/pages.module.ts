@@ -21,7 +21,16 @@ import { UpdateUserWindowComponent } from "./user-management/update-user-window/
 import { AtelierMangementComponent } from "./atelier-mangement/atelier-mangement.component";
 import { CreateAtelierWindowComponent } from "./atelier-mangement/create-atelier-window/create-atelier-window.component";
 import { UpdateAtelierWindowComponent } from "./atelier-mangement/update-atelier-window/update-atelier-window.component";
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from "./home/home.component";
+import { monthYearPrintedlabelChartComponent } from "./charts/monthYearprintedlabelChart-bar.component";
+import { NgxEchartsModule } from "ngx-echarts";
+import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { ChartModule } from "angular2-chartjs";
+import { DetailImpressionHttpService } from "./APT/DetailImpression/detailImpressionHttp.service";
+import { ReprintedLabelChartComponent } from "./charts/reprinted label-chart.component";
+import { ReprintedLabelLineChartComponent } from "./charts/reprinted-labels-lineChart";
+import { GestionProduitHttpService } from "./APT/GestionProduits/GestionProduitHttp.service";
+import { ProductHistoryComponent } from "./charts/ProductHistoryComponent.component";
 @NgModule({
   imports: [
     FormsModule,
@@ -33,8 +42,16 @@ import { HomeComponent } from './home/home.component';
     FontAwesomeModule,
     Ng2SmartTableModule,
     NbLayoutModule,
+    NgxEchartsModule,
+    NgxChartsModule,
+    ChartModule,
   ],
-  providers: [CookieService, GestionUtilisateursHttpService],
+  providers: [
+    CookieService,
+    GestionUtilisateursHttpService,
+    DetailImpressionHttpService,
+    GestionProduitHttpService,
+  ],
   declarations: [
     PagesComponent,
     ProfilComponent,
@@ -48,6 +65,10 @@ import { HomeComponent } from './home/home.component';
     CreateAtelierWindowComponent,
     UpdateAtelierWindowComponent,
     HomeComponent,
+    monthYearPrintedlabelChartComponent,
+    ReprintedLabelChartComponent,
+    ReprintedLabelLineChartComponent,
+    ProductHistoryComponent,
   ],
 })
 export class PagesModule {}

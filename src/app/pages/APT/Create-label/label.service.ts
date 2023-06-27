@@ -26,14 +26,15 @@ export class LabelService {
   //
   constructor(private ImpressionHttpService: ImpressionHttpService) {}
   async convertToPdf() {
+    console.log(this.labelInfo.getValue().longueur);
     var element = document.getElementById("test");
     var options = {
       filename: "label.pdf",
       compression: "FAST",
-      scale: 3,
+      scale: 1,
+      overrideWidth: this.labelInfo.getValue().longueur * 3.78,
     };
     const pdf = await downloadPdf(element, options);
-    console.log("canvas");
     // const canvas = await getcanvas(element, options);
     // console.log(canvas);
     // document.getElementById("printComponent").appendChild(canvas);

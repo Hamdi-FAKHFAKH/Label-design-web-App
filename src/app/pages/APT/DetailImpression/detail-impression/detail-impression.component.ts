@@ -28,7 +28,7 @@ export class DetailImpressionComponent implements OnInit {
     pager: { display: true },
     filter: false,
     mode: "external",
-    actions: { position: "right", add: false },
+    actions: { position: "right", add: false, delete: false },
     columns: {
       numOF: {
         title: "N° OF",
@@ -91,11 +91,12 @@ export class DetailImpressionComponent implements OnInit {
       editButtonContent: '<i class="fa-solid fa-print fa-xs" > </i>',
       confirmSave: true,
     },
-    delete: {
-      inputClass: "success",
-      deleteButtonContent: '<i class="fas fa-search fa-xs" ></i>',
-      confirmDelete: true,
-    },
+    // delete: {
+
+    //   inputClass: "success",
+    //   deleteButtonContent: '<i class="fas fa-search fa-xs" ></i>',
+    //   confirmDelete: true,
+    // },
   };
 
   source: LocalDataSource = new LocalDataSource();

@@ -118,7 +118,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Produit n'existe Pas!",
+        text: "Aucun produit n'a été créé pour cet ordre de fabrication !",
         showConfirmButton:
           this.authService.user.getValue().role !== roles.agentSaisie,
         confirmButtonColor: "#3374B5",
@@ -144,7 +144,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Aucune Etiquette crée pour ce produit",
+        text: "Aucune étiquette n'a été créée pour ce produit !",
         showConfirmButton:
           this.authService.user.getValue().role !== roles.agentSaisie,
         confirmButtonColor: "#3374B5",

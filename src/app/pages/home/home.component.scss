@@ -12,3 +12,26 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: "OpenSans";
+  src: url("../../../assets/font/OpenSan.ttf");
+}
+.col-3 > nb-card > nb-card-header {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  font-size: 0.85em;
+}
+.col-3 > nb-card > nb-card-body > div:first-child {
+  font-weight: bold;
+  font-size: 2em;
+  margin-right: 10px;
+}
+.col-3 > nb-card > nb-card-body > div:nth-child(2) {
+  color: rgb(147, 155, 170);
+}
+.col-3 > nb-card > nb-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

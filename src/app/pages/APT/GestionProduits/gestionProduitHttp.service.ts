@@ -21,6 +21,7 @@ import {
   GetOneLotResponseData,
   GetAllProduitDataResponseData,
   GetLienProTypeAteliersResultData,
+  getTotalProduitNumberResponseData,
 } from "./GestionProduit.data";
 import { environment } from "../../../../environments/environment";
 
@@ -55,6 +56,14 @@ export class GestionProduitHttpService {
   getOneProduit(id: string) {
     return this.http.get<getOneProduitResponseData>(
       `${environment.apiUrl}/api/v1/Produits/${id}`
+    );
+  }
+  getTotalProduitNumber() {
+    return this.http.get<getTotalProduitNumberResponseData>(
+      `${environment.apiUrl}/api/v1/Produits`,
+      {
+        params: new HttpParams().set("count", true),
+      }
     );
   }
   /****************************************************** SDTPRA ***************************************************************/

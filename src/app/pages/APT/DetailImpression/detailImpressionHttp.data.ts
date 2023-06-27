@@ -22,6 +22,27 @@ export interface GetEtiquetteImprimeeResultData {
   Status: string;
   etiquettesImprimees: EtiquetteImprimeeData[];
 }
+export interface GetTotalNumberEtiquetteImprimeeResultData {
+  Status: string;
+  etiquettesImprimees: {
+    total: number;
+  }[];
+}
+export interface GetTotalNumberEtiquetteImprimeeByMonthResultData {
+  Status: string;
+  etiquettesImprimees: {
+    total: number;
+    month: number;
+  }[];
+}
+export interface GetTotalNumberEtiquetteImprimeeByDayResultData {
+  Status: string;
+  etiquettesImprimees: {
+    total: number;
+    month: number;
+    day: number;
+  }[];
+}
 export interface EtiquetteImprimeeResultData {
   Status: string;
   etiquetteImprimee: EtiquetteImprimeeData[];

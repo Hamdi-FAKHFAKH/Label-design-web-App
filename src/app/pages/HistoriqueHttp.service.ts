@@ -2,7 +2,9 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import {
   CreateHistoriqueProduitResultData,
+  GetHistoriqueProduitByOperationResponseResultData,
   GetHistoriqueProduitResponseResultData,
+  HistoriqueProduitByOperationData,
   HistoriqueProduitData,
 } from "./HistoriqueHttp.data";
 import { environment } from "./../../environments/environment";
@@ -15,6 +17,16 @@ export class ProductHistoriqueService {
       `${environment.apiUrl}/api/v1/historiqueProduits`,
       {
         params: new HttpParams().set("userMatricule", userMatricule),
+      }
+    );
+  }
+  getHistoriqueProduitByOperation(userMatricule: string) {
+    return this.http.get<GetHistoriqueProduitByOperationResponseResultData>(
+      `${environment.apiUrl}/api/v1/historiqueProduits`,
+      {
+        params: new HttpParams()
+          .set("userMatricule", userMatricule)
+          .set("operation", true),
       }
     );
   }

@@ -5,6 +5,7 @@ import { DetailImpressionHttpService } from "../../DetailImpression/detailImpres
 import { EtiquetteImprimeeData } from "../../DetailImpression/detailImpressionHttp.data";
 import { CheckPrintedLabelHttp } from "../checkPrintedLabelHttp.service";
 import { AuthService } from "../../../../auth/authService.service";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "ngx-control-printed-labels",
@@ -53,31 +54,20 @@ export class ControlPrintedLabelsComponent implements OnInit {
   // check the validity of dataMatrix
   async checkDataMatrix(data: string) {
     if (data) {
-      if (this.etiquettes) {
+      if (this.etiquettes.length > 0) {
         const etiquettesByQrcode = this.etiquettes.filter(
           (val) => val.dataMatrixData == data && val.serialNumber
         );
-        const checkedetiquettesByQrcode = this.listOfCheckedLabel.filter(
+        const checkedetiquettesByQrcode = this.listOfCheckedLabel.find(
           (val) => val.dataMatrixData == data
         );
-        if (checkedetiquettesByQrcode.length > 0) {
-          checkedetiquettesByQrcode[0].problem = "duplicated";
-          checkedetiquettesByQrcode[0].checked = false;
-          if (
-            !this.listOfLabelsWithProblem.some(
-              (val) => val.dataMatrixData == data
-            )
-          ) {
-            checkedetiquettesByQrcode[0].nbrDuplication = 1;
-            this.nbrOfProblem++;
-            this.listOfLabelsWithProblem.push(checkedetiquettesByQrcode[0]);
-          }
-          this.listOfCheckedLabel.splice(
-            this.listOfCheckedLabel.findIndex(
-              (val) => val.id == checkedetiquettesByQrcode[0].id
-            ),
-            1
-          );
+        // label duplicated and not exist in problem list
+        if (checkedetiquettesByQrcode) {
+          checkedetiquettesByQrcode.problem = "duplicated";
+          checkedetiquettesByQrcode.checked = false;
+          checkedetiquettesByQrcode.nbrDuplication = 1;
+          this.nbrOfProblem++;
+          this.listOfLabelsWithProblem.push(checkedetiquettesByQrcode);
           await this.checkPrintedLabelHttp
             .createVerificationEtiquette({
               dataMatrixData: data,
@@ -86,8 +76,16 @@ export class ControlPrintedLabelsComponent implements OnInit {
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
+          const index = this.listOfCheckedLabel.findIndex(
+            (val) =>
+              val.dataMatrixData == checkedetiquettesByQrcode.dataMatrixData
+          );
+          index >= 0 && this.listOfCheckedLabel.splice(index, 1);
+          // label duplicated and exist in problem list
         } else if (
-          this.listOfLabelsWithProblem.some((val) => val.dataMatrixData == data)
+          this.listOfLabelsWithProblem.some(
+            (val) => val.dataMatrixData == data && val.problem == "duplicated"
+          )
         ) {
           this.listOfLabelsWithProblem.find((val) => val.dataMatrixData == data)
             .nbrDuplication++;
@@ -100,15 +98,15 @@ export class ControlPrintedLabelsComponent implements OnInit {
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
-        } else if (
-          etiquettesByQrcode.length == 0 &&
-          !this.listOfLabelsWithProblem.some(
-            (val) => val.dataMatrixData == data
-          )
-        ) {
-          // const notFoundEtiquetteMsg = this.listOfLabelsWithProblem.find(
-          //   (val) => val.problem == "not Found"
-          // );
+        }
+        // label  not found
+        else if (etiquettesByQrcode.length == 0) {
+          this.listOfLabelsWithProblem.push({
+            problem: "not Found",
+            nbr: 1,
+            title: data,
+          });
+          this.nbrOfProblem++;
           await this.checkPrintedLabelHttp
             .createVerificationEtiquette({
               dataMatrixData: data,
@@ -117,21 +115,14 @@ export class ControlPrintedLabelsComponent implements OnInit {
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
-          this.listOfLabelsWithProblem.push({
-            problem: "not Found",
-            nbr: 1,
-            title: data,
-          });
-          this.nbrOfProblem++;
+          // label exist
         } else {
           etiquettesByQrcode[0].checked = true;
           this.listOfCheckedLabel.push(etiquettesByQrcode[0]);
-          this.etiquettes.splice(
-            this.etiquettes.findIndex(
-              (val) => val.id == etiquettesByQrcode[0].id
-            ),
-            1
+          const index = this.etiquettes.findIndex(
+            (val) => val.dataMatrixData == etiquettesByQrcode[0].dataMatrixData
           );
+          this.etiquettes.splice(index, 1);
           await this.checkPrintedLabelHttp
             .createVerificationEtiquette({
               dataMatrixData: data,
@@ -141,6 +132,22 @@ export class ControlPrintedLabelsComponent implements OnInit {
             })
             .toPromise();
         }
+        // no more labels
+      } else if (
+        this.etiquettes.length == 0 &&
+        this.listOfCheckedLabel.length > 0
+      ) {
+        Swal.fire({
+          icon: "info",
+          title:
+            "La liste des étiquettes est vide. Vous avez terminé la vérification de toutes les étiquettes.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title:
+            "Veuillez vérifier la validité du numéro d'ordre de fabrication saisi.",
+        });
       }
     }
   }

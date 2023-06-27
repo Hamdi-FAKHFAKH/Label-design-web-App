@@ -54,6 +54,12 @@ export interface getOneProduitResponseData {
   Status: string;
   produit: ProduitData;
 }
+export interface getTotalProduitNumberResponseData {
+  Status: string;
+  produits: {
+    total: number;
+  }[];
+}
 export interface ProduitData {
   ref: string;
   ref1?: string;

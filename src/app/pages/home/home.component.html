@@ -2,13 +2,140 @@
   <nb-layout-column
     ><p
       style="
-        text-align: center;
-        font-family: sansa_pronormal;
-        font-size: 1.3rem;
-        color: #3374b5;
+        font-family: OpenSans;
+        font-size: 1.5rem;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(155, 164, 181, 0.6);
+        padding-bottom: 27px;
+        margin-bottom: 30px;
       "
     >
-      Bienvenue dans votre application de Gestion d'étiquette
-    </p></nb-layout-column
-  >
+      Tableau de Bord
+    </p>
+    <div class="row">
+      <div class="col-3">
+        <nb-card>
+          <nb-card-header>
+            <img
+              src="../../../assets/images/icons8-label-printer.png"
+              alt=""
+              srcset=""
+              height="20"
+              width="20"
+              style="margin-right: 5px"
+            />Total étiquettes imprimées
+          </nb-card-header>
+          <nb-card-body>
+            <div>{{ totalPrintedLabel }}</div>
+            <div>Étiquettes</div>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-3">
+        <nb-card>
+          <nb-card-header style="padding-right: 5px"
+            ><img
+              src="../../../assets/images/icons8-label-printer-32.png"
+              alt=""
+              srcset=""
+              height="25"
+              width="20"
+              style="margin-right: 5px"
+            />Total étiquettes réimprimées
+          </nb-card-header>
+          <nb-card-body>
+            <div>{{ totalRePrintedLabel }}</div>
+            <div>Étiquettes</div>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-3" style="padding-right: 0px">
+        <nb-card>
+          <nb-card-header
+            style="
+              margin-right: 0px;
+              font-size: 0.8em;
+              padding-right: 2px;
+              padding-left: 5px;
+            "
+          >
+            <img
+              src="../../../assets/images/icons8-serial-number-32.png"
+              alt=""
+              srcset=""
+              height="25"
+              width="20"
+              style="margin-right: 3px"
+            />
+            Total étiquettes réimprimées avec SN
+          </nb-card-header>
+          <nb-card-body>
+            <div>{{ totalRePrintedLabelwithSN }}</div>
+            <div>Étiquettes</div>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-3">
+        <nb-card>
+          <nb-card-header>
+            <img
+              src="../../../assets/images/icons8-product-32.png"
+              alt=""
+              srcset=""
+              height="30"
+              width="30"
+              style="margin-right: 5px"
+            />Nombre des produits
+          </nb-card-header>
+          <nb-card-body>
+            <div>{{ totalProduit }}</div>
+            <div>Produits</div>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <nb-card>
+          <nb-card-header
+            >Nombre mensuel d'étiquettes imprimées
+          </nb-card-header>
+          <nb-card-body>
+            <ngx-moth-year-printed-label-char></ngx-moth-year-printed-label-char>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-lg-6">
+        <nb-card>
+          <nb-card-header
+            >Nombre mensuel d'étiquettes réimprimées avec SN</nb-card-header
+          >
+          <nb-card-body>
+            <ngx-reprinted-label-chart></ngx-reprinted-label-chart>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <nb-card>
+          <nb-card-header
+            >Nombre quotidienne d'étiquettes réimprimées avec SN</nb-card-header
+          >
+          <nb-card-body>
+            <ngx-reprinted-label-linechart></ngx-reprinted-label-linechart>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-lg-6">
+        <nb-card>
+          <nb-card-header>Historique du produit</nb-card-header>
+          <nb-card-body>
+            <ngx-product-history-linechart></ngx-product-history-linechart>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
+    <br /><br />
+  </nb-layout-column>
 </nb-layout>
