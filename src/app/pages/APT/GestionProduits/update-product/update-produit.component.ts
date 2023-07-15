@@ -51,6 +51,7 @@ export class UpdateProduitComponent implements OnInit {
     this.windowdata.formes.split(";").forEach((forme, index) => {
       if (forme) {
         const selectedForme = this.formes.find((obj) => obj.id == forme);
+        selectedForme.clicked = true;
       }
     });
     this.lotValue = this.windowdata.numLot;

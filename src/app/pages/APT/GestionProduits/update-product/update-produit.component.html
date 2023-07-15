@@ -130,7 +130,7 @@
             <div class="row-md-3 mt-2">
               <label for="ref1" class="form-label">Désignation Client</label>
               <input
-                [ngModel]="windowdata.desFournisseur"
+                [ngModel]="windowdata.desClient"
                 #desClient="ngModel"
                 class="form-control"
                 id="ref1"
@@ -347,15 +347,11 @@
             <label for="formes"> &nbsp;formes</label>
             <div
               class="container"
-              style="padding-left: 0px"
+              style="padding-left: 0px; max-width: 1380px"
               *ngIf="forme.checked"
             >
               <div
-                style="
-                  border: 1px #3374b5 solid;
-                  padding: 11px 4px;
-                  width: fit-content;
-                "
+                style="border: 1px #3374b5 solid; padding: 11px; width: 219px"
               >
                 <img
                   *ngFor="let item of formes; let i = index"

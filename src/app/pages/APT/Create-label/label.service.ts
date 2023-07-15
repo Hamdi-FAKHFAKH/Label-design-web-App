@@ -31,8 +31,8 @@ export class LabelService {
     var options = {
       filename: "label.pdf",
       compression: "FAST",
-      scale: 1,
-      overrideWidth: this.labelInfo.getValue().longueur * 3.78,
+      scale: 3,
+      //overrideWidth: this.labelInfo.getValue().longueur * 3.78,
     };
     const pdf = await downloadPdf(element, options);
     // const canvas = await getcanvas(element, options);

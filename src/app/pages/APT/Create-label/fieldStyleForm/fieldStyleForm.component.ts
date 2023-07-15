@@ -71,11 +71,11 @@ export class FieldStyleFormComponent implements OnInit, OnChanges {
       : this.dragDropService.items[this.itemId].style["margin-bottom"]
       ? "margin-bottom"
       : "margin";
-    Object.keys(this.componentstyle).forEach((key) => {
-      if (!this.dragDropService.items[this.itemId].style[key])
-        this.dragDropService.items[this.itemId].style[key] =
-          this.componentstyle[key];
-    });
+    // Object.keys(this.componentstyle).forEach((key) => {
+    //   if (!this.dragDropService.items[this.itemId].style[key])
+    //     this.dragDropService.items[this.itemId].style[key] =
+    //       this.componentstyle[key];
+    // });
     this.componentstyle.bold == false;
     this.componentstyle.italic == false;
     this.componentstyle.underline == false;

@@ -4,6 +4,7 @@ import { GestionProduitHttpService } from "../../../GestionProduits/GestionProdu
 import { LabeltHttpService } from "../../labelHTTP.service";
 import { DragDropService } from "../../drag-drop.service";
 import { ComposentHttpData } from "../../labelHttp.data";
+import { v4 as uuidv4 } from "uuid";
 import {
   AllProduitData,
   ClientData,
@@ -74,7 +75,7 @@ export class EtiquetteTabComponent implements OnInit {
     });
   }
   //change Label info
-  change(elemName, elemValue) {
+  async change(elemName, elemValue) {
     if (this.labelInfo.format == "cercle" && elemName == "longueur") {
       this.minPadding = Math.ceil(
         (+elemValue - Math.sqrt((+elemValue * +elemValue) / 2)) / 2
@@ -115,7 +116,7 @@ export class EtiquetteTabComponent implements OnInit {
             this.dragDropService.listOfLabelElements.length = 0;
             this.lastRefProd = elemValue;
             this.lableService.labelInfo.next({
-              id: null,
+              id: `TE-${elemValue}`,
               refProd: elemValue,
               color: "#ffffff",
               format: "rectangle",
@@ -134,11 +135,25 @@ export class EtiquetteTabComponent implements OnInit {
                 val.produit.idEtiquette = null;
                 this.productToBeCreated = val.produit;
                 this.refProdWithEtiquette =
-                  this.produitwithEtiquette.produits.filter((obj) =>
-                    Object.keys(obj).every(
-                      (key) => !!this.productToBeCreated[key] === !!obj[key]
-                    )
+                  this.produitwithEtiquette.produits.filter(
+                    (obj) =>
+                      Object.keys(obj).every(
+                        (key) => !!this.productToBeCreated[key] === !!obj[key]
+                      ) && obj.ref !== this.lastRefProd
                   );
+              });
+
+            // console.log(this.refProdWithEtiquette);
+            this.labelHttpService
+              .getAllProduitWithEtiquette()
+              .toPromise()
+              .then((val) => {
+                const prodwithEtiquette = val.produits.some(
+                  (val) =>
+                    val.idEtiquette !== null && val.ref == this.lastRefProd
+                );
+                prodwithEtiquette &&
+                  this.DownloadLabelData(this.lastRefProd).then(() => {});
               });
           } else if (result.isDenied || result.isDismissed) {
             this.defaultRefProd = this.lastRefProd;
@@ -157,13 +172,30 @@ export class EtiquetteTabComponent implements OnInit {
           .then((val) => {
             val.produit.idEtiquette = null;
             this.productToBeCreated = val.produit;
+            // console.log(this.produitwithEtiquette.produits);
             this.refProdWithEtiquette =
-              this.produitwithEtiquette.produits.filter((obj) =>
-                Object.keys(obj).every(
-                  (key) => !!this.productToBeCreated[key] === !!obj[key]
-                )
-              );
+              this.produitwithEtiquette.produits.filter((obj) => {
+                const listofkey = Object.keys(obj);
+                listofkey.splice(Object.keys(obj).indexOf("idEtiquette"), 1);
+                console.log(obj.ref);
+                listofkey.every((key) => {
+                  console.log(
+                    key + " " + (!!this.productToBeCreated[key] === !!obj[key])
+                  );
+
+                  return !!this.productToBeCreated[key] === !!obj[key];
+                }) && obj.ref !== this.lastRefProd;
+              });
+            console.log(this.productToBeCreated);
+            console.log(this.produitwithEtiquette.produits);
           });
+
+        const prodwithEtiquette = (
+          await this.labelHttpService.getAllProduitWithEtiquette().toPromise()
+        ).produits.some(
+          (val) => val.idEtiquette !== null && val.ref == this.lastRefProd
+        );
+        prodwithEtiquette && (await this.DownloadLabelData(this.lastRefProd));
       }
     } else {
       this.lableService.labelInfo.next({
@@ -243,11 +275,16 @@ export class EtiquetteTabComponent implements OnInit {
     this.padding = 0;
     this.minPadding = 0;
   }
+  async changeRefProdSimlaire(val) {
+    if (val && val !== null) {
+      this.change("refProdSimlaire", val);
+      await this.DownloadLabelData(val);
+    }
+  }
   // position the elements imported from the database in the label
   async DownloadLabelData(val) {
     if (val && val !== null) {
       this.dragDropService.listOfLabelElements.length = 0;
-      this.change("refProdSimlaire", val);
       const { produit } = await this.gestionProduitHttpService
         .getOneProduit(val)
         .toPromise();
@@ -313,9 +350,10 @@ export class EtiquetteTabComponent implements OnInit {
         this.dragDropService.dragDropLibre = true;
         this.dragDropService.dragPosition = {};
         composents.forEach((comp) => {
+          const id = uuidv4();
           this.dragDropService.listOfLabelElements.push(
             this.ComponentToInsert(
-              comp,
+              { ...comp, id: id },
               produit,
               client,
               fournisseur,
@@ -325,12 +363,12 @@ export class EtiquetteTabComponent implements OnInit {
             )
           );
           // set position of label components
-          this.dragDropService.dragPosition[comp.id] = {
+          this.dragDropService.dragPosition[id] = {
             x: +comp.x,
             y: +comp.y,
           };
           // push id of components into nodeLookup2
-          this.dragDropService.nodeLookup2[comp.id] =
+          this.dragDropService.nodeLookup2[id] =
             this.dragDropService.listOfDragItems.find(
               (val) => val.refItem == comp.refItem
             );
@@ -367,7 +405,7 @@ export class EtiquetteTabComponent implements OnInit {
         this.minPadding = this.labelInfo.padding;
       }
     }
-    console.log(this.dragDropService.listOfDragItems);
+    // console.log(this.dragDropService.listOfDragItems);
   }
   // convert component data imported from database to object
   ComponentToInsert(
@@ -391,7 +429,7 @@ export class EtiquetteTabComponent implements OnInit {
           : obj.refItem == "format" && lot
           ? lot.format
           : (obj.refItem && obj.refItem.includes("formes") ? form : null)
-          ? form[+obj.refItem.split("-")[1]].form.path
+          ? form[+obj.refItem.split("-")[1]]?.form.path
           : obj.refItem == "of"
           ? "OF Number"
           : this.productToBeCreated[obj.refItem],

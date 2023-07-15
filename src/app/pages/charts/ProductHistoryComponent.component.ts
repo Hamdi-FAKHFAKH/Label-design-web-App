@@ -37,7 +37,7 @@ export class ProductHistoryComponent {
               date.push({ day: val.day, month: val.month, year: val.year });
             }
           });
-          console.log(date);
+          // console.log(date);
 
           //set create ,update, delete list
           const createList = [];

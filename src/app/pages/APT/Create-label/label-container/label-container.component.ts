@@ -197,176 +197,168 @@ export class SidebarComponent implements OnInit {
       Swal.fire("Selectionner la référence Produit", "", "info");
       return;
     }
-    Swal.fire({
-      title:
-        "vous voulez écraser les données de l'étiquette associée à la référence produite" +
-        this.labelInfo.refProd +
-        " ?",
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: "Oui",
-      confirmButtonColor: "#007BFF",
-      denyButtonText: `Non`,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        //********************************************************* check components in label ************************ */
-        let datamatrix = this.findItem(
-          this.dragDropService.listOfLabelElements,
-          "datamatrixData"
-        );
-        let SN = this.findItem(
-          this.dragDropService.listOfLabelElements,
-          "idSN"
-        );
-        let lot = this.findItem(
-          this.dragDropService.listOfLabelElements,
-          "format"
-        );
-        let OF = this.findItem(this.dragDropService.listOfLabelElements, "of");
+    // Swal.fire({
+    //   title:
+    //     "vous voulez écraser les données de l'étiquette associée à la référence produite" +
+    //     this.labelInfo.refProd +
+    //     " ?",
+    //   showDenyButton: true,
+    //   showCancelButton: true,
+    //   confirmButtonText: "Oui",
+    //   confirmButtonColor: "#007BFF",
+    //   denyButtonText: `Non`,
+    // }).then(async (result) => {
+    //   if (result.isConfirmed) {
+    //********************************************************* check components in label ************************ */
+    let datamatrix = this.findItem(
+      this.dragDropService.listOfLabelElements,
+      "datamatrixData"
+    );
+    let SN = this.findItem(this.dragDropService.listOfLabelElements, "idSN");
+    let lot = this.findItem(this.dragDropService.listOfLabelElements, "format");
+    let OF = this.findItem(this.dragDropService.listOfLabelElements, "of");
 
-        if (produit.withDataMatrix && !datamatrix) {
-          Swal.fire(
-            "DataMatrix introuvable?",
-            "Veuillez inclure un DataMatrix sur l'étiquette",
-            "info"
-          );
-          return;
-        }
-        if (
-          produit.withDataMatrix &&
-          (datamatrix.data ==
-            "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix." ||
-            !datamatrix.data)
-        ) {
-          Swal.fire(
-            "Les données contenues dans la DataMatrix sont inexistantes ou nulles.",
-            "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.",
-            "info"
-          );
-          return;
-        }
-        if (produit.withSN && !SN) {
-          Swal.fire(
-            "Numéro de Série introuvable?",
-            "Veuillez inclure le Numéro de Série sur l'étiquette",
-            "info"
-          );
-          return;
-        }
-        if (produit.withOF && !OF) {
-          Swal.fire(
-            "Ordre de Fabrication(OF) introuvable?",
-            "Veuillez inclure l'Ordre de Fabrication(OF) sur l'étiquette",
-            "info"
-          );
-          return;
-        }
-        if (produit.numLot && !lot) {
-          Swal.fire(
-            "Format de LOT introuvable?",
-            "Veuillez inclure le format de LOT sur l'étiquette",
-            "info"
-          );
-          return;
-        }
-        //********************************************************************* save data ****************************** */
-        // update label
-        if (
-          refProdWithEtiquette.includes(this.labelInfo.refProd) &&
+    if (produit.withDataMatrix && !datamatrix) {
+      Swal.fire(
+        "DataMatrix introuvable?",
+        "Veuillez inclure un DataMatrix sur l'étiquette",
+        "info"
+      );
+      return;
+    }
+    if (
+      produit.withDataMatrix &&
+      (datamatrix.data ==
+        "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix." ||
+        !datamatrix.data)
+    ) {
+      Swal.fire(
+        "Les données contenues dans la DataMatrix sont inexistantes ou nulles.",
+        "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix.",
+        "info"
+      );
+      return;
+    }
+    if (produit.withSN && !SN) {
+      Swal.fire(
+        "Numéro de Série introuvable?",
+        "Veuillez inclure le Numéro de Série sur l'étiquette",
+        "info"
+      );
+      return;
+    }
+    if (produit.withOF && !OF) {
+      Swal.fire(
+        "Ordre de Fabrication(OF) introuvable?",
+        "Veuillez inclure l'Ordre de Fabrication(OF) sur l'étiquette",
+        "info"
+      );
+      return;
+    }
+    if (produit.numLot && !lot) {
+      Swal.fire(
+        "Format de LOT introuvable?",
+        "Veuillez inclure le format de LOT sur l'étiquette",
+        "info"
+      );
+      return;
+    }
+    //********************************************************************* save data ****************************** */
+    // update label
+    if (
+      refProdWithEtiquette.includes(this.labelInfo.refProd) &&
+      this.idEtiquette
+    ) {
+      //update etiquette
+      try {
+        await this.lablHttpService
+          .UpdateEtiquette(this.idEtiquette, {
+            couleur: this.labelInfo.color,
+            format: this.labelInfo.format,
+            createur: null,
+            id1: this.labelInfo.id,
+            largeur: this.labelInfo.largeur,
+            longeur: this.labelInfo.longueur,
+            padding: this.labelInfo.padding,
+            modificateur: null,
+          })
+          .toPromise();
+        //remove all components of this label
+        await this.lablHttpService
+          .deleteComponentsByEtiquette(this.idEtiquette)
+          .toPromise();
+        // create all Components
+        await this.createComponent(
+          this.dragDropService.listOfLabelElements,
           this.idEtiquette
-        ) {
-          //update etiquette
-          try {
-            await this.lablHttpService
-              .UpdateEtiquette(this.idEtiquette, {
-                couleur: this.labelInfo.color,
-                format: this.labelInfo.format,
-                createur: null,
-                id1: this.labelInfo.id,
-                largeur: this.labelInfo.largeur,
-                longeur: this.labelInfo.longueur,
-                padding: this.labelInfo.padding,
-                modificateur: null,
-              })
-              .toPromise();
-            //remove all components of this label
-            await this.lablHttpService
-              .deleteComponentsByEtiquette(this.idEtiquette)
-              .toPromise();
-            // create all Components
-            await this.createComponent(
-              this.dragDropService.listOfLabelElements,
-              this.idEtiquette
-            );
-            Swal.fire({
-              icon: "success",
-              title: "L'étiquette a été enregistrée",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-            console.log("update label");
-            console.log(this.dragDropService.listOfLabelElements);
-          } catch (error) {
-            Swal.fire({
-              icon: "error",
-              title: "Les modifications ne sont pas enregistrées",
-              text: error.message,
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          }
-        }
-        // create new label
-        else {
-          const id: string = uuidv4();
-          this.idEtiquette = id;
-          try {
-            //create Components
-            await this.lablHttpService
-              .CreateEtiquette({
-                couleur: this.labelInfo.color,
-                format: this.labelInfo.format,
-                id: id,
-                createur: null,
-                id1: this.labelInfo.id,
-                largeur: this.labelInfo.largeur,
-                longeur: this.labelInfo.longueur,
-                padding: this.labelInfo.padding,
-                modificateur: null,
-              })
-              .toPromise();
-            await this.gestionProduitHttpService
-              .updateProduit(
-                { ref: this.labelInfo.refProd, idEtiquette: id },
-                this.labelInfo.refProd
-              )
-              .toPromise();
-            let listOfElementsWithNewId = [];
-            this.FillListOfLabelComponentsWithNewID(
-              this.dragDropService.listOfLabelElements,
-              listOfElementsWithNewId
-            );
-            console.log("list with new id");
-            console.log(listOfElementsWithNewId);
-            console.log(this.dragDropService.dragPosition);
-            await this.createComponent(
-              listOfElementsWithNewId,
-              this.idEtiquette
-            );
-            Swal.fire({
-              icon: "success",
-              title: "L'étiquette a été enregistrée",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      } else if (result.isDenied) {
-        Swal.fire("Les modifications ne sont pas enregistrées", "", "info");
+        );
+        Swal.fire({
+          icon: "success",
+          title: "L'étiquette a été enregistrée",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        console.log("update label");
+        console.log(this.dragDropService.listOfLabelElements);
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Les modifications ne sont pas enregistrées",
+          text: error.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        console.log(error);
       }
-    });
+    }
+    // create new label
+    else {
+      const id: string = uuidv4();
+      this.idEtiquette = id;
+      try {
+        //create Components
+        await this.lablHttpService
+          .CreateEtiquette({
+            couleur: this.labelInfo.color,
+            format: this.labelInfo.format,
+            id: id,
+            createur: null,
+            id1: this.labelInfo.id,
+            largeur: this.labelInfo.largeur,
+            longeur: this.labelInfo.longueur,
+            padding: this.labelInfo.padding,
+            modificateur: null,
+          })
+          .toPromise();
+        await this.gestionProduitHttpService
+          .updateProduit(
+            { ref: this.labelInfo.refProd, idEtiquette: id },
+            this.labelInfo.refProd
+          )
+          .toPromise();
+        let listOfElementsWithNewId = [];
+        this.FillListOfLabelComponentsWithNewID(
+          this.dragDropService.listOfLabelElements,
+          listOfElementsWithNewId
+        );
+        console.log("list with new id");
+        console.log(listOfElementsWithNewId);
+        console.log(this.dragDropService.dragPosition);
+        await this.createComponent(listOfElementsWithNewId, this.idEtiquette);
+        Swal.fire({
+          icon: "success",
+          title: "L'étiquette a été enregistrée",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    // } else if (result.isDenied) {
+    //   Swal.fire("Les modifications ne sont pas enregistrées", "", "info");
+    // }
+    // });
   }
 
   onDrop(event) {
@@ -537,13 +529,16 @@ export class SidebarComponent implements OnInit {
   ) {
     list.forEach((item, index) => {
       const id = uuidv4();
-      ListWithNewID.push(Object.assign({}, { ...item, id: id, children: [] }));
+      (!item.children || item.children.length == 0) &&
+        ListWithNewID.push(
+          Object.assign({}, { ...item, id: id, children: [] })
+        );
       this.dragDropService.dragPosition[id] =
         this.dragDropService.dragPosition[item.id];
-      if (item.children) {
+      if (item.children && item.children.length > 0) {
         this.FillListOfLabelComponentsWithNewID(
           item.children,
-          ListWithNewID[index].children
+          ListWithNewID[index]?.children
         );
       }
     });
@@ -595,7 +590,12 @@ export class SidebarComponent implements OnInit {
   handleKeyboardEvent(event: KeyboardEvent) {
     let focusedElement: Element;
     focusedElement = document.activeElement;
-    if (focusedElement && focusedElement.tagName === "BODY" && this.itemId) {
+    if (
+      focusedElement &&
+      focusedElement.tagName === "BODY" &&
+      this.itemId &&
+      this.dragDropService.dragDropLibre
+    ) {
       if (event.code === "ArrowUp") {
         this.dragDropService.dragPosition[this.itemId] = {
           x: +this.dragDropService.dragPosition[this.itemId].x,

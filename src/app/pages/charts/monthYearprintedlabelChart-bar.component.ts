@@ -15,6 +15,7 @@ export class monthYearPrintedlabelChartComponent implements OnDestroy {
     total: number;
   }[];
   nbrcopiesByMonthYear = [];
+  promisessTab = [];
   monthsYear: { month: number; year: number }[] = [];
   constructor(
     private theme: NbThemeService,
@@ -35,68 +36,80 @@ export class monthYearPrintedlabelChartComponent implements OnDestroy {
           year: date.getFullYear() - 1,
         });
       }
+    } else {
+      for (let i = date.getMonth() + 1; i > date.getMonth() - 5; i--) {
+        this.monthsYear.push({
+          month: i,
+          year: date.getFullYear(),
+        });
+      }
     }
     //
-    this.themeSubscription = this.theme.getJsTheme().subscribe((config) => {
-      // get printed Labels
-      this.monthsYear.forEach((val) => {
-        this.detailImpressionHttpService
-          .GetEtiquettesImprimeesByMonthYear(val.month, val.year)
-          .subscribe((obj) => {
-            this.nbrcopiesByMonthYear.push(obj.etiquettesImprimees[0].total);
-            // chart configuration
-            const colors: any = config.variables;
-            const chartjs: any = config.variables.chartjs;
-            this.data = {
-              labels: this.monthsYear.map((val) => `${val.month}/${val.year}`),
-              datasets: [
-                {
-                  data: this.nbrcopiesByMonthYear,
-                  label: "Nombre d'étiquettes imprimées",
-                  backgroundColor: NbColorHelper.hexToRgbA(
-                    colors.primaryLight,
-                    0.8
-                  ),
+    // get printed Labels
+    this.monthsYear.forEach((val) => {
+      const promis = this.detailImpressionHttpService
+        .GetEtiquettesImprimeesByMonthYear(val.month, val.year)
+        .toPromise();
+      this.promisessTab.push(promis);
+    });
+    Promise.all(this.promisessTab).then((val) => {
+      val.forEach((obj) => {
+        this.nbrcopiesByMonthYear.push(obj.etiquettesImprimees[0].total);
+      });
+      this.themeSubscription = this.theme.getJsTheme().subscribe((config) => {
+        // chart configuration
+        const colors: any = config.variables;
+        const chartjs: any = config.variables.chartjs;
+        this.data = {
+          labels: this.monthsYear.map((val) => `${val.month}/${val.year}`),
+          datasets: [
+            {
+              data: this.nbrcopiesByMonthYear,
+              label: "Nombre d'étiquettes imprimées",
+              backgroundColor: NbColorHelper.hexToRgbA(
+                colors.primaryLight,
+                0.8
+              ),
+            },
+          ],
+        };
+        this.options = {
+          maintainAspectRatio: false,
+          responsive: true,
+          legend: {
+            labels: {
+              fontColor: chartjs.textColor,
+            },
+          },
+          scales: {
+            xAxes: [
+              {
+                gridLines: {
+                  display: false,
+                  color: chartjs.axisLineColor,
                 },
-              ],
-            };
-            this.options = {
-              maintainAspectRatio: false,
-              responsive: true,
-              legend: {
-                labels: {
+                ticks: {
                   fontColor: chartjs.textColor,
                 },
               },
-              scales: {
-                xAxes: [
-                  {
-                    gridLines: {
-                      display: false,
-                      color: chartjs.axisLineColor,
-                    },
-                    ticks: {
-                      fontColor: chartjs.textColor,
-                    },
-                  },
-                ],
-                yAxes: [
-                  {
-                    gridLines: {
-                      display: true,
-                      color: chartjs.axisLineColor,
-                    },
-                    ticks: {
-                      fontColor: chartjs.textColor,
-                    },
-                  },
-                ],
+            ],
+            yAxes: [
+              {
+                gridLines: {
+                  display: true,
+                  color: chartjs.axisLineColor,
+                },
+                ticks: {
+                  fontColor: chartjs.textColor,
+                },
               },
-            };
-          });
+            ],
+          },
+        };
       });
-      //--------------------------------------------------------------------------------------------------------
     });
+
+    //--------------------------------------------------------------------------------------------------------
   }
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();

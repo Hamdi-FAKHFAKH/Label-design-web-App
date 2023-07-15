@@ -37,7 +37,7 @@ export class UpdateUserWindowComponent implements OnInit {
 
     this.role = this.userdata.role;
     this.atelier = this.userdata.atelierLiecod;
-    this.uap = this.userdata.UAP;
+    this.uap = this.userdata.UAP || "UAP1";
     this.roles = roles;
     this.uaps = (await this.userHttpService.getAllUAPs().toPromise()).UAPs.map(
       (val) => val.Unite_Production
@@ -46,8 +46,21 @@ export class UpdateUserWindowComponent implements OnInit {
       this.ateliers = (
         await this.userHttpService.getAllAtelierName(this.uap).toPromise()
       ).ateliers;
+      this.atelier = this.ateliers[0]?.Liecod;
     }
   }
+  // on change Role
+  // changeRole() {
+  //   if (
+  //     [
+  //       roles.agentMethod.toString(),
+  //       roles.agentSaisie.toString(),
+  //       roles.responsableUAP.toString(),
+  //     ].includes(this.role)
+  //   ) {
+  //     this.uap = "UAP1";
+  //   }
+  // }
   //close product creation window
   close() {
     this.windowRef.close();
@@ -57,7 +70,7 @@ export class UpdateUserWindowComponent implements OnInit {
     this.ateliers = (
       await this.userHttpService.getAllAtelierName(this.uap).toPromise()
     ).ateliers;
-    this.atelier = this.ateliers[0].Liecod;
+    this.atelier = this.ateliers[0]?.Liecod;
   }
   // Submit the product creation form
   async onSubmit(form: NgForm) {

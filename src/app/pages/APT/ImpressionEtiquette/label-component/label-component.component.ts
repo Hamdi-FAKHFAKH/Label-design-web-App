@@ -221,6 +221,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
             .getOneSerialNumber(this.produit.idSN)
             .toPromise()
         : null;
+      console.log(SN);
 
       if (SN) {
         this.SN = SN.serialNumber;
@@ -234,6 +235,7 @@ export class LabelComponentComponent implements OnChanges, OnInit {
           .map((obj) => obj.serialNumber.split(this.SN.prefix)[1])
           .sort()
           .pop();
+        console.log(lastSerialNumber);
 
         if (lastSerialNumber) {
           this.SN.suffix = lastSerialNumber;

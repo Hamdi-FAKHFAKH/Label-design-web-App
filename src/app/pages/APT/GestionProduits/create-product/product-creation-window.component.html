@@ -203,8 +203,17 @@
                     </div>
                   </div>
                   <label for="desLot"
-                    >Format de Lot <span style="color: red"> *</span></label
-                  >
+                    >Format de Lot <span style="color: red"> *</span>
+                    <i
+                      style="margin-left: 6px; color: #3374b5"
+                      class="fa-solid fa-circle-info"
+                      [title]="
+                        dateFormat.checked
+                          ? 'Pour spécifier le format de Lot il faut utiliser les caractères spéciaux suivants:\ndd : Jour\nMM: Mois\nyyyy : Année'
+                          : 'text libre'
+                      "
+                    ></i
+                  ></label>
                   <input
                     ngModel
                     #newformatLot="ngModel"
@@ -348,11 +357,7 @@
               *ngIf="forme.checked"
             >
               <div
-                style="
-                  border: 1px #3374b5 solid;
-                  padding: 11px 4px;
-                  width: fit-content;
-                "
+                style="border: 1px #3374b5 solid; padding: 11px; width: 219px"
               >
                 <img
                   *ngFor="let item of formes; let i = index"
@@ -431,7 +436,7 @@
                 #addNewSN
                 type="checkbox"
                 [defaultChecked]="false"
-                (change)="addSN($event)"
+                (change)="addSN($event); snFormat.value = ''"
               />
               <label> &nbsp;Ajouter un Nouveau SN</label>
               <br />

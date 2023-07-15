@@ -43,6 +43,7 @@ export class DataMatrixStyleFormComponent implements OnInit {
     this.xmlForm = this.dragDropService.items[this.itemId].data;
     this.marginCliked = "margin";
     this.items = this.dragDropService.items;
+    this.items[this.itemId].dataMatrixFormat = "qrcode";
     this.tagList = (
       await this.labelHttpService.GetAllTag().toPromise()
     ).tags.map((val) => val.tag);

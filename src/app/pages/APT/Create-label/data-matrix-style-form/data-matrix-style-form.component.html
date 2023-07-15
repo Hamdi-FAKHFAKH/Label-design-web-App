@@ -21,12 +21,12 @@
         <div class="col" style="padding-left: 0px; padding-right: 0px">
           <label for="hauteur" class="label">Hauteur(mm)</label>
           <input
-            [disabled]="format.value === 'qrcode'"
+            [disabled]="true"
             type="number"
             name="hauteur"
             id=""
             class="form-control"
-            [value]="format.value === 'qrcode' && largeur.value"
+            [value]="largeur.value"
             (input)="changeStyle('height', $event.target.value)"
             [ngModel]="
               (dragDropService.items[itemId].style &&
@@ -239,7 +239,7 @@
   <fieldset>
     <legend>Data</legend>
   </fieldset>
-  <div class="row">
+  <!-- <div class="row">
     <div class="col">
       <div class="form-group">
         <label for="format" class="label">Format</label>
@@ -275,7 +275,7 @@
         </select>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <div class="row tag">
     <div class="col">

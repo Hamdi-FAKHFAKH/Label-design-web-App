@@ -127,162 +127,168 @@ export class DragDropService {
           .getOneProduit(this.refproduit)
           .toPromise()
           .then((resProduit) => {
-            this.produit = resProduit.produit;
-            Object.keys(resProduit.produit).forEach((item) => {
-              if (
-                item !== "createdAt" &&
-                item !== "updatedAt" &&
-                item !== "idEtiquette" &&
-                item !== "withSN" &&
-                item !== "Createur" &&
-                item !== "Modificateur" &&
-                item !== "datamatrixData" &&
-                resProduit.produit[item]
-              ) {
-                if (item === "idSN" && resProduit.produit.idSN) {
-                  resProduit.produit.withSN &&
+            if (resProduit) {
+              this.produit = resProduit.produit;
+              Object.keys(resProduit.produit).forEach((item) => {
+                if (
+                  item !== "createdAt" &&
+                  item !== "updatedAt" &&
+                  item !== "idEtiquette" &&
+                  item !== "withSN" &&
+                  item !== "Createur" &&
+                  item !== "Modificateur" &&
+                  item !== "datamatrixData" &&
+                  resProduit.produit[item]
+                ) {
+                  if (item === "idSN" && resProduit.produit.idSN) {
+                    resProduit.produit.withSN &&
+                      this.gestionProduitHttpService
+                        .getOneSerialNumber(resProduit.produit.idSN)
+                        .toPromise()
+                        .then((serialNumber) => {
+                          this.listOfDragItems.push({
+                            id: uuidv4(),
+                            type: "text",
+                            refItem: item,
+                            title: ComponentTitle.SN,
+                            data:
+                              serialNumber.serialNumber.prefix +
+                              serialNumber.serialNumber.suffix,
+                            style: Object.assign({}, this.defaultTextStyle),
+                            children: [],
+                          });
+                          this.prepareDragDrop(this.listOfDragItems);
+                        });
+                  } else if (item == "withOF" && resProduit.produit.withOF) {
+                    this.listOfDragItems.push({
+                      id: uuidv4(),
+                      type: "text",
+                      refItem: "of",
+                      title: ComponentTitle.OF,
+                      data: "OF Number",
+                      style: Object.assign({}, this.defaultTextStyle),
+                    });
+                    this.prepareDragDrop(this.listOfDragItems);
+                  } else if (item === "formes" && resProduit.produit.formes) {
+                    resProduit.produit.formes
+                      .split(";")
+                      .forEach((val, index) => {
+                        if (val) {
+                          this.gestionProduitHttpService
+                            .getOneForm(val)
+                            .toPromise()
+                            .then((obj) => {
+                              const id = uuidv4();
+                              const icon = {
+                                id: id,
+                                type: "forme",
+                                refItem: `${item}-${index}`,
+                                title: ComponentTitle.forms,
+                                children: [],
+                                data: obj.form.path,
+                              };
+                              this.listOfDragItems.push(icon);
+                              this.nodeLookup2[id] = icon;
+                            })
+                            .catch((err) => {
+                              console.log(err.message);
+                            });
+                        }
+                      });
+                  } else if (resProduit.produit.numLot && item === "numLot") {
                     this.gestionProduitHttpService
-                      .getOneSerialNumber(resProduit.produit.idSN)
+                      .getOneLot(resProduit.produit.numLot)
                       .toPromise()
-                      .then((serialNumber) => {
+                      .then((lot) => {
                         this.listOfDragItems.push({
                           id: uuidv4(),
                           type: "text",
-                          refItem: item,
-                          title: ComponentTitle.SN,
-                          data:
-                            serialNumber.serialNumber.prefix +
-                            serialNumber.serialNumber.suffix,
+                          title: ComponentTitle.formatLot,
+                          refItem: "format",
+                          data: lot.lot.format,
                           style: Object.assign({}, this.defaultTextStyle),
-                          children: [],
                         });
                         this.prepareDragDrop(this.listOfDragItems);
                       });
-                } else if (item == "withOF" && resProduit.produit.withOF) {
-                  this.listOfDragItems.push({
-                    id: uuidv4(),
-                    type: "text",
-                    refItem: "of",
-                    title: ComponentTitle.OF,
-                    data: "OF Number",
-                    style: Object.assign({}, this.defaultTextStyle),
-                  });
-                  this.prepareDragDrop(this.listOfDragItems);
-                } else if (item === "formes" && resProduit.produit.formes) {
-                  resProduit.produit.formes.split(";").forEach((val, index) => {
-                    if (val) {
-                      this.gestionProduitHttpService
-                        .getOneForm(val)
-                        .toPromise()
-                        .then((obj) => {
-                          const id = uuidv4();
-                          const icon = {
-                            id: id,
-                            type: "forme",
-                            refItem: `${item}-${index}`,
-                            title: ComponentTitle.forms,
-                            children: [],
-                            data: obj.form.path,
-                          };
-                          this.listOfDragItems.push(icon);
-                          this.nodeLookup2[id] = icon;
-                        })
-                        .catch((err) => {
-                          console.log(err.message);
-                        });
-                    }
-                  });
-                } else if (resProduit.produit.numLot && item === "numLot") {
-                  this.gestionProduitHttpService
-                    .getOneLot(resProduit.produit.numLot)
-                    .toPromise()
-                    .then((lot) => {
-                      this.listOfDragItems.push({
-                        id: uuidv4(),
-                        type: "text",
-                        title: ComponentTitle.formatLot,
-                        refItem: "format",
-                        data: lot.lot.format,
-                        style: Object.assign({}, this.defaultTextStyle),
+                  } else if (
+                    resProduit.produit.codeClient &&
+                    item === "codeClient"
+                  ) {
+                    this.gestionProduitHttpService
+                      .getClient(resProduit.produit.codeClient)
+                      .toPromise()
+                      .then((client) => {
+                        resProduit.produit.codeClient &&
+                          this.listOfDragItems.push({
+                            id: uuidv4(),
+                            type: "text",
+                            refItem: item,
+                            title: ComponentTitle.codeClient,
+                            data: resProduit.produit.codeClient,
+                            style: Object.assign({}, this.defaultTextStyle),
+                          });
+                        client.body.client.desClient &&
+                          this.listOfDragItems.push({
+                            id: uuidv4(),
+                            type: "text",
+                            title: ComponentTitle.desClient,
+                            refItem: "desClient",
+                            data: client.body.client.desClient,
+                            style: Object.assign({}, this.defaultTextStyle),
+                          });
+                        this.prepareDragDrop(this.listOfDragItems);
                       });
-                      this.prepareDragDrop(this.listOfDragItems);
-                    });
-                } else if (
-                  resProduit.produit.codeClient &&
-                  item === "codeClient"
-                ) {
-                  this.gestionProduitHttpService
-                    .getClient(resProduit.produit.codeClient)
-                    .toPromise()
-                    .then((client) => {
-                      resProduit.produit.codeClient &&
+                  } else if (
+                    resProduit.produit.codeFournisseur &&
+                    item === "codeFournisseur"
+                  ) {
+                    this.gestionProduitHttpService
+                      .getFournisseur(resProduit.produit.codeFournisseur)
+                      .toPromise()
+                      .then((fournisseur) => {
                         this.listOfDragItems.push({
                           id: uuidv4(),
                           type: "text",
                           refItem: item,
-                          title: ComponentTitle.codeClient,
-                          data: resProduit.produit.codeClient,
+                          title: ComponentTitle.codeFournisseur,
+                          data: resProduit.produit.codeFournisseur,
                           style: Object.assign({}, this.defaultTextStyle),
                         });
-                      client.body.client.desClient &&
-                        this.listOfDragItems.push({
-                          id: uuidv4(),
-                          type: "text",
-                          title: ComponentTitle.desClient,
-                          refItem: "desClient",
-                          data: client.body.client.desClient,
-                          style: Object.assign({}, this.defaultTextStyle),
-                        });
-                      this.prepareDragDrop(this.listOfDragItems);
-                    });
-                } else if (
-                  resProduit.produit.codeFournisseur &&
-                  item === "codeFournisseur"
-                ) {
-                  this.gestionProduitHttpService
-                    .getFournisseur(resProduit.produit.codeFournisseur)
-                    .toPromise()
-                    .then((fournisseur) => {
-                      this.listOfDragItems.push({
-                        id: uuidv4(),
-                        type: "text",
-                        refItem: item,
-                        title: ComponentTitle.codeFournisseur,
-                        data: resProduit.produit.codeFournisseur,
-                        style: Object.assign({}, this.defaultTextStyle),
+                        fournisseur.body.fournisseur.desFournisseur &&
+                          this.listOfDragItems.push({
+                            id: uuidv4(),
+                            type: "text",
+                            title: ComponentTitle.desFournisseur,
+                            refItem: "desFournisseur",
+                            data: fournisseur.body.fournisseur.desFournisseur,
+                            style: Object.assign({}, this.defaultTextStyle),
+                          });
+                        this.prepareDragDrop(this.listOfDragItems);
                       });
-                      fournisseur.body.fournisseur.desFournisseur &&
-                        this.listOfDragItems.push({
-                          id: uuidv4(),
-                          type: "text",
-                          title: ComponentTitle.desFournisseur,
-                          refItem: "desFournisseur",
-                          data: fournisseur.body.fournisseur.desFournisseur,
-                          style: Object.assign({}, this.defaultTextStyle),
-                        });
-                      this.prepareDragDrop(this.listOfDragItems);
+                  } else {
+                    this.listOfDragItems.push({
+                      id: uuidv4(),
+                      type: item == "withDataMatrix" ? "QRcode" : "text",
+                      refItem:
+                        item == "withDataMatrix" ? "datamatrixData" : item,
+                      title: ComponentTitle[item],
+                      data:
+                        item == "withDataMatrix"
+                          ? "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix."
+                          : resProduit.produit[item],
+                      style: {
+                        ...this.defaultTextStyle,
+                        height: item == "withDataMatrix" && "110",
+                        width: item == "withDataMatrix" && "110",
+                      },
+                      dataMatrixFormat:
+                        item == "withDataMatrix" ? "qrcode" : "",
                     });
-                } else {
-                  this.listOfDragItems.push({
-                    id: uuidv4(),
-                    type: item == "withDataMatrix" ? "QRcode" : "text",
-                    refItem: item == "withDataMatrix" ? "datamatrixData" : item,
-                    title: ComponentTitle[item],
-                    data:
-                      item == "withDataMatrix"
-                        ? "Veuillez saisir les données que vous souhaitez inclure dans la DataMatrix."
-                        : resProduit.produit[item],
-                    style: {
-                      ...this.defaultTextStyle,
-                      height: item == "withDataMatrix" && "110",
-                      width: item == "withDataMatrix" && "110",
-                    },
-                    dataMatrixFormat: item == "withDataMatrix" ? "qrcode" : "",
-                  });
-                  this.prepareDragDrop(this.listOfDragItems);
+                    this.prepareDragDrop(this.listOfDragItems);
+                  }
                 }
-              }
-            });
+              });
+            }
           });
       }
     });

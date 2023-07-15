@@ -68,6 +68,11 @@ export class ControlPrintedLabelsComponent implements OnInit {
           checkedetiquettesByQrcode.nbrDuplication = 1;
           this.nbrOfProblem++;
           this.listOfLabelsWithProblem.push(checkedetiquettesByQrcode);
+          const index = this.listOfCheckedLabel.findIndex(
+            (val) =>
+              val.dataMatrixData == checkedetiquettesByQrcode.dataMatrixData
+          );
+          index >= 0 && this.listOfCheckedLabel.splice(index, 1);
           await this.checkPrintedLabelHttp
             .createVerificationEtiquette({
               dataMatrixData: data,
@@ -76,11 +81,6 @@ export class ControlPrintedLabelsComponent implements OnInit {
               userMatricule: this.authService.user.getValue().matricule,
             })
             .toPromise();
-          const index = this.listOfCheckedLabel.findIndex(
-            (val) =>
-              val.dataMatrixData == checkedetiquettesByQrcode.dataMatrixData
-          );
-          index >= 0 && this.listOfCheckedLabel.splice(index, 1);
           // label duplicated and exist in problem list
         } else if (
           this.listOfLabelsWithProblem.some(

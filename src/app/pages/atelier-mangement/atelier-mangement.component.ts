@@ -134,7 +134,31 @@ export class AtelierMangementComponent implements OnInit {
         });
     });
   }
-  onSearch(data) {}
+  // search data
+  onSearch(query: string = "") {
+    if (query == "") {
+      this.source.reset(false);
+    } else {
+      this.source.setFilter(
+        [
+          // fields we want to include in the search
+          {
+            field: "Liecod",
+            search: query,
+          },
+          {
+            field: "Unite_Production",
+            search: query,
+          },
+          {
+            field: "Libelle_Atelier",
+            search: query,
+          },
+        ],
+        false
+      );
+    }
+  }
   openAddAtelierWindow() {
     const window = this.windowService.open(CreateAtelierWindowComponent, {
       title: `Nouveau Atelier`,
