@@ -179,15 +179,15 @@ export class EtiquetteTabComponent implements OnInit {
                 listofkey.splice(Object.keys(obj).indexOf("idEtiquette"), 1);
                 console.log(obj.ref);
                 listofkey.every((key) => {
-                  console.log(
-                    key + " " + (!!this.productToBeCreated[key] === !!obj[key])
-                  );
+                  // console.log(
+                  //   key + " " + (!!this.productToBeCreated[key] === !!obj[key])
+                  // );
 
                   return !!this.productToBeCreated[key] === !!obj[key];
                 }) && obj.ref !== this.lastRefProd;
               });
-            console.log(this.productToBeCreated);
-            console.log(this.produitwithEtiquette.produits);
+            // console.log(this.productToBeCreated);
+            // console.log(this.produitwithEtiquette.produits);
           });
 
         const prodwithEtiquette = (
